@@ -4,11 +4,11 @@ using WebBanTaiKhoan.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ===== BẮT BUỘC cho Render =====
+// ====== BẮT BUỘC CHO RENDER ======
 var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
-builder.WebHost.UseUrls($"http://*:{port}");
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
-// 1. DATABASE
+// ====== DATABASE ======
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -17,7 +17,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// 2. IDENTITY
+// ====== IDENTITY ======
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
@@ -36,7 +36,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-// 3. SESSION
+// ====== SESSION ======
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -47,7 +47,7 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-// 4. MIDDLEWARE
+// ====== MIDDLEWARE ======
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
