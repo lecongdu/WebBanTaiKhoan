@@ -287,10 +287,10 @@ C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\obj\Release\net8.0\static
 C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\obj\Release\net8.0\staticwebassets.build.json.cache
 C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\obj\Release\net8.0\staticwebassets.development.json
 C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\obj\Release\net8.0\staticwebassets.build.endpoints.json
-C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\obj\Release\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\obj\Release\net8.0\WebBanTa.3682493A.Up2Date
 C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\obj\Release\net8.0\WebBanTaiKhoan.dll
 C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\obj\Release\net8.0\refint\WebBanTaiKhoan.dll
 C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\obj\Release\net8.0\WebBanTaiKhoan.pdb
 C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\obj\Release\net8.0\WebBanTaiKhoan.genruntimeconfig.cache
 C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\obj\Release\net8.0\ref\WebBanTaiKhoan.dll
+C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\obj\Release\net8.0\WebBanTaiKhoan.sourcelink.json
