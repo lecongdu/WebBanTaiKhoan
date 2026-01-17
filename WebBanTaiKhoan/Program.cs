@@ -4,11 +4,11 @@ using WebBanTaiKhoan.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ====== BẮT BUỘC CHO RENDER ======
-var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
+// ==== BẮT BUỘC CHO RENDER ====
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
-// ====== DATABASE ======
+// 1. DATABASE
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -17,13 +17,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// ====== IDENTITY ======
+// 2. IDENTITY
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
-    options.SignIn.RequireConfirmedEmail = false;
-    options.SignIn.RequireConfirmedPhoneNumber = false;
-
     options.Password.RequireDigit = false;
     options.Password.RequiredLength = 3;
     options.Password.RequireNonAlphanumeric = false;
@@ -36,7 +33,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-// ====== SESSION ======
+// 3. SESSION
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -47,18 +44,7 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-// ====== MIDDLEWARE ======
-if (app.Environment.IsDevelopment())
-{
-    app.UseMigrationsEndPoint();
-}
-else
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection();
+// 4. MIDDLEWARE
 app.UseStaticFiles();
 app.UseRouting();
 
