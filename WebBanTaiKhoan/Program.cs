@@ -4,6 +4,10 @@ using WebBanTaiKhoan.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ===== BẮT BUỘC cho Render =====
+var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
+builder.WebHost.UseUrls($"http://*:{port}");
+
 // 1. DATABASE
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -68,9 +72,5 @@ app.MapControllerRoute(
 
 app.MapRazorPages();
 app.MapFallbackToController("Index", "Home");
-
-// ==== QUAN TRỌNG CHO RENDER ====
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-app.Urls.Add($"http://0.0.0.0:{port}");
 
 app.Run();
