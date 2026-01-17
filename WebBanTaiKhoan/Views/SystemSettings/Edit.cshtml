@@ -1,0 +1,212 @@
+﻿@model WebBanTaiKhoan.Models.SystemSetting
+
+@{
+    ViewData["Title"] = "Chỉnh sửa cấu hình hệ thống";
+}
+
+<div class="container mt-4 pb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold text-primary"><i class="fa-solid fa-gear"></i> CẤU HÌNH HỆ THỐNG</h2>
+        <a asp-controller="Admin" asp-action="Index" class="btn btn-outline-secondary fw-bold shadow-sm">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại Dashboard
+        </a>
+    </div>
+
+    @* Lưu ý: Phải có enctype="multipart/form-data" để gửi được file ảnh *@
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+
+        @* Giữ lại giá trị cũ nếu không sửa, tránh mất ảnh khi submit *@
+        <input type="hidden" asp-for="BannerUrl" />
+        <input type="hidden" asp-for="BannerUrl2" />
+        <input type="hidden" asp-for="BannerUrl3" />
+
+        <div class="row">
+            @* CỘT 1: QUẢN LÝ 3 BANNER SLIDER *@
+            <div class="col-md-12 mb-4">
+                <div class="card shadow-sm border-primary border-top border-4 rounded-4">
+                    <div class="card-header bg-white fw-bold text-primary">
+                        <i class="fa-solid fa-images"></i> Quản lý Banner Slider (3 ảnh)
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            @* Banner 1 *@
+                            <div class="col-md-4 border-end">
+                                <label class="fw-bold d-block mb-2 small text-secondary">Banner 1 (Chính):</label>
+                                <div class="border rounded-3 p-2 bg-light mb-2 d-flex align-items-center justify-content-center" style="height: 120px;">
+                                    <img src="@(string.IsNullOrEmpty(Model.BannerUrl) ? "/images/no-image.png" : Model.BannerUrl)" id="preview1" class="img-fluid rounded shadow-sm" style="max-height: 100px;" />
+                                </div>
+                                <input type="file" name="bannerFile1" class="form-control form-control-sm" accept="image/*" onchange="previewImage(this, 'preview1')" />
+                            </div>
+
+                            @* Banner 2 *@
+                            <div class="col-md-4 border-end">
+                                <label class="fw-bold d-block mb-2 small text-secondary">Banner 2:</label>
+                                <div class="border rounded-3 p-2 bg-light mb-2 d-flex align-items-center justify-content-center" style="height: 120px;">
+                                    <img src="@(string.IsNullOrEmpty(Model.BannerUrl2) ? "/images/no-image.png" : Model.BannerUrl2)" id="preview2" class="img-fluid rounded shadow-sm" style="max-height: 100px;" />
+                                </div>
+                                @* SỬA LỖI: onchange phải là preview2 *@
+                                <input type="file" name="bannerFile2" class="form-control form-control-sm" accept="image/*" onchange="previewImage(this, 'preview2')" />
+                            </div>
+
+                            @* Banner 3 *@
+                            <div class="col-md-4">
+                                <label class="fw-bold d-block mb-2 small text-secondary">Banner 3:</label>
+                                <div class="border rounded-3 p-2 bg-light mb-2 d-flex align-items-center justify-content-center" style="height: 120px;">
+                                    <img src="@(string.IsNullOrEmpty(Model.BannerUrl3) ? "/images/no-image.png" : Model.BannerUrl3)" id="preview3" class="img-fluid rounded shadow-sm" style="max-height: 100px;" />
+                                </div>
+                                @* SỬA LỖI: onchange phải là preview3 *@
+                                <input type="file" name="bannerFile3" class="form-control form-control-sm" accept="image/*" onchange="previewImage(this, 'preview3')" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* CỘT 2: THÔNG BÁO & THÔNG TIN LIÊN HỆ *@
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100 border-info border-top border-4 rounded-4">
+                    <div class="card-header bg-white fw-bold text-info text-uppercase">
+                        <i class="fa-solid fa-bullhorn"></i> Thông báo & Liên hệ
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="fw-bold small">Địa chỉ Shop (Bắt buộc):</label>
+                            <input asp-for="ContactAddress" class="form-control shadow-sm" placeholder="Nhập địa chỉ..." required />
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="fw-bold small text-primary">Hotline:</label>
+                                <input asp-for="ContactPhone" class="form-control shadow-sm" />
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="fw-bold small text-info">Zalo hỗ trợ:</label>
+                                <input asp-for="ContactZalo" class="form-control shadow-sm" />
+                            </div>
+                        </div>
+                        <div class="mb-0">
+                            <label class="fw-bold small text-danger">Dòng chữ chạy (Marquee):</label>
+                            <input asp-for="MarqueeText" class="form-control shadow-sm" placeholder="Nhập tin tức..." />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* CỘT 3: GOOGLE MAPS *@
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100 border-danger border-top border-4 rounded-4">
+                    <div class="card-header bg-white fw-bold text-danger text-uppercase">
+                        <i class="fa-solid fa-map-location-dot"></i> Bản đồ Google Maps
+                    </div>
+                    <div class="card-body">
+                        <label class="fw-bold small mb-1 text-secondary">Mã nhúng Iframe:</label>
+                        <textarea asp-for="MapHtml" id="mapInput" class="form-control mb-2 shadow-sm" rows="2" placeholder='<iframe src="..." ...></iframe>'></textarea>
+                        <div id="mapPreview" class="border rounded-3 bg-light overflow-hidden d-flex align-items-center justify-content-center shadow-inner" style="height: 130px; width: 100%;">
+                            @if (!string.IsNullOrEmpty(Model.MapHtml))
+                            {
+                                @Html.Raw(Model.MapHtml)
+                            }
+                            else
+                            {
+                                <div class="text-muted small italic">Xem trước bản đồ tại đây</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* CỘT 4: GIỚI THIỆU & MẠNG XÃ HỘI *@
+            <div class="col-md-12 mb-4">
+                <div class="card shadow-sm border-dark border-top border-4 rounded-4">
+                    <div class="card-header bg-white fw-bold text-dark text-uppercase">
+                        <i class="fa-solid fa-share-nodes"></i> Giới thiệu & Mạng xã hội
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3 border-end">
+                                <label class="fw-bold small text-secondary">Giới thiệu ngắn ở Footer:</label>
+                                <textarea asp-for="FooterAbout" class="form-control shadow-sm" rows="4" placeholder="Viết giới thiệu về shop của bạn..."></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-6 mb-3">
+                                        <label class="fw-bold small text-primary"><i class="fa-brands fa-facebook"></i> Facebook:</label>
+                                        <input asp-for="FacebookUrl" class="form-control form-control-sm shadow-sm" placeholder="https://facebook.com/..." />
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <label class="fw-bold small text-danger"><i class="fa-brands fa-youtube"></i> Youtube:</label>
+                                        <input asp-for="YoutubeUrl" class="form-control form-control-sm shadow-sm" />
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <label class="fw-bold small text-dark"><i class="fa-brands fa-tiktok"></i> Tiktok:</label>
+                                        <input asp-for="TiktokUrl" class="form-control form-control-sm shadow-sm" />
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <label class="fw-bold small text-success"><i class="fa-solid fa-shield"></i> DMCA Link:</label>
+                                        <input asp-for="DmcaUrl" class="form-control form-control-sm shadow-sm" />
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="fw-bold small text-info"><i class="fa-brands fa-discord"></i> Discord URL:</label>
+                                        <input asp-for="DiscordUrl" class="form-control form-control-sm shadow-sm" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-success btn-lg px-5 fw-bold shadow-lg rounded-pill">
+                <i class="fa-solid fa-floppy-disk me-2"></i> LƯU TẤT CẢ THAY ĐỔI
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+    .shadow-inner {
+        box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+    }
+
+    .rounded-4 {
+        border-radius: 1rem !important;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Preview ảnh Banner
+        function previewImage(input, previewId) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById(previewId).src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Preview Map khi dán mã
+        document.getElementById('mapInput').addEventListener('input', function () {
+            const preview = document.getElementById('mapPreview');
+            preview.innerHTML = this.value;
+            const iframe = preview.querySelector('iframe');
+            if (iframe) {
+                iframe.setAttribute('width', '100%');
+                iframe.setAttribute('height', '130');
+            }
+        });
+
+        // Xử lý iframe map khi load trang
+        window.addEventListener('load', function() {
+            const iframe = document.querySelector('#mapPreview iframe');
+            if (iframe) {
+                iframe.setAttribute('width', '100%');
+                iframe.setAttribute('height', '130');
+            }
+        });
+    </script>
+}

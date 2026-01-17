@@ -1,0 +1,252 @@
+﻿@model IEnumerable<WebBanTaiKhoan.Models.Product>
+@{
+    ViewData["Title"] = "Trang chủ";
+    var settings = ViewBag.Settings as WebBanTaiKhoan.Models.SystemSetting;
+    var searchTerm = ViewBag.CurrentSearch as string;
+    var currentCategoryId = ViewBag.CurrentCategoryId as int?;
+}
+
+<div class="container mt-3 pb-5">
+    <div class="row">
+        @* CỘT DANH MỤC ĐỘNG *@
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                <div class="card-header bg-dark text-white fw-bold py-3">
+                    <i class="fa-solid fa-bars me-2 text-warning"></i> DANH MỤC SẢN PHẨM
+                </div>
+                <div class="list-group list-group-flush">
+                    <a asp-action="Index" asp-route-categoryId="" class="list-group-item list-group-item-action border-0 py-2 @(currentCategoryId == null ? "bg-light fw-bold text-primary" : "")">
+                        <i class="fa-solid fa-border-all me-2"></i> Tất cả sản phẩm
+                    </a>
+
+                    @if (ViewBag.Categories != null)
+                    {
+                        foreach (var cat in (List<WebBanTaiKhoan.Models.Category>)ViewBag.Categories)
+                        {
+                            <a asp-action="Index" asp-route-categoryId="@cat.Id"
+                               class="list-group-item list-group-item-action border-0 py-2 @(currentCategoryId == cat.Id ? "bg-light fw-bold text-primary" : "")">
+                                <i class="fa-solid fa-chevron-right me-2 small"></i> @cat.Name
+                            </a>
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="mt-4 p-3 bg-primary rounded-3 text-white shadow-sm">
+                <h6 class="fw-bold"><i class="fa-solid fa-shield-check me-2"></i>Cam kết uy tín</h6>
+                <p class="small mb-0 opacity-75">Hỗ trợ bảo hành 1-1 cho mọi tài khoản lỗi trong vòng 24h.</p>
+            </div>
+        </div>
+
+        @* CỘT NỘI DUNG CHÍNH *@
+        <div class="col-lg-9 col-md-12">
+
+            @* --- PHẦN BANNER SLIDER (ĐÃ SỬA LOGIC ĐỘNG) --- *@
+            <div id="homeBannerCarousel" class="carousel slide shadow-sm rounded-3 overflow-hidden mb-4 border" data-bs-ride="carousel">
+
+                @* 1. Nút chấm tròn điều hướng (Indicators) *@
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#homeBannerCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
+
+                    @* Chỉ hiện chấm thứ 2 nếu có Banner 2 *@
+                    @if (settings != null && !string.IsNullOrEmpty(settings.BannerUrl2))
+                    {
+                        <button type="button" data-bs-target="#homeBannerCarousel" data-bs-slide-to="1"></button>
+                    }
+
+                    @* Chỉ hiện chấm thứ 3 nếu có Banner 3 *@
+                    @if (settings != null && !string.IsNullOrEmpty(settings.BannerUrl3))
+                    {
+                        <button type="button" data-bs-target="#homeBannerCarousel" data-bs-slide-to="2"></button>
+                    }
+                </div>
+
+                @* 2. Phần ảnh (Slides) *@
+                <div class="carousel-inner">
+                    @* Slide 1: Luôn hiện (Lấy từ DB hoặc ảnh mặc định) *@
+                    <div class="carousel-item active" data-bs-interval="5000">
+                        <img src="@(settings?.BannerUrl ?? "/images/banner1.jpg")" class="d-block w-100" style="max-height: 380px; object-fit: cover;" alt="Banner Chính">
+                    </div>
+
+                    @* Slide 2: Chỉ hiện khi có dữ liệu trong DB *@
+                    @if (settings != null && !string.IsNullOrEmpty(settings.BannerUrl2))
+                    {
+                        <div class="carousel-item" data-bs-interval="5000">
+                            <img src="@settings.BannerUrl2" class="d-block w-100" style="max-height: 380px; object-fit: cover;" alt="Banner 2">
+                        </div>
+                    }
+
+                    @* Slide 3: Chỉ hiện khi có dữ liệu trong DB *@
+                    @if (settings != null && !string.IsNullOrEmpty(settings.BannerUrl3))
+                    {
+                        <div class="carousel-item" data-bs-interval="5000">
+                            <img src="@settings.BannerUrl3" class="d-block w-100" style="max-height: 380px; object-fit: cover;" alt="Banner 3">
+                        </div>
+                    }
+                </div>
+
+                @* 3. Nút bấm Trái / Phải *@
+                <button class="carousel-control-prev" type="button" data-bs-target="#homeBannerCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#homeBannerCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+            @* --- KẾT THÚC PHẦN BANNER --- *@
+
+            @* CHỮ CHẠY THÔNG BÁO *@
+            @if (settings != null && !string.IsNullOrEmpty(settings.MarqueeText))
+            {
+                <div class="alert bg-white d-flex align-items-center mb-4 shadow-sm p-1 border-0 rounded-3">
+                    <span class="badge bg-danger ms-2 px-3 py-2 rounded-pill shadow-sm animate-pulse">🔥 TIN HOT</span>
+                    <marquee class="fw-bold text-danger ms-3" scrollamount="8">@settings.MarqueeText</marquee>
+                </div>
+            }
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold text-dark mb-0 border-start border-primary border-4 ps-2 text-uppercase">
+                    @if (!string.IsNullOrEmpty(searchTerm))
+                    {
+                        <span>Kết quả tìm kiếm: "@searchTerm"</span>
+                    }
+                    else if (currentCategoryId != null)
+                    {
+                        <span>Danh mục: @(Model.FirstOrDefault()?.Category?.Name ?? "Sản phẩm")</span>
+                    }
+                    else
+                    {
+                        <span>Sản phẩm nổi bật</span>
+                    }
+                </h4>
+            </div>
+
+            @* DANH SÁCH SẢN PHẨM *@
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                @if (!Model.Any())
+                {
+                    <div class="col-12 text-center text-muted py-5 bg-white rounded-3 shadow-sm border border-dashed">
+                        <h5>Không tìm thấy sản phẩm nào...</h5>
+                        <a asp-action="Index" class="btn btn-outline-primary btn-sm mt-2">Xem tất cả sản phẩm</a>
+                    </div>
+                }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        <div class="col">
+                            <div class="card h-100 card-product shadow-sm border-0 position-relative bg-white p-2">
+                                @{
+                                    var stockCount = item.AccountItems?.Count(a => !a.IsSold) ?? 0;
+                                }
+
+                                @* Ảnh sản phẩm *@
+                                <div class="card-img-container p-3 text-center">
+                                    <a asp-action="ProductDetail" asp-route-id="@item.Id">
+                                        <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/no-image.png" : item.ImageUrl)"
+                                             class="card-img-top img-fluid rounded transition-all" style="height: 160px; object-fit: contain;" />
+                                    </a>
+                                </div>
+
+                                <div class="card-body pt-0 d-flex flex-column text-center">
+                                    @* Tên sản phẩm *@
+                                    <h6 class="card-title fw-bold text-dark text-truncate mb-2">
+                                        <a asp-action="ProductDetail" asp-route-id="@item.Id" class="text-decoration-none text-dark">@item.Name</a>
+                                    </h6>
+
+                                    @* Trạng thái kho *@
+                                    <div class="mb-3">
+                                        @if (stockCount > 0)
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success border-opacity-25">
+                                                <i class="fa-solid fa-check-circle me-1"></i> Còn hàng (@stockCount)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger-subtle text-danger border border-danger border-opacity-25">
+                                                <i class="fa-solid fa-circle-xmark me-1"></i> Hết hàng
+                                            </span>
+                                        }
+                                    </div>
+
+                                    @* Giá cả *@
+                                    <div class="mb-4 mt-auto">
+                                        <div class="text-danger fw-bold fs-5">@item.Price.ToString("#,##0")đ</div>
+                                    </div>
+
+                                    @* NÚT XEM CHI TIẾT *@
+                                    <a asp-action="ProductDetail" asp-route-id="@item.Id"
+                                       class="btn btn-outline-primary w-100 fw-bold rounded-pill py-2 shadow-sm border-2">
+                                        XEM CHI TIẾT <i class="fa-solid fa-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Carousel Customization */
+    .carousel-item img {
+        transition: transform 0.5s ease;
+    }
+
+    .carousel-control-prev-icon, .carousel-control-next-icon {
+        background-color: rgba(0,0,0,0.5);
+        border-radius: 50%;
+        padding: 20px;
+    }
+
+    .card-product {
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        border-radius: 15px;
+    }
+
+        .card-product:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.1) !important;
+        }
+
+    .card-img-container img {
+        transition: transform 0.5s ease;
+    }
+
+    .card-product:hover .card-img-container img {
+        transform: scale(1.05);
+    }
+
+    .bg-success-subtle {
+        background-color: #e8f5e9;
+    }
+
+    .bg-danger-subtle {
+        background-color: #ffebee;
+    }
+
+    .animate-pulse {
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.7;
+        }
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #0061ff;
+        color: white;
+        transform: scale(1.02);
+    }
+</style>

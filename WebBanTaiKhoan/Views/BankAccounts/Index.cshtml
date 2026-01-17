@@ -1,0 +1,67 @@
+﻿@model IEnumerable<WebBanTaiKhoan.Models.BankAccount>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary">
+        <i class="fa-solid fa-arrow-left"></i> Quay lại Admin
+    </a>
+
+    <a asp-action="Create" class="btn btn-success fw-bold">
+        <i class="fa-solid fa-plus"></i> Tạo sản phẩm mới
+    </a>
+</div>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.BankName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AccountNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AccountName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LogoUrl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.QrUrl)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.BankName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccountNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccountName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LogoUrl)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.QrUrl)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

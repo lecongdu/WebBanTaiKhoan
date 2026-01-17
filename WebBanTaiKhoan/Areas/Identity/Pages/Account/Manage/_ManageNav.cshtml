@@ -1,0 +1,36 @@
+﻿@inject SignInManager<IdentityUser> SignInManager
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
+<div class="list-group list-group-flush">
+    <a class="list-group-item list-group-item-action py-3 px-4 border-0 @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">
+        <i class="fa-solid fa-id-card-alt me-3 text-secondary"></i> Hồ sơ của tôi
+    </a>
+    <a class="list-group-item list-group-item-action py-3 px-4 border-0 @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">
+        <i class="fa-solid fa-envelope-open me-3 text-secondary"></i> Thay đổi Email
+    </a>
+    <a class="list-group-item list-group-item-action py-3 px-4 border-0 @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">
+        <i class="fa-solid fa-shield-keyhole me-3 text-secondary"></i> Đổi mật khẩu
+    </a>
+    <a class="list-group-item list-group-item-action py-3 px-4 border-0 @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication">
+        <i class="fa-solid fa-fingerprint me-3 text-secondary"></i> Bảo mật 2 lớp
+    </a>
+    <a class="list-group-item list-group-item-action py-3 px-4 border-0 @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">
+        <i class="fa-solid fa-user-slash me-3 text-danger"></i> Xóa tài khoản
+    </a>
+</div>
+
+<style>
+    /* Làm nổi bật mục đang chọn */
+    .list-group-item.active {
+        background-color: rgba(0, 97, 255, 0.08) !important;
+        color: #0061ff !important;
+        font-weight: 800;
+        border-right: 4px solid #0061ff !important;
+    }
+
+    .list-group-item:hover:not(.active) {
+        background-color: #f8f9fa;
+        color: #0061ff;
+    }
+</style>

@@ -1,0 +1,49 @@
+﻿@page
+@model EmailModel
+@{
+    ViewData["Title"] = "Quản lý Email";
+    ViewData["ActivePage"] = ManageNavPages.Email;
+    Layout = "_Layout.cshtml";
+}
+
+<h4 class="fw-bold mb-4 text-primary text-uppercase"><i class="fa-solid fa-envelope-open-text me-2"></i>Thay đổi địa chỉ Email</h4>
+<partial name="_StatusMessage" for="StatusMessage" />
+
+<div class="row">
+    <div class="col-md-9">
+        <form id="email-form" method="post">
+            <div asp-validation-summary="All" class="text-danger small mb-3"></div>
+
+            @if (Model.IsEmailConfirmed)
+            {
+                <div class="form-floating mb-3 input-group">
+                    <input asp-for="Email" class="form-control bg-light border-0" disabled placeholder="Email hiện tại" />
+                    <label asp-for="Email">Email hiện tại</label>
+                    <span class="input-group-text bg-success text-white border-0"><i class="fa-solid fa-circle-check me-1"></i> Đã xác minh</span>
+                </div>
+            }
+            else
+            {
+                <div class="form-floating mb-3">
+                    <input asp-for="Email" class="form-control bg-light border-0" disabled placeholder="Email chưa xác minh" />
+                    <label asp-for="Email">Email hiện tại</label>
+                    <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="btn btn-link text-decoration-none small fw-bold mt-1">Gửi lại mã xác minh</button>
+                </div>
+            }
+
+            <div class="form-floating mb-4">
+                <input asp-for="Input.NewEmail" class="form-control border-primary border-opacity-25 shadow-none" style="border-radius: 12px;" autocomplete="email" aria-required="true" placeholder="Nhập email mới" />
+                <label asp-for="Input.NewEmail">Địa chỉ Email mới</label>
+                <span asp-validation-for="Input.NewEmail" class="text-danger small"></span>
+            </div>
+
+            <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="btn btn-primary px-5 py-3 fw-bold shadow-sm rounded-pill">
+                CẬP NHẬT EMAIL <i class="fa-solid fa-paper-plane ms-2"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,154 @@
+﻿@model WebBanTaiKhoan.Models.Product
+
+@{
+    ViewData["Title"] = "Chỉnh sửa sản phẩm";
+}
+
+<div class="container mt-4 pb-5">
+    <div class="row">
+        @* CỘT TRÁI: FORM CHỈNH SỬA THÔNG TIN *@
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-dark text-white py-3">
+                    <h4 class="mb-0 fw-bold"><i class="fa-solid fa-pen-to-square me-2 text-warning"></i>CHỈNH SỬA SẢN PHẨM</h4>
+                </div>
+                <div class="card-body p-4 bg-white">
+                    <form asp-action="Edit" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="ImageUrl" />
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Name" class="control-label fw-bold">Tên sản phẩm</label>
+                            <input asp-for="Name" class="form-control border-2 shadow-none" placeholder="Ví dụ: Netflix 1 Tháng Premium" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="CategoryId" class="control-label fw-bold text-primary">
+                                <i class="fa-solid fa-tags me-1"></i> Danh mục sản phẩm
+                            </label>
+                            <select asp-for="CategoryId" class="form-select border-2 shadow-none" asp-items="ViewBag.CategoryId">
+                                <option value="">-- Chọn danh mục --</option>
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Description" class="control-label fw-bold">Mô tả chi tiết</label>
+                            <textarea asp-for="Description" class="form-control border-2 shadow-none" rows="4"></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="Price" class="control-label fw-bold">Giá bán (VNĐ)</label>
+                            <div class="input-group">
+                                <input asp-for="Price" class="form-control border-2 shadow-none fw-bold text-danger" type="number" />
+                                <span class="input-group-text bg-light fw-bold">đ</span>
+                            </div>
+                            <span asp-validation-for="Price" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="control-label fw-bold d-block mb-2">Hình ảnh minh họa</label>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="position-relative">
+                                    <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/images/no-image.png" : Model.ImageUrl)"
+                                         id="currentImage" width="120" class="img-thumbnail rounded-3 shadow-sm"
+                                         onerror="this.src='/images/no-image.png'" />
+                                </div>
+                                <div>
+                                    <label class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
+                                        <i class="fa-solid fa-camera me-1"></i> Đổi ảnh
+                                        <input type="file" name="ImageFile" class="d-none" accept="image/*" onchange="previewImage(this)">
+                                    </label>
+                                    <p class="x-small text-muted mt-2 mb-0 italic">Nên chọn ảnh vuông 500x500px.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-4 border-top pt-4">
+                            <button type="submit" class="btn btn-primary px-5 shadow-sm fw-bold rounded-pill py-2">
+                                <i class="fa-solid fa-save me-1"></i> LƯU THAY ĐỔI
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary px-4 ms-2 rounded-pill py-2">Hủy bỏ</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        @* CỘT PHẢI: QUẢN LÝ KHO HÀNG NHANH *@
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4 mb-4 bg-white">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="fa-solid fa-warehouse me-2"></i>Trạng thái kho</h5>
+                </div>
+                <div class="card-body p-4 text-center">
+                    @{
+                        var inStock = Model.AccountItems?.Count(a => !a.IsSold) ?? 0;
+                        var soldOut = Model.AccountItems?.Count(a => a.IsSold) ?? 0;
+                    }
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <div class="p-3 bg-success bg-opacity-10 rounded-3 border border-success border-opacity-25">
+                                <h3 class="fw-bold text-success mb-0">@inStock</h3>
+                                <small class="text-muted fw-bold">CÒN HÀNG</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-danger bg-opacity-10 rounded-3 border border-danger border-opacity-25">
+                                <h3 class="fw-bold text-danger mb-0">@soldOut</h3>
+                                <small class="text-muted fw-bold">ĐÃ BÁN</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        @* Nút này sẽ dẫn đến trang nhập tài khoản *@
+                        <a asp-controller="AccountItems" asp-action="Index" asp-route-productId="@Model.Id"
+                           class="btn btn-dark fw-bold rounded-pill py-2 shadow-sm">
+                            <i class="fa-solid fa-list-check me-2"></i>QUẢN LÝ TÀI KHOẢN
+                        </a>
+                        <p class="small text-muted mt-2 italic">Bạn có thể thêm/xóa tài khoản cụ thể cho sản phẩm này tại đây.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert bg-warning bg-opacity-10 border-warning border-opacity-25 rounded-4 p-3 shadow-sm">
+                <h6 class="fw-bold text-dark mb-2 small"><i class="fa-solid fa-lightbulb me-2"></i>Mẹo nhỏ:</h6>
+                <p class="x-small text-dark mb-0 lh-base">
+                    Khi số lượng <b>CÒN HÀNG</b> bằng 0, sản phẩm sẽ tự động hiển thị nhãn <b>Hết hàng</b> ngoài trang chủ để tránh khách hàng thanh toán lỗi.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .x-small {
+        font-size: 0.75rem;
+    }
+
+    .italic {
+        font-style: italic;
+    }
+</style>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('currentImage').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

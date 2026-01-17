@@ -1,0 +1,41 @@
+﻿@model WebBanTaiKhoan.Models.Product
+@{
+    ViewData["Title"] = "Nhập kho sản phẩm";
+}
+
+<div class="container mt-4 pb-5">
+    @* Nút quay lại nhanh *@
+    <div class="mb-3">
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm fw-bold shadow-sm">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div class="card-header bg-dark text-white py-3">
+            <h4 class="mb-0 fw-bold"><i class="fa-solid fa-file-import me-2 text-warning"></i>NHẬP KHO: @Model.Name</h4>
+        </div>
+        <div class="card-body p-4 bg-light">
+            <form asp-action="ImportStock" method="post">
+                @* Thẻ ẩn để gửi ID của sản phẩm lên máy chủ *@
+                <input type="hidden" name="productId" value="@Model.Id" />
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Dán danh sách tài khoản tại đây</label>
+                    <textarea name="listData" class="form-control border-2 shadow-none" rows="12"
+                              placeholder="Mỗi dòng 1 tài khoản, ví dụ:&#10;user01|pass01&#10;user02|pass02"></textarea>
+                    <div class="alert alert-info mt-3 border-0 shadow-sm rounded-3">
+                        <i class="fa-solid fa-circle-info me-2"></i>
+                        <b>Hướng dẫn:</b> Mỗi dòng bạn dán vào ô trên sẽ được hệ thống tự động tạo thành 1 món hàng trong kho.
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary btn-lg fw-bold px-5 rounded-pill shadow">
+                        <i class="fa-solid fa-cloud-arrow-up me-2"></i>XÁC NHẬN NHẬP KHO NGAY
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

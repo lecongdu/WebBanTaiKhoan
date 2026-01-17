@@ -1,0 +1,162 @@
+﻿@model IEnumerable<WebBanTaiKhoan.Models.AccountItem>
+
+@{
+    ViewData["Title"] = "Kho tài khoản";
+    // Lấy lại từ khóa đã tìm kiếm để hiển thị lên ô nhập liệu
+    var currentFilter = ViewData["CurrentFilter"] as string;
+}
+
+<div class="container-fluid mt-4 pb-5">
+    @* --- HEADER & SEARCH BAR --- *@
+    <div class="card shadow-sm border-0 mb-4 rounded-3">
+        <div class="card-body bg-white rounded-3">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h2 class="fw-bold text-dark mb-1">
+                        <i class="fa-solid fa-key text-warning me-2"></i> KHO TÀI KHOẢN
+                    </h2>
+                    <p class="text-muted small mb-3 mb-md-0">Quản lý danh sách tài khoản mật khẩu của các sản phẩm</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="d-flex flex-wrap gap-2 justify-content-md-end">
+                        @* FORM TÌM KIẾM MỚI THÊM *@
+                        <form asp-action="Index" method="get" class="d-flex gap-1 me-md-3">
+                            <div class="input-group">
+                                <input type="text" name="searchString" class="form-control rounded-pill-start border-primary-subtle"
+                                       placeholder="Tìm Email hoặc Tên SP..." value="@currentFilter" style="width: 220px;" />
+                                <button type="submit" class="btn btn-primary rounded-pill-end px-3">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </button>
+                            </div>
+                            @if (!string.IsNullOrEmpty(currentFilter))
+                            {
+                                <a asp-action="Index" class="btn btn-outline-secondary rounded-pill shadow-sm" title="Xóa tìm kiếm">
+                                    <i class="fa-solid fa-rotate-left"></i>
+                                </a>
+                            }
+                        </form>
+
+                        <a asp-action="Create" class="btn btn-success fw-bold px-4 rounded-pill shadow-sm">
+                            <i class="fa-solid fa-plus me-1"></i> Nạp Acc Mới
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* --- DATA TABLE --- *@
+    <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-dark text-white">
+                        <tr>
+                            <th class="ps-4 py-3">Sản phẩm</th>
+                            <th class="py-3">Tài khoản</th>
+                            <th class="py-3">Mật khẩu</th>
+                            <th class="py-3 text-center">Trạng thái</th>
+                            <th class="text-end pe-4 py-3">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-5 text-muted italic">
+                                    <i class="fa-solid fa-folder-open fs-2 d-block mb-2"></i>
+                                    Không tìm thấy tài khoản nào khớp với yêu cầu.
+                                </td>
+                            </tr>
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <tr class="@(item.IsSold ? "opacity-75" : "")">
+                                <td class="ps-4 fw-bold text-primary">
+                                    @Html.DisplayFor(modelItem => item.Product.Name)
+                                </td>
+                                <td>
+                                    <div class="p-2 border rounded bg-light small font-monospace position-relative">
+                                        @Html.DisplayFor(modelItem => item.Username)
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="p-2 border rounded bg-light small font-monospace">
+                                        @Html.DisplayFor(modelItem => item.Password)
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    @if (item.IsSold)
+                                    {
+                                        <span class="badge rounded-pill bg-danger-subtle text-danger px-3 border border-danger border-opacity-10">
+                                            <i class="fa-solid fa-circle-xmark me-1"></i>Đã bán
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill bg-success-subtle text-success px-3 border border-success border-opacity-10">
+                                            <i class="fa-solid fa-circle-check me-1"></i>Còn hàng
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning rounded-start-pill px-3">
+                                            <i class="fa-solid fa-pen-to-square"></i> Sửa
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger rounded-end-pill px-3">
+                                            <i class="fa-solid fa-trash"></i> Xóa
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom Styles */
+    .bg-danger-subtle {
+        background-color: #ffebee;
+    }
+
+    .bg-success-subtle {
+        background-color: #e8f5e9;
+    }
+
+    .font-monospace {
+        font-family: 'Courier New', Courier, monospace;
+    }
+
+    .table thead th {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-group .btn {
+        transition: all 0.2s;
+    }
+
+        .btn-group .btn:hover {
+            transform: translateY(-1px);
+        }
+
+    .rounded-pill-start {
+        border-top-left-radius: 50rem !important;
+        border-bottom-left-radius: 50rem !important;
+    }
+
+    .rounded-pill-end {
+        border-top-right-radius: 50rem !important;
+        border-bottom-right-radius: 50rem !important;
+    }
+
+    .opacity-75 {
+        opacity: 0.8;
+    }
+</style>

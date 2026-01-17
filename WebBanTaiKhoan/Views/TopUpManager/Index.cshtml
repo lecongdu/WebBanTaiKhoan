@@ -1,0 +1,113 @@
+﻿@model IEnumerable<WebBanTaiKhoan.Models.TopUpTransaction>
+@{
+    ViewData["Title"] = "Quản lý Nạp tiền";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary fw-bold border-bottom border-primary border-3 pb-2">
+            💸 QUẢN LÝ YÊU CẦU NẠP TIỀN
+        </h2>
+        <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary fw-bold">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại Admin
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white fw-bold">
+            DANH SÁCH GIAO DỊCH GẦN ĐÂY
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped m-0 align-middle">
+                    <thead class="bg-light text-center">
+                        <tr>
+                            <th>Thời gian</th>
+                            <th>Khách hàng (User ID)</th>
+                            <th>Số tiền</th>
+                            <th>Nội dung / Hình thức</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="text-center small">@item.Date.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>
+                                        <span class="fw-bold text-dark">@item.UserId</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <span class="badge bg-success fs-6">@item.Amount.ToString("#,##0") đ</span>
+                                    </td>
+                                    <td class="text-center small">@item.Method</td>
+                                    <td class="text-center">
+                                        @if (item.Status == "Success")
+                                        {
+                                            <span class="badge bg-success"><i class="fa-solid fa-check"></i> Thành công</span>
+                                        }
+                                        else if (item.Status == "Pending")
+                                        {
+                                            <span class="badge bg-warning text-dark border border-dark blink-animation">⏳ Đang chờ duyệt</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Đã hủy</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @if (item.Status == "Pending")
+                                        {
+                                            <div class="btn-group" role="group">
+                                                <a asp-action="Approve" asp-route-id="@item.Id"
+                                                   class="btn btn-success btn-sm fw-bold"
+                                                   onclick="return confirm('Xác nhận ĐÃ NHẬN ĐƯỢC TIỀN của khách này?')">
+                                                    ✅ DUYỆT NGAY
+                                                </a>
+                                                <a asp-action="Reject" asp-route-id="@item.Id"
+                                                   class="btn btn-danger btn-sm fw-bold"
+                                                   onclick="return confirm('Bạn chắc chắn muốn HỦY đơn này?')">
+                                                    ❌ TỪ CHỐI
+                                                </a>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="text-muted small"
+                                               onclick="return confirm('Xóa lịch sử này?')">
+                                                <i class="fa-solid fa-trash"></i> Xóa
+                                            </a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">Chưa có giao dịch nào.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Hiệu ứng nhấp nháy cho đơn chờ duyệt để Admin dễ thấy */
+    .blink-animation {
+        animation: blinker 1.5s linear infinite;
+    }
+
+    @@keyframes blinker {
+        50% {
+            opacity: 0.5;
+        }
+    }
+</style>

@@ -1,0 +1,76 @@
+﻿@model WebBanTaiKhoan.Models.SystemSetting
+
+@{
+    ViewData["Title"] = "Thêm cấu hình mới";
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary fw-bold">➕ TẠO MỚI CẤU HÌNH HỆ THỐNG</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-bold">Link Ảnh bìa (Banner):</label>
+                                <input asp-for="BannerUrl" class="form-control" />
+                                <span asp-validation-for="BannerUrl" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-bold">Dòng chữ chạy:</label>
+                                <input asp-for="MarqueeText" class="form-control" />
+                                <span asp-validation-for="MarqueeText" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-bold">Số Zalo:</label>
+                                <input asp-for="ContactZalo" class="form-control" />
+                                <span asp-validation-for="ContactZalo" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-bold">Số Hotline:</label>
+                                <input asp-for="ContactPhone" class="form-control" />
+                                <span asp-validation-for="ContactPhone" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="fw-bold">Email hỗ trợ:</label>
+                            <input asp-for="ContactEmail" class="form-control" />
+                            <span asp-validation-for="ContactEmail" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="fw-bold">Địa chỉ:</label>
+                            <input asp-for="ContactAddress" class="form-control" />
+                            <span asp-validation-for="ContactAddress" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="fw-bold">Mã nhúng Bản đồ (Iframe):</label>
+                            <textarea asp-for="MapHtml" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="MapHtml" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary fw-bold px-4">TẠO NGAY</button>
+                            <a asp-action="Index" class="btn btn-secondary px-4">Quay lại</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

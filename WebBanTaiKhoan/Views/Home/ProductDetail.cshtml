@@ -1,0 +1,144 @@
+﻿@model WebBanTaiKhoan.Models.Product
+@{
+    ViewData["Title"] = Model.Name;
+    var stockCount = ViewBag.StockCount ?? 0;
+}
+
+<div class="container mt-4 pb-5">
+    @* --- THANH ĐIỀU HƯỚNG --- *@
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-transparent p-0 small">
+            <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-primary"><i class="fa-solid fa-house"></i></a></li>
+            <li class="breadcrumb-item active text-dark fw-bold">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        @* --- CỘT 1: HÌNH ẢNH (Chiếm 4/12) --- *@
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden sticky-top" style="top: 100px;">
+                <img src="@Model.ImageUrl" class="img-fluid w-100" alt="@Model.Name">
+                <div class="p-3 bg-light text-center">
+                    <span class="badge bg-danger rounded-pill px-3">🔥 Đang được quan tâm</span>
+                </div>
+            </div>
+        </div>
+
+        @* --- CỘT 2: MÔ TẢ CHI TIẾT (Chiếm 5/12) --- *@
+        <div class="col-lg-5">
+            <div class="product-main-info mb-4">
+                <h1 class="fw-bold h3 text-dark mb-3">@Model.Name</h1>
+                <div class="d-flex gap-3 mb-3 small">
+                    <span class="text-muted"><i class="fa-solid fa-tag me-1"></i> @Model.Category?.Name</span>
+                    <span class="text-muted"><i class="fa-solid fa-barcode me-1"></i> Mã: #@Model.Id</span>
+                </div>
+                <hr class="opacity-10">
+
+                <h5 class="fw-bold text-primary mb-3 text-uppercase small tracking-wider">Thông tin sản phẩm</h5>
+                <div class="product-description text-dark lh-lg">
+                    @Html.Raw(Model.Description)
+                </div>
+            </div>
+
+            <div class="p-3 rounded-4 bg-primary bg-opacity-10 border border-primary border-opacity-25">
+                <h6 class="fw-bold text-primary mb-2"><i class="fa-solid fa-shield-check me-2"></i>Chế độ bảo hành</h6>
+                <p class="small mb-0 text-dark">Cam kết bảo hành 1 đổi 1 trong suốt thời gian sử dụng nếu tài khoản gặp lỗi từ phía nhà cung cấp.</p>
+            </div>
+        </div>
+
+        @* --- CỘT 3: Ô MUA HÀNG (Chiếm 3/12) - GÓC BÊN PHẢI --- *@
+        <div class="col-lg-3">
+            <div class="card border-0 shadow-lg rounded-4 p-4 sticky-top bg-white border-top border-primary border-4" style="top: 100px;">
+                <div class="price-section mb-4">
+                    <p class="text-muted small mb-1">Giá bán hiện tại:</p>
+                    <h2 class="fw-bold text-danger mb-0">@Model.Price.ToString("#,##0")đ</h2>
+                    <del class="text-muted small">@((Model.Price * 1.5m).ToString("#,##0"))đ</del>
+                </div>
+
+                <div class="stock-status mb-4">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Trạng thái:</span>
+                        <b class="@(stockCount > 0 ? "text-success" : "text-danger")">
+                            @(stockCount > 0 ? "Còn hàng" : "Hết hàng")
+                        </b>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-success" style="width: @(stockCount > 0 ? "100%" : "0%")"></div>
+                    </div>
+                    <p class="x-small text-muted mt-2 mb-0">Kho còn lại: <b>@stockCount</b> sản phẩm</p>
+                </div>
+
+                @if (stockCount > 0)
+                {
+                    <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                        <input type="hidden" name="productId" value="@Model.Id" />
+
+                        <div class="quantity-select mb-4">
+                            <label class="fw-bold small mb-2 text-uppercase">Số lượng mua:</label>
+                            <div class="input-group">
+                                <button type="button" class="btn btn-outline-secondary px-3" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">-</button>
+                                <input type="number" name="quantity" value="1" min="1" max="@stockCount" class="form-control text-center fw-bold border-secondary border-opacity-25" />
+                                <button type="button" class="btn btn-outline-secondary px-3" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">+</button>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary py-3 fw-bold rounded-3 shadow">
+                                <i class="fa-solid fa-bolt me-2"></i> MUA NGAY
+                            </button>
+                            <button type="submit" class="btn btn-outline-primary py-2 fw-bold rounded-3">
+                                <i class="fa-solid fa-cart-plus me-2"></i> Thêm vào giỏ
+                            </button>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <button class="btn btn-secondary py-3 w-100 disabled rounded-3">LIÊN HỆ LẠI SAU</button>
+                }
+
+                <div class="mt-4 pt-3 border-top border-light">
+                    <div class="d-flex align-items-center mb-2 small">
+                        <i class="fa-solid fa-truck-fast text-muted me-3"></i>
+                        <span>Giao hàng ngay lập tức</span>
+                    </div>
+                    <div class="d-flex align-items-center small">
+                        <i class="fa-solid fa-headset text-muted me-3"></i>
+                        <span>Hỗ trợ kỹ thuật 24/7</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f0f2f5;
+    }
+
+    .product-description img {
+        max-width: 100%;
+        border-radius: 12px;
+        margin: 15px 0;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .x-small {
+        font-size: 0.75rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(45deg, #0061ff, #004ecc);
+        border: none;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 97, 255, 0.4) !important;
+        }
+
+    .sticky-top {
+        transition: all 0.3s;
+    }
+</style>

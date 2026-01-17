@@ -1,0 +1,60 @@
+﻿@model WebBanTaiKhoan.Models.BankAccount
+
+@{
+    ViewData["Title"] = "Thêm Ngân hàng";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h3 class="fw-bold m-0"><i class="fa-solid fa-building-columns"></i> THÊM TÀI KHOẢN NGÂN HÀNG</h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold control-label">Tên Ngân Hàng (Ví dụ: MBBank)</label>
+                        <input asp-for="BankName" class="form-control" placeholder="Nhập tên ngân hàng..." />
+                        <span asp-validation-for="BankName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold control-label">Số Tài Khoản</label>
+                        <input asp-for="AccountNumber" class="form-control" placeholder="0123xxxx..." />
+                        <span asp-validation-for="AccountNumber" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="fw-bold control-label">Tên Chủ Thẻ</label>
+                    <input asp-for="AccountName" class="form-control" placeholder="NGUYEN VAN A" />
+                    <span asp-validation-for="AccountName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="fw-bold control-label">Logo Ngân hàng (Ảnh)</label>
+                    <input type="file" name="logoFile" class="form-control" accept="image/*" />
+                    <small class="text-muted">Chọn ảnh logo ngân hàng (png, jpg...)</small>
+                </div>
+
+                <div class="mb-4">
+                    <label class="fw-bold control-label">Mã QR (Ảnh)</label>
+                    <input type="file" name="qrFile" class="form-control" accept="image/*" />
+                    <small class="text-muted">Upload ảnh mã QR để khách quét cho nhanh</small>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a asp-action="Index" class="btn btn-secondary me-md-2">Quay lại</a>
+                    <button type="submit" class="btn btn-primary fw-bold px-5">THÊM MỚI</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

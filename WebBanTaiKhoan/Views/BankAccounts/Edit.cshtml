@@ -1,0 +1,74 @@
+﻿@model WebBanTaiKhoan.Models.BankAccount
+
+@{
+    ViewData["Title"] = "Sửa Ngân hàng";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-warning">
+        <div class="card-header bg-warning text-dark">
+            <h3 class="fw-bold m-0"><i class="fa-solid fa-pen-to-square"></i> CẬP NHẬT NGÂN HÀNG</h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+
+                <input type="hidden" asp-for="LogoUrl" />
+                <input type="hidden" asp-for="QrUrl" />
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold control-label">Tên Ngân Hàng</label>
+                        <input asp-for="BankName" class="form-control" />
+                        <span asp-validation-for="BankName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold control-label">Số Tài Khoản</label>
+                        <input asp-for="AccountNumber" class="form-control" />
+                        <span asp-validation-for="AccountNumber" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="fw-bold control-label">Tên Chủ Thẻ</label>
+                    <input asp-for="AccountName" class="form-control" />
+                    <span asp-validation-for="AccountName" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold d-block">Logo hiện tại:</label>
+                        @if (!string.IsNullOrEmpty(Model.LogoUrl))
+                        {
+                            <img src="@Model.LogoUrl" height="60" class="mb-2 border rounded p-1" />
+                        }
+                        <label class="text-muted small">Chọn ảnh mới nếu muốn thay đổi:</label>
+                        <input type="file" name="logoFile" class="form-control" accept="image/*" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold d-block">Mã QR hiện tại:</label>
+                        @if (!string.IsNullOrEmpty(Model.QrUrl))
+                        {
+                            <img src="@Model.QrUrl" height="100" class="mb-2 border rounded" />
+                        }
+                        <label class="text-muted small">Chọn ảnh mới nếu muốn thay đổi:</label>
+                        <input type="file" name="qrFile" class="form-control" accept="image/*" />
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                    <a asp-action="Index" class="btn btn-secondary me-md-2">Quay lại</a>
+                    <button type="submit" class="btn btn-warning fw-bold px-5">LƯU THAY ĐỔI</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

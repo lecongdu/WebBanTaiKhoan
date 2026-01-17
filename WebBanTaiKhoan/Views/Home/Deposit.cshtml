@@ -1,0 +1,112 @@
+﻿@model IEnumerable<WebBanTaiKhoan.Models.BankAccount>
+@{
+    ViewData["Title"] = "Nạp tiền";
+    string username = User.Identity.Name ?? "KHACH";
+    // Tạo mã nạp rút gọn từ tên đăng nhập
+    string codeNap = username.Contains("@") ? username.Split('@')[0] : username;
+    codeNap = System.Text.RegularExpressions.Regex.Replace(codeNap, "[^a-zA-Z0-9]", "");
+    string transferContent = $"NAP {codeNap.ToUpper()}";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center fw-bold text-success mb-4">💰 TRUNG TÂM NẠP TIỀN</h2>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success text-center fw-bold">@TempData["Success"]</div>
+    }
+
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow border-primary">
+                <div class="card-header bg-primary text-white fw-bold fs-5 text-center">
+                    <i class="fa-solid fa-qrcode"></i> CHUYỂN KHOẢN TỰ ĐỘNG (VIETQR)
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 border-end">
+                            <h5 class="fw-bold mb-3"><i class="fa-solid fa-pen-to-square"></i> Bước 1: Nhập thông tin</h5>
+
+                            <div class="mb-3">
+                                <label class="fw-bold mb-1">Số tiền muốn nạp (VNĐ):</label>
+                                <input type="number" id="inputAmount" class="form-control form-control-lg border-primary text-danger fw-bold" placeholder="Tối thiểu 10,000" min="10000">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="fw-bold mb-1">Chọn ngân hàng nhận:</label>
+                                <select id="selectBank" class="form-select border-primary">
+                                    @foreach (var bank in Model)
+                                    {
+                                        <option value="@bank.AccountNumber|@bank.BankName">@bank.BankName - @bank.AccountNumber (@bank.AccountName)</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="alert alert-info py-2">
+                                <small>Nội dung chuyển khoản mặc định:</small><br />
+                                <strong class="text-danger fs-5">@transferContent</strong>
+                            </div>
+
+                            <button onclick="generateQR()" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm py-3 mt-2">
+                                <i class="fa-solid fa-magic"></i> TẠO MÃ QR NẠP TIỀN
+                            </button>
+                        </div>
+
+                        <div class="col-md-6 text-center">
+                            <h5 class="fw-bold mb-3"><i class="fa-solid fa-qrcode"></i> Bước 2: Quét mã & Xác nhận</h5>
+
+                            <div id="qrContainer" style="display: none;">
+                                <img id="imgQR" src="" class="img-fluid border border-3 border-dark rounded shadow mb-3" style="max-width: 230px;">
+
+                                <div class="bg-light p-2 rounded border mb-2 text-start">
+                                    <p class="mb-1 small"><strong>Số tiền:</strong> <span id="displayAmount" class="text-danger fw-bold">0</span> đ</p>
+                                    <p class="mb-0 small"><strong>Nội dung:</strong> <span class="text-primary fw-bold">@transferContent</span></p>
+                                </div>
+
+                                <form asp-action="ProcessBanking" method="post">
+                                    <input type="hidden" name="amount" id="finalAmount">
+                                    <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow">
+                                        <i class="fa-solid fa-circle-check"></i> XÁC NHẬN ĐÃ CHUYỂN
+                                    </button>
+                                </form>
+                                <p class="text-muted mt-2 small"><i>(Sau khi bấm xác nhận, vui lòng chờ Admin duyệt)</i></p>
+                            </div>
+
+                            <div id="qrPlaceholder" class="d-flex align-items-center justify-content-center h-100 bg-light rounded border" style="min-height: 300px;">
+                                <div class="text-muted">
+                                    <i class="fa-solid fa-hand-pointer fs-1 mb-2"></i>
+                                    <p>Nhập số tiền bên trái để tạo mã QR</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function generateQR() {
+        const amount = document.getElementById('inputAmount').value;
+        const bankData = document.getElementById('selectBank').value.split('|');
+        const stk = bankData[0];
+        const bankName = bankData[1];
+        const content = "@transferContent";
+
+        if (!amount || amount < 10000) {
+            alert("Vui lòng nhập số tiền nạp tối thiểu 10.000 VNĐ");
+            return;
+        }
+
+        // Tạo link VietQR tự động điền số tiền và nội dung
+        const qrUrl = `https://img.vietqr.io/image/${bankName}-${stk}-compact.png?amount=${amount}&addInfo=${encodeURIComponent(content)}`;
+
+        document.getElementById('imgQR').src = qrUrl;
+        document.getElementById('displayAmount').innerText = parseInt(amount).toLocaleString();
+        document.getElementById('finalAmount').value = amount;
+
+        document.getElementById('qrPlaceholder').style.display = 'none';
+        document.getElementById('qrContainer').style.display = 'block';
+    }
+</script>

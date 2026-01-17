@@ -1,0 +1,26 @@
+﻿@{
+    Layout = "/Views/Shared/_Layout.cshtml"; // Dùng layout chính của web
+}
+
+<div class="container mt-5">
+    <div class="row g-4">
+        <div class="col-12">
+            <h2 class="fw-bold"><i class="fa-solid fa-user-gear me-2 text-primary"></i>CÀI ĐẶT TÀI KHOẢN</h2>
+            <hr class="opacity-10">
+        </div>
+
+        @* Thanh menu bên trái *@
+        <div class="col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <partial name="_ManageNav" />
+            </div>
+        </div>
+
+        @* Nội dung bên phải *@
+        <div class="col-lg-9">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+</div>

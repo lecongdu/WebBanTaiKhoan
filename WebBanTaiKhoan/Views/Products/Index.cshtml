@@ -1,0 +1,152 @@
+﻿@model IEnumerable<WebBanTaiKhoan.Models.Product>
+
+@{
+    ViewData["Title"] = "Quản lý Sản phẩm";
+}
+
+<div class="container-fluid mt-4 pb-5">
+    @* HEADER: TIÊU ĐỀ VÀ NÚT THÊM MỚI *@
+    <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded-4 shadow-sm">
+        <div>
+            <h2 class="text-primary fw-bold mb-0"><i class="fa-solid fa-boxes-stacked me-2"></i>QUẢN LÝ SẢN PHẨM</h2>
+            <small class="text-muted">Hệ thống đang có: <b>@Model.Count()</b> loại sản phẩm</small>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Create" class="btn btn-success fw-bold px-4 rounded-pill shadow-sm">
+                <i class="fa-solid fa-plus-circle me-1"></i> THÊM LOẠI MỚI
+            </a>
+            <a asp-controller="Admin" asp-action="Index" class="btn btn-outline-secondary fw-bold px-4 rounded-pill shadow-sm">
+                <i class="fa-solid fa-arrow-left me-1"></i> DASHBOARD
+            </a>
+        </div>
+    </div>
+
+    @* BẢNG DANH SÁCH *@
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-dark text-white">
+                    <tr>
+                        <th class="ps-4">Sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Giá bán</th>
+                        <th>Tình trạng kho</th>
+                        <th class="text-center">Thao tác quản trị</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3 border rounded p-1 bg-light shadow-sm">
+                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                        {
+                                            <img src="@item.ImageUrl" style="width: 50px; height: 50px; object-fit: contain;" alt="@item.Name" />
+                                        }
+                                        else
+                                        {
+                                            <img src="/images/no-image.png" style="width: 50px; height: 50px; object-fit: contain;" />
+                                        }
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">@item.Name</div>
+                                        <div class="text-muted x-small">Mã: #@item.Id</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-info-subtle text-info border border-info border-opacity-25 px-3">
+                                    <i class="fa-solid fa-tag me-1"></i> @(item.Category?.Name ?? "N/A")
+                                </span>
+                            </td>
+                            <td>
+                                <span class="text-danger fw-bold fs-6">@item.Price.ToString("#,##0")đ</span>
+                            </td>
+                            <td>
+                                @{
+                                    var stockCount = item.AccountItems?.Count(a => !a.IsSold) ?? 0;
+                                }
+                                @if (stockCount > 0)
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success border-opacity-25 py-2 px-3">
+                                        <i class="fa-solid fa-box-open me-1"></i> Sẵn có: @stockCount
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger-subtle text-danger border border-danger border-opacity-25 py-2 px-3">
+                                        <i class="fa-solid fa-circle-exclamation me-1"></i> Hết hàng
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    @* NÚT NHẬP KHO QUAN TRỌNG *@
+                                    <a asp-action="ImportStock" asp-route-id="@item.Id" class="btn btn-sm btn-dark rounded-pill px-3 shadow-sm" title="Nhập thêm tài khoản">
+                                        <i class="fa-solid fa-file-import me-1"></i> Nhập kho
+                                    </a>
+
+                                    <div class="btn-group shadow-sm rounded-pill overflow-hidden">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning px-3 border-0">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info px-3 border-0 text-white">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger px-3 border-0">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .x-small {
+        font-size: 0.75rem;
+    }
+
+    .bg-success-subtle {
+        background-color: #e8f5e9;
+    }
+
+    .bg-danger-subtle {
+        background-color: #ffebee;
+    }
+
+    .bg-info-subtle {
+        background-color: #e0f2fe;
+    }
+
+    .table thead th {
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        padding: 15px 10px;
+        border: none;
+    }
+
+    .table tbody td {
+        padding: 18px 10px;
+        border-bottom: 1px solid #f1f3f5;
+    }
+
+    .btn-group .btn:hover {
+        opacity: 0.9;
+        transform: scale(1.05);
+    }
+
+    .btn-success {
+        background: linear-gradient(45deg, #198754, #20c997);
+        border: none;
+    }
+</style>

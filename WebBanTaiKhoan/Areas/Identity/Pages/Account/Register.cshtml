@@ -1,0 +1,75 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Đăng ký thành viên";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row justify-content-center align-items-center" style="min-height: 80vh; padding: 40px 0;">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                <div class="card-header bg-success text-white text-center py-4 border-0">
+                    <h3 class="fw-bold mb-0 text-uppercase tracking-wider">Tham gia ngay</h3>
+                    <p class="small mb-0 opacity-75">Tạo tài khoản để nhận nhiều ưu đãi từ Nick3s</p>
+                </div>
+                <div class="card-body p-4 p-md-5 bg-white">
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Email" class="form-control border-0 bg-light shadow-none"
+                                   style="border-radius: 12px;" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                            <label asp-for="Input.Email" class="text-muted"><i class="fa-solid fa-envelope me-2"></i>Địa chỉ Email</label>
+                            <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Password" class="form-control border-0 bg-light shadow-none"
+                                   style="border-radius: 12px;" autocomplete="new-password" aria-required="true" placeholder="password" />
+                            <label asp-for="Input.Password" class="text-muted"><i class="fa-solid fa-lock me-2"></i>Mật khẩu mới</label>
+                            <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <input asp-for="Input.ConfirmPassword" class="form-control border-0 bg-light shadow-none"
+                                   style="border-radius: 12px;" autocomplete="new-password" aria-required="true" placeholder="password" />
+                            <label asp-for="Input.ConfirmPassword" class="text-muted"><i class="fa-solid fa-check-double me-2"></i>Xác nhận lại mật khẩu</label>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                        </div>
+
+                        <button id="registerSubmit" type="submit" class="btn btn-success w-100 py-3 fw-bold shadow-sm"
+                                style="border-radius: 12px; transition: 0.3s; background: linear-gradient(45deg, #198754, #20c997); border: none;">
+                            ĐĂNG KÝ TÀI KHOẢN <i class="fa-solid fa-user-plus ms-2"></i>
+                        </button>
+
+                        <div class="text-center mt-4">
+                            <p class="small text-muted mb-0">Bạn đã có tài khoản rồi?</p>
+                            <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" class="fw-bold text-decoration-none">Đăng nhập tại đây</a>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-light border-0 py-3 text-center">
+                    <p class="x-small text-muted mb-0 italic" style="font-size: 0.75rem;">
+                        Bằng cách đăng ký, bạn đồng ý với Điều khoản dịch vụ của chúng tôi.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <style>
+        .form-control:focus {
+            background-color: #fff !important;
+            box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.15) !important;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(25, 135, 84, 0.3) !important;
+        }
+    </style>
+}

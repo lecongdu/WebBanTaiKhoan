@@ -1,0 +1,125 @@
+﻿@model IEnumerable<WebBanTaiKhoan.Models.SystemSetting>
+
+@{
+    ViewData["Title"] = "Quản lý Giao diện & Footer";
+    var setting = Model.FirstOrDefault();
+}
+
+<div class="container mt-4 pb-5">
+    @* NÚT QUAY LẠI *@
+    <div class="mb-3">
+        <a asp-controller="Admin" asp-action="Index" class="btn btn-outline-secondary fw-bold shadow-sm">
+            <i class="fa-solid fa-arrow-left me-2"></i> Quay lại Dashboard
+        </a>
+    </div>
+
+    <div class="card shadow border-0 rounded-4 overflow-hidden">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
+            <h4 class="m-0 fw-bold"><i class="fa-solid fa-gears me-2 text-warning"></i> CẤU HÌNH HỆ THỐNG</h4>
+            @if (setting == null)
+            {
+                <a asp-action="Create" class="btn btn-success fw-bold shadow-sm">
+                    <i class="fa-solid fa-plus me-1"></i> KHỞI TẠO CẤU HÌNH
+                </a>
+            }
+        </div>
+
+        <div class="card-body p-4">
+            @if (setting != null)
+            {
+                <div class="row g-4">
+                    @* --- CỘT 1: GIAO DIỆN & TIN TỨC --- *@
+                    <div class="col-md-4 border-end">
+                        <h5 class="fw-bold text-primary mb-3"><i class="fa-solid fa-palette me-2"></i>Giao diện & Tin tức</h5>
+                        <p class="small text-muted mb-2"><strong>Ảnh bìa (Banner):</strong></p>
+                        @if (!string.IsNullOrEmpty(setting.BannerUrl))
+                        {
+                            <img src="@setting.BannerUrl" class="img-thumbnail mb-3 shadow-sm rounded-3" style="max-height: 120px; width: 100%; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <div class="alert alert-light border text-center small py-4">Chưa có ảnh bìa</div>
+                        }
+                        <ul class="list-unstyled small">
+                            <li class="mb-2"><strong>Dòng chữ chạy:</strong> <span class="text-danger">@setting.MarqueeText</span></li>
+                            <li><strong>Zalo hỗ trợ:</strong> <span class="badge bg-primary">@setting.ContactZalo</span></li>
+                        </ul>
+                    </div>
+
+                    @* --- CỘT 2: THÔNG TIN CHÂN TRANG (FOOTER) --- *@
+                    <div class="col-md-4 border-end">
+                        <h5 class="fw-bold text-info mb-3"><i class="fa-solid fa-window-maximize me-2"></i>Cấu hình Footer</h5>
+                        <div class="mb-3">
+                            <p class="small text-muted mb-1"><strong>Giới thiệu ngắn:</strong></p>
+                            <div class="p-2 border rounded bg-light small" style="max-height: 80px; overflow-y: auto;">
+                                @(setting.FooterAbout ?? "Chưa có nội dung giới thiệu chân trang.")
+                            </div>
+                        </div>
+                        <ul class="list-unstyled small">
+                            <li class="mb-2">
+                                <strong><i class="fa-brands fa-facebook text-primary me-2"></i>Facebook:</strong>
+                                <span class="text-truncate d-inline-block shadow-none" style="max-width: 150px;">@(setting.FacebookUrl ?? "N/A")</span>
+                            </li>
+                            <li class="mb-2">
+                                <strong><i class="fa-brands fa-youtube text-danger me-2"></i>Youtube:</strong>
+                                <span class="text-truncate d-inline-block" style="max-width: 150px;">@(setting.YoutubeUrl ?? "N/A")</span>
+                            </li>
+                            <li>
+                                <strong><i class="fa-solid fa-shield-halved text-success me-2"></i>Link DMCA:</strong>
+                                <span class="badge bg-light text-dark border">@(string.IsNullOrEmpty(setting.DmcaUrl) ? "Chưa có" : "Đã thiết lập")</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    @* --- CỘT 3: LIÊN HỆ & HÀNH ĐỘNG --- *@
+                    <div class="col-md-4">
+                        <h5 class="fw-bold text-success mb-3"><i class="fa-solid fa-headset me-2"></i>Thông tin liên hệ</h5>
+                        <ul class="list-unstyled small">
+                            <li class="mb-2"><strong><i class="fa-solid fa-phone me-2"></i> Hotline:</strong> @(setting.ContactPhone ?? "N/A")</li>
+                            <li class="mb-2"><strong><i class="fa-solid fa-envelope me-2"></i> Email:</strong> @(setting.ContactEmail ?? "N/A")</li>
+                            <li class="mb-2"><strong><i class="fa-solid fa-location-dot me-2"></i> Địa chỉ:</strong> @(setting.ContactAddress ?? "N/A")</li>
+                            <li class="mb-3">
+                                <strong><i class="fa-solid fa-map-location-dot me-2"></i> Bản đồ:</strong>
+                                @(string.IsNullOrEmpty(setting.MapHtml) ? "❌ Chưa nhúng" : "✅ Đã nhúng")
+                            </li>
+                        </ul>
+
+                        <div class="d-grid mt-4">
+                            <a asp-action="Edit" asp-route-id="@setting.Id" class="btn btn-primary btn-lg fw-bold shadow-sm py-3">
+                                <i class="fa-solid fa-pen-to-square me-2"></i> CHỈNH SỬA TẤT CẢ
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <img src="https://cdn-icons-png.flaticon.com/512/4076/4076432.png" width="80" class="mb-3 opacity-25" />
+                    <h4 class="text-muted fw-bold">Hệ thống chưa có dữ liệu!</h4>
+                    <p class="text-secondary">Vui lòng khởi tạo cấu hình để thiết lập Shop của bạn.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(45deg, #0061ff, #60efff);
+        border: none;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,97,255,0.2) !important;
+        }
+
+    .badge {
+        font-weight: 600;
+    }
+</style>

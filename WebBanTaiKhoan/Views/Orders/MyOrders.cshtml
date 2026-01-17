@@ -1,0 +1,142 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<WebBanTaiKhoan.Models.Order>
+@{
+    ViewData["Title"] = "Lịch sử mua hàng";
+}
+
+<div class="container mt-4 pb-5">
+    @* TIÊU ĐỀ TRANG *@
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h3 class="fw-bold text-dark"><i class="fa-solid fa-cart-shopping me-2 text-primary"></i>TÀI KHOẢN ĐÃ MUA</h3>
+            <p class="text-muted small mb-0">Xem lại danh sách các tài khoản bạn đã thanh toán thành công.</p>
+        </div>
+        @* Nút dẫn nhanh sang lịch sử nạp tiền nếu khách cần tìm *@
+        <a asp-controller="Orders" asp-action="DepositHistory" class="btn btn-outline-success btn-sm rounded-pill px-3 shadow-sm">
+            <i class="fa-solid fa-wallet me-1"></i> Lịch sử nạp tiền
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-uppercase">
+                        <tr style="font-size: 0.8rem; letter-spacing: 0.5px;">
+                            <th class="ps-4 py-3">Mã đơn</th>
+                            <th>Thông tin đăng nhập</th>
+                            <th>Số tiền</th>
+                            <th class="text-end pe-4">Thời gian</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-bold text-primary">#@item.Id</td>
+                                    <td>
+                                        <div class="d-flex flex-column gap-1">
+                                            @{
+                                                // Logic lấy dữ liệu thông minh từ đơn hàng hoặc tài khoản liên kết
+                                                var rawInfo = !string.IsNullOrEmpty(item.SoldAccountInfo)
+                                                ? item.SoldAccountInfo
+                                                : (item.AccountItems != null && item.AccountItems.Any()
+                                                ? string.Join(", ", item.AccountItems.Select(a => a.Data))
+                                                : "Dữ liệu đang được cập nhật...");
+
+                                                var parts = rawInfo.Split('|');
+                                                var isFormatted = parts.Length >= 2;
+                                            }
+
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-light p-2 rounded border border-primary border-opacity-25 shadow-sm d-flex align-items-center">
+                                                    @if (isFormatted)
+                                                    {
+                                                        <span class="me-2 badge bg-dark opacity-75">TK</span>
+                                            
+                                                        <code class="text-dark fw-bold me-3">@parts[0]</code>
+                                                        <span class="me-2 badge bg-primary opacity-75">MK</span>
+
+                                                        <code id="acc-@item.Id" class="text-dark fw-bold me-2">@parts[1]</code>
+                                                    }
+                                                    else
+                                                    {
+                                                        <code id="acc-@item.Id" class="text-dark fw-bold me-2">@rawInfo</code>
+                                                    }
+
+                                                    <button class="btn btn-sm btn-primary py-0 shadow-sm" onclick="copyText('@rawInfo')" title="Sao chép toàn bộ">
+                                                        <i class="fa-solid fa-copy" style="font-size: 0.7rem;"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <small class="x-small text-muted italic">
+                                                <i class="fa-solid fa-shield-halved me-1"></i>Vui lòng bảo mật thông tin sau khi nhận.
+                                            </small>
+                                        </div>
+                                    </td>
+                                    <td class="fw-bold text-danger">@item.TotalAmount.ToString("#,##0")đ</td>
+                                    <td class="text-end pe-4 small text-muted">@item.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center py-5">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png" width="80" class="opacity-25 mb-3" />
+                                    <p class="text-muted">Bạn chưa mua tài khoản nào.</p>
+                                    <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-sm rounded-pill px-4">Mua sắm ngay</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .rounded-4 {
+        border-radius: 1rem !important;
+    }
+
+    .x-small {
+        font-size: 0.7rem;
+    }
+
+    .italic {
+        font-style: italic;
+    }
+
+    code {
+        font-family: 'Courier New', Courier, monospace;
+        letter-spacing: 0.5px;
+    }
+
+    .table thead th {
+        border-bottom: none;
+    }
+</style>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Đã sao chép vào bộ nhớ tạm!',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true
+                });
+            });
+        }
+    </script>
+}

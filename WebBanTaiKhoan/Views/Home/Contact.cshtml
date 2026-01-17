@@ -1,0 +1,49 @@
+﻿@model WebBanTaiKhoan.Models.SystemSetting
+@{
+    ViewData["Title"] = "Liên hệ";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center fw-bold text-primary mb-4">LIÊN HỆ VỚI CHÚNG TÔI</h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h4 class="fw-bold mb-3">Thông tin liên hệ</h4>
+
+                    @if (Model != null)
+                    {
+                        <p><i class="fa-solid fa-location-dot text-danger me-2"></i> <strong>Địa chỉ:</strong> @(Model.ContactAddress ?? "Đang cập nhật")</p>
+                        <p><i class="fa-solid fa-phone text-success me-2"></i> <strong>Hotline:</strong> @(Model.ContactPhone ?? "Đang cập nhật")</p>
+                        <p><i class="fa-solid fa-envelope text-warning me-2"></i> <strong>Email:</strong> @(Model.ContactEmail ?? "Đang cập nhật")</p>
+                        <p><i class="fa-solid fa-comments text-primary me-2"></i> <strong>Zalo:</strong> @(Model.ContactZalo ?? "Đang cập nhật")</p>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Admin chưa cập nhật thông tin shop.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body p-1">
+                    @if (Model != null && !string.IsNullOrEmpty(Model.MapHtml))
+                    {
+                        <div class="ratio ratio-4x3">
+                            @Html.Raw(Model.MapHtml)
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex align-items-center justify-content-center bg-light" style="height: 300px;">
+                            <span class="text-muted">Chưa có bản đồ</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

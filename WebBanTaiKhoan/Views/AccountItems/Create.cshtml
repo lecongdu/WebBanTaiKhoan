@@ -1,0 +1,108 @@
+﻿@model WebBanTaiKhoan.Models.AccountItem
+
+@{
+    ViewData["Title"] = "Thêm tài khoản mới vào kho";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="fa-solid fa-plus-circle me-2"></i>THÊM TÀI KHOẢN MỚI VÀO KHO</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="row">
+                            @* CHỌN SẢN PHẨM *@
+                            <div class="col-12 mb-3">
+                                <label asp-for="ProductId" class="form-label fw-bold text-dark">Thuộc sản phẩm (Game/Dịch vụ)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="fa-solid fa-tag text-primary"></i></span>
+                                    <select asp-for="ProductId" class="form-select shadow-none" asp-items="ViewBag.ProductId">
+                                        <option value="">-- Chọn sản phẩm để gán tài khoản --</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="ProductId" class="text-danger small"></span>
+                            </div>
+
+                            @* TÊN ĐĂNG NHẬP *@
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Username" class="form-label fw-bold text-dark">Tên đăng nhập / Email</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="fa-solid fa-user text-secondary"></i></span>
+                                    <input asp-for="Username" class="form-control shadow-none" placeholder="Ví dụ: nick3s@gmail.com" />
+                                </div>
+                                <span asp-validation-for="Username" class="text-danger small"></span>
+                            </div>
+
+                            @* MẬT KHẨU *@
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Password" class="form-label fw-bold text-dark">Mật khẩu</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="fa-solid fa-key text-secondary"></i></span>
+                                    <input asp-for="Password" class="form-control shadow-none" placeholder="Nhập mật khẩu tài khoản" />
+                                </div>
+                                <span asp-validation-for="Password" class="text-danger small"></span>
+                            </div>
+
+                            @* TRẠNG THÁI *@
+                            <div class="col-12 mb-4">
+                                <div class="form-check form-switch card p-2 ps-5 border-light shadow-sm">
+                                    <input class="form-check-input ms-n4" type="checkbox" asp-for="IsSold" id="flexSwitchCheckDefault">
+                                    <label class="form-check-label fw-bold" for="flexSwitchCheckDefault"> Đã bán? (Mặc định hãy để Tắt)</label>
+                                </div>
+                                <small class="text-muted">Lưu ý: Chỉ bật nếu bạn muốn thêm tài khoản đã bán vào lịch sử.</small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary px-4 py-2 fw-bold shadow-sm">
+                                <i class="fa-solid fa-save me-2"></i>LƯU VÀO KHO
+                            </button>
+                            <a asp-action="Index" class="btn btn-light px-4 py-2 border fw-bold text-secondary">
+                                <i class="fa-solid fa-arrow-left me-2"></i>Quay lại danh sách
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+<style>
+    .input-group-text {
+        border-right: none;
+    }
+
+    .form-control, .form-select {
+        border-left: none;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #dee2e6;
+        }
+
+    .card {
+        border-radius: 12px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(45deg, #007bff, #0056b3);
+        border: none;
+    }
+
+        .btn-primary:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+</style>

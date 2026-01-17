@@ -1,0 +1,21 @@
+﻿@model WebBanTaiKhoan.Models.Order
+
+<div class="container text-center mt-5">
+    <div class="alert alert-success display-4">
+        🎉 MUA THÀNH CÔNG!
+    </div>
+
+    <div class="card shadow-lg mx-auto border-success" style="max-width: 600px;">
+        <div class="card-header bg-success text-white">
+            <h3>Thông tin tài khoản của bạn</h3>
+        </div>
+        <div class="card-body">
+            <h5 class="text-muted">Copy dòng dưới đây để đăng nhập:</h5>
+            <div class="p-4 bg-light border rounded mb-3 display-6 fw-bold text-danger">
+                @Model.SoldAccountInfo
+            </div>
+            <p>Vui lòng đổi mật khẩu ngay sau khi nhận.</p>
+            <a href="/" class="btn btn-outline-primary">Quay lại mua tiếp</a>
+        </div>
+    </div>
+</div>

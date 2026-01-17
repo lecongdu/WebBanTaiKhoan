@@ -1,0 +1,116 @@
+﻿@model IEnumerable<WebBanTaiKhoan.Models.TopUpTransaction>
+@{
+    ViewData["Title"] = "Lịch sử nạp tiền";
+}
+
+<div class="container mt-4 pb-5">
+    @* TIÊU ĐỀ TRANG *@
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h3 class="fw-bold text-dark">
+                <i class="fa-solid fa-wallet me-2 text-primary"></i>LỊCH SỬ NẠP TIỀN
+            </h3>
+            <p class="text-muted small mb-0">Theo dõi trạng thái các giao dịch nạp tiền vào ví của bạn.</p>
+        </div>
+        <div>
+            <a asp-action="MyOrders" class="btn btn-outline-primary btn-sm rounded-pill px-3 shadow-sm">
+                <i class="fa-solid fa-cart-shopping me-1"></i> Xem lịch sử mua
+            </a>
+        </div>
+    </div>
+
+    @* BẢNG DỮ LIỆU *@
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light text-uppercase">
+                    <tr style="font-size: 0.8rem; letter-spacing: 0.5px;">
+                        <th class="ps-4 py-3">Mã giao dịch</th>
+                        <th>Số dư nạp</th>
+                        <th>Trạng thái</th>
+                        <th class="text-end pe-4">Hình thức / Ngày</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var t in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <span class="text-muted small fw-bold">#@t.TransactionCode</span>
+                                </td>
+                                <td class="text-success fw-bold">
+                                    <i class="fa-solid fa-plus-circle me-1"></i>@t.Amount.ToString("#,##0")đ
+                                </td>
+                                <td>
+                                    @if (t.Status == "Success")
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success border-opacity-25 rounded-pill px-3 py-2">
+                                            <i class="fa-solid fa-check-double me-1"></i>Thành công
+                                        </span>
+                                    }
+                                    else if (t.Status == "Pending")
+                                    {
+                                        <span class="badge bg-warning-subtle text-warning border border-warning border-opacity-25 rounded-pill px-3 py-2">
+                                            <i class="fa-solid fa-spinner fa-spin me-1"></i>Chờ duyệt
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger-subtle text-danger border border-danger border-opacity-25 rounded-pill px-3 py-2">
+                                            <i class="fa-solid fa-xmark me-1"></i>Đã hủy
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="small fw-bold text-dark">Chuyển khoản / VietQR</div>
+                                    <div class="x-small text-muted">@t.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center py-5">
+                                <img src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png" width="60" class="opacity-25 mb-3" />
+                                <p class="text-muted">Bạn chưa có giao dịch nạp tiền nào.</p>
+                                <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-sm rounded-pill px-4">Nạp tiền ngay</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@* CSS BỔ SUNG *@
+<style>
+    .rounded-4 {
+        border-radius: 1rem !important;
+    }
+
+    .x-small {
+        font-size: 0.7rem;
+    }
+
+    .bg-success-subtle {
+        background-color: #e8f5e9 !important;
+    }
+
+    .bg-warning-subtle {
+        background-color: #fff8e1 !important;
+    }
+
+    .bg-danger-subtle {
+        background-color: #ffebee !important;
+    }
+
+    .table thead th {
+        border-bottom: none;
+        color: #666;
+        font-weight: 600;
+    }
+</style>
