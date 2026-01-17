@@ -3,6 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using WebBanTaiKhoan.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5000); // HTTP
+});
+
 
 // --- 1. CẤU HÌNH DATABASE ---
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
