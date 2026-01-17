@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WebBanTaiKhoan")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4d9213570fb5dc8399e21b15ea80eec8b874624c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6eaac29944a561a1af8e3d3954ad8502d7ace144")]
 [assembly: System.Reflection.AssemblyProductAttribute("WebBanTaiKhoan")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WebBanTaiKhoan")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

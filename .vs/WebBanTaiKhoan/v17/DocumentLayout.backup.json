@@ -7,6 +7,10 @@
       "RelativeMoniker": "D:0:0:{25FCD5C3-1970-42C4-9E0E-9ABC8F32E4B0}|WebBanTaiKhoan\\WebBanTaiKhoan.csproj|solutionrelative:webbantaikhoan\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{25FCD5C3-1970-42C4-9E0E-9ABC8F32E4B0}|WebBanTaiKhoan\\WebBanTaiKhoan.csproj|c:\\users\\pc\\source\\repos\\webbantaikhoan\\webbantaikhoan\\webbantaikhoan.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{25FCD5C3-1970-42C4-9E0E-9ABC8F32E4B0}|WebBanTaiKhoan\\WebBanTaiKhoan.csproj|solutionrelative:webbantaikhoan\\webbantaikhoan.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{25FCD5C3-1970-42C4-9E0E-9ABC8F32E4B0}|WebBanTaiKhoan\\WebBanTaiKhoan.csproj|c:\\users\\pc\\source\\repos\\webbantaikhoan\\webbantaikhoan\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{25FCD5C3-1970-42C4-9E0E-9ABC8F32E4B0}|WebBanTaiKhoan\\WebBanTaiKhoan.csproj|solutionrelative:webbantaikhoan\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
@@ -222,10 +226,6 @@
       "RelativeMoniker": "D:0:0:{25FCD5C3-1970-42C4-9E0E-9ABC8F32E4B0}|WebBanTaiKhoan\\WebBanTaiKhoan.csproj|solutionrelative:webbantaikhoan\\data\\migrations\\20260115075208_addmytables.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{25FCD5C3-1970-42C4-9E0E-9ABC8F32E4B0}|WebBanTaiKhoan\\WebBanTaiKhoan.csproj|c:\\users\\pc\\source\\repos\\webbantaikhoan\\webbantaikhoan\\webbantaikhoan.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{25FCD5C3-1970-42C4-9E0E-9ABC8F32E4B0}|WebBanTaiKhoan\\WebBanTaiKhoan.csproj|solutionrelative:webbantaikhoan\\webbantaikhoan.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{25FCD5C3-1970-42C4-9E0E-9ABC8F32E4B0}|WebBanTaiKhoan\\WebBanTaiKhoan.csproj|c:\\users\\pc\\source\\repos\\webbantaikhoan\\webbantaikhoan\\data\\migrations\\20260116124058_fixorderid.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{25FCD5C3-1970-42C4-9E0E-9ABC8F32E4B0}|WebBanTaiKhoan\\WebBanTaiKhoan.csproj|solutionrelative:webbantaikhoan\\data\\migrations\\20260116124058_fixorderid.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -293,43 +293,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 4,
           "Children": [
             {
-              "$type": "Document",
-              "DocumentIndex": 64,
-              "Title": "20260116174324_FixLoiNull.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116174324_FixLoiNull.cs",
-              "RelativeDocumentMoniker": "WebBanTaiKhoan\\Data\\Migrations\\20260116174324_FixLoiNull.cs",
-              "ToolTip": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116174324_FixLoiNull.cs",
-              "RelativeToolTip": "WebBanTaiKhoan\\Data\\Migrations\\20260116174324_FixLoiNull.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-16T17:43:24.9Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 65,
-              "Title": "20260116173914_UpdateBanners.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116173914_UpdateBanners.cs",
-              "RelativeDocumentMoniker": "WebBanTaiKhoan\\Data\\Migrations\\20260116173914_UpdateBanners.cs",
-              "ToolTip": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116173914_UpdateBanners.cs",
-              "RelativeToolTip": "WebBanTaiKhoan\\Data\\Migrations\\20260116173914_UpdateBanners.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-16T17:39:14.926Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 66,
-              "Title": "20260116173529_UpdateSystemSettingsV2.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116173529_UpdateSystemSettingsV2.cs",
-              "RelativeDocumentMoniker": "WebBanTaiKhoan\\Data\\Migrations\\20260116173529_UpdateSystemSettingsV2.cs",
-              "ToolTip": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116173529_UpdateSystemSettingsV2.cs",
-              "RelativeToolTip": "WebBanTaiKhoan\\Data\\Migrations\\20260116173529_UpdateSystemSettingsV2.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-16T17:35:29.375Z"
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
             },
             {
               "$type": "Document",
@@ -345,7 +313,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\Home\\Index.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\Home\\Index.cshtml",
@@ -353,7 +321,19 @@
               "RelativeToolTip": "WebBanTaiKhoan\\Views\\Home\\Index.cshtml",
               "ViewState": "AgIAAN8AAAAAAAAAAAAqwOsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-01-16T00:13:26.686Z",
+              "WhenOpened": "2026-01-16T00:13:26.686Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "WebBanTaiKhoan.csproj",
+              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\WebBanTaiKhoan.csproj",
+              "RelativeDocumentMoniker": "WebBanTaiKhoan\\WebBanTaiKhoan.csproj",
+              "ToolTip": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\WebBanTaiKhoan.csproj",
+              "RelativeToolTip": "WebBanTaiKhoan\\WebBanTaiKhoan.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-15T07:36:38.33Z",
               "EditorCaption": ""
             },
             {
@@ -364,10 +344,46 @@
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Program.cs",
               "ToolTip": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Program.cs",
               "RelativeToolTip": "WebBanTaiKhoan\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAADMAAAAAAAAAAAAqwDsAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-16T02:07:36.029Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 66,
+              "Title": "20260116173529_UpdateSystemSettingsV2.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116173529_UpdateSystemSettingsV2.cs",
+              "RelativeDocumentMoniker": "WebBanTaiKhoan\\Data\\Migrations\\20260116173529_UpdateSystemSettingsV2.cs",
+              "ToolTip": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116173529_UpdateSystemSettingsV2.cs",
+              "RelativeToolTip": "WebBanTaiKhoan\\Data\\Migrations\\20260116173529_UpdateSystemSettingsV2.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-16T17:35:29.375Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 65,
+              "Title": "20260116173914_UpdateBanners.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116173914_UpdateBanners.cs",
+              "RelativeDocumentMoniker": "WebBanTaiKhoan\\Data\\Migrations\\20260116173914_UpdateBanners.cs",
+              "ToolTip": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116173914_UpdateBanners.cs",
+              "RelativeToolTip": "WebBanTaiKhoan\\Data\\Migrations\\20260116173914_UpdateBanners.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-16T17:39:14.926Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 64,
+              "Title": "20260116174324_FixLoiNull.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116174324_FixLoiNull.cs",
+              "RelativeDocumentMoniker": "WebBanTaiKhoan\\Data\\Migrations\\20260116174324_FixLoiNull.cs",
+              "ToolTip": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116174324_FixLoiNull.cs",
+              "RelativeToolTip": "WebBanTaiKhoan\\Data\\Migrations\\20260116174324_FixLoiNull.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-16T17:43:24.9Z"
             },
             {
               "$type": "Document",
@@ -383,7 +399,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Edit.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\SystemSettings\\Edit.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\SystemSettings\\Edit.cshtml",
@@ -395,7 +411,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "SystemSetting.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Models\\SystemSetting.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Models\\SystemSetting.cs",
@@ -407,7 +423,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "SystemSettingsController.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Controllers\\SystemSettingsController.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Controllers\\SystemSettingsController.cs",
@@ -419,7 +435,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "20260116133048_SavePoint_Ngay16_01.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116133048_SavePoint_Ngay16_01.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Data\\Migrations\\20260116133048_SavePoint_Ngay16_01.cs",
@@ -431,7 +447,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 25,
               "Title": "Edit.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\Products\\Edit.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\Products\\Edit.cshtml",
@@ -455,7 +471,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "UserViewModel.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Models\\UserViewModel.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Models\\UserViewModel.cs",
@@ -479,7 +495,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\admin\\Index.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\admin\\Index.cshtml",
@@ -503,7 +519,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "UsersController.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Controllers\\UsersController.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Controllers\\UsersController.cs",
@@ -515,7 +531,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\Users\\Index.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\Users\\Index.cshtml",
@@ -527,7 +543,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "_LayoutAdmin.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\Shared\\_LayoutAdmin.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\Shared\\_LayoutAdmin.cshtml",
@@ -539,7 +555,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "_Layout.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\Shared\\_Layout.cshtml",
@@ -551,7 +567,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 24,
               "Title": "Deposit.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\Home\\Deposit.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\Home\\Deposit.cshtml",
@@ -563,7 +579,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "MyOrders.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\Orders\\MyOrders.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\Orders\\MyOrders.cshtml",
@@ -575,7 +591,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\Products\\Index.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\Products\\Index.cshtml",
@@ -587,7 +603,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "DepositHistory.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\Orders\\DepositHistory.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\Orders\\DepositHistory.cshtml",
@@ -599,7 +615,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "CartController.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Controllers\\CartController.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Controllers\\CartController.cs",
@@ -611,7 +627,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "OrdersController.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Controllers\\OrdersController.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Controllers\\OrdersController.cs",
@@ -635,7 +651,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 19,
               "Title": "ImportStock.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\Products\\ImportStock.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\Products\\ImportStock.cshtml",
@@ -647,7 +663,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 18,
               "Title": "ProductsController.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Controllers\\ProductsController.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Controllers\\ProductsController.cs",
@@ -671,7 +687,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 20,
               "Title": "AccountItem.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Models\\AccountItem.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Models\\AccountItem.cs",
@@ -695,7 +711,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 21,
               "Title": "Order.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Models\\Order.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Models\\Order.cs",
@@ -707,7 +723,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 22,
               "Title": "Create.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\AccountItems\\Create.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\AccountItems\\Create.cshtml",
@@ -719,7 +735,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 36,
               "Title": "Email.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Areas\\Identity\\Pages\\Account\\Manage\\Email.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Areas\\Identity\\Pages\\Account\\Manage\\Email.cshtml",
@@ -731,7 +747,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 23,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\AccountItems\\Index.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\AccountItems\\Index.cshtml",
@@ -755,7 +771,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 35,
               "Title": "ChangePassword.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Areas\\Identity\\Pages\\Account\\Manage\\ChangePassword.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Areas\\Identity\\Pages\\Account\\Manage\\ChangePassword.cshtml",
@@ -767,7 +783,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 32,
               "Title": "_Layout.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Areas\\Identity\\Pages\\Account\\Manage\\_Layout.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Areas\\Identity\\Pages\\Account\\Manage\\_Layout.cshtml",
@@ -791,7 +807,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 26,
               "Title": "Create.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\Products\\Create.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\Products\\Create.cshtml",
@@ -803,7 +819,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 28,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\SystemSettings\\Index.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\SystemSettings\\Index.cshtml",
@@ -815,7 +831,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 27,
               "Title": "HomeController.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Controllers\\HomeController.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Controllers\\HomeController.cs",
@@ -827,7 +843,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 29,
               "Title": "_LoginPartial.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\Shared\\_LoginPartial.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\Shared\\_LoginPartial.cshtml",
@@ -839,7 +855,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 30,
               "Title": "ProductDetail.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\Home\\ProductDetail.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\Home\\ProductDetail.cshtml",
@@ -851,7 +867,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 31,
               "Title": "Register.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Areas\\Identity\\Pages\\Account\\Register.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Areas\\Identity\\Pages\\Account\\Register.cshtml",
@@ -863,7 +879,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 34,
               "Title": "_ManageNav.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Areas\\Identity\\Pages\\Account\\Manage\\_ManageNav.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Areas\\Identity\\Pages\\Account\\Manage\\_ManageNav.cshtml",
@@ -875,7 +891,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 33,
               "Title": "AdminController.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Controllers\\AdminController.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Controllers\\AdminController.cs",
@@ -887,7 +903,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 37,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Areas\\Identity\\Pages\\Account\\Manage\\Index.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Areas\\Identity\\Pages\\Account\\Manage\\Index.cshtml",
@@ -899,7 +915,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 39,
               "Title": "Login.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Areas\\Identity\\Pages\\Account\\Login.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Areas\\Identity\\Pages\\Account\\Login.cshtml",
@@ -911,7 +927,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 38,
               "Title": "ScaffoldingReadMe.txt",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\ScaffoldingReadMe.txt",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\ScaffoldingReadMe.txt",
@@ -923,7 +939,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 40,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\Categories\\Index.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\Categories\\Index.cshtml",
@@ -935,7 +951,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
+              "DocumentIndex": 48,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\TopUpManager\\Index.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\TopUpManager\\Index.cshtml",
@@ -947,7 +963,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 41,
               "Title": "Product.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Models\\Product.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Models\\Product.cs",
@@ -971,7 +987,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 43,
               "Title": "Category.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Models\\Category.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Models\\Category.cs",
@@ -983,7 +999,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 42,
               "Title": "CategoriesController.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Controllers\\CategoriesController.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Controllers\\CategoriesController.cs",
@@ -1007,7 +1023,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 45,
               "Title": "TopUpManagerController.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Controllers\\TopUpManagerController.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Controllers\\TopUpManagerController.cs",
@@ -1019,7 +1035,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 44,
               "Title": "AccountItemsController.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Controllers\\AccountItemsController.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Controllers\\AccountItemsController.cs",
@@ -1031,7 +1047,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 46,
               "Title": "20260116034702_SyncTopUpModel.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116034702_SyncTopUpModel.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Data\\Migrations\\20260116034702_SyncTopUpModel.cs",
@@ -1043,7 +1059,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 47,
               "Title": "TopUpTransaction.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Models\\TopUpTransaction.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Models\\TopUpTransaction.cs",
@@ -1055,7 +1071,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 51,
+              "DocumentIndex": 52,
               "Title": "CheckoutController.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Controllers\\CheckoutController.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Controllers\\CheckoutController.cs",
@@ -1067,7 +1083,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 48,
+              "DocumentIndex": 49,
               "Title": "ApplicationDbContext.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Data\\ApplicationDbContext.cs",
@@ -1079,7 +1095,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 49,
+              "DocumentIndex": 50,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\cart\\Index.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\cart\\Index.cshtml",
@@ -1091,7 +1107,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 50,
+              "DocumentIndex": 51,
               "Title": "CartItem.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Models\\CartItem.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Models\\CartItem.cs",
@@ -1103,7 +1119,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 52,
+              "DocumentIndex": 53,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Views\\Orders\\Index.cshtml",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Views\\Orders\\Index.cshtml",
@@ -1115,7 +1131,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 53,
+              "DocumentIndex": 54,
               "Title": "readme.txt",
               "DocumentMoniker": "C:\\Users\\PC\\.nuget\\packages\\epplus\\8.4.1\\readme.txt",
               "RelativeDocumentMoniker": "..\\..\\..\\.nuget\\packages\\epplus\\8.4.1\\readme.txt",
@@ -1127,7 +1143,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 54,
+              "DocumentIndex": 55,
               "Title": "20260115075208_AddMyTables.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260115075208_AddMyTables.cs",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\Data\\Migrations\\20260115075208_AddMyTables.cs",
@@ -1136,22 +1152,6 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAABbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-15T07:52:08.82Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 55,
-              "Title": "WebBanTaiKhoan.csproj",
-              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\WebBanTaiKhoan.csproj",
-              "RelativeDocumentMoniker": "WebBanTaiKhoan\\WebBanTaiKhoan.csproj",
-              "ToolTip": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\WebBanTaiKhoan.csproj",
-              "RelativeToolTip": "WebBanTaiKhoan\\WebBanTaiKhoan.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAtAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-01-15T07:36:38.33Z"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
             }
           ]
         }

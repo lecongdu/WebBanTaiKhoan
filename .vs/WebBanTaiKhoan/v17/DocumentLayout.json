@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{25FCD5C3-1970-42C4-9E0E-9ABC8F32E4B0}|WebBanTaiKhoan\\WebBanTaiKhoan.csproj|c:\\users\\pc\\source\\repos\\webbantaikhoan\\webbantaikhoan\\webbantaikhoan.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{25FCD5C3-1970-42C4-9E0E-9ABC8F32E4B0}|WebBanTaiKhoan\\WebBanTaiKhoan.csproj|solutionrelative:webbantaikhoan\\webbantaikhoan.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{25FCD5C3-1970-42C4-9E0E-9ABC8F32E4B0}|WebBanTaiKhoan\\WebBanTaiKhoan.csproj|c:\\users\\pc\\source\\repos\\webbantaikhoan\\webbantaikhoan\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{25FCD5C3-1970-42C4-9E0E-9ABC8F32E4B0}|WebBanTaiKhoan\\WebBanTaiKhoan.csproj|solutionrelative:webbantaikhoan\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25FCD5C3-1970-42C4-9E0E-9ABC8F32E4B0}|WebBanTaiKhoan\\WebBanTaiKhoan.csproj|c:\\users\\pc\\source\\repos\\webbantaikhoan\\webbantaikhoan\\webbantaikhoan.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{25FCD5C3-1970-42C4-9E0E-9ABC8F32E4B0}|WebBanTaiKhoan\\WebBanTaiKhoan.csproj|solutionrelative:webbantaikhoan\\webbantaikhoan.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{25FCD5C3-1970-42C4-9E0E-9ABC8F32E4B0}|WebBanTaiKhoan\\WebBanTaiKhoan.csproj|c:\\users\\pc\\source\\repos\\webbantaikhoan\\webbantaikhoan\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -293,19 +293,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 4,
           "Children": [
             {
-              "$type": "Document",
-              "DocumentIndex": 66,
-              "Title": "20260116173529_UpdateSystemSettingsV2.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116173529_UpdateSystemSettingsV2.cs",
-              "RelativeDocumentMoniker": "WebBanTaiKhoan\\Data\\Migrations\\20260116173529_UpdateSystemSettingsV2.cs",
-              "ToolTip": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116173529_UpdateSystemSettingsV2.cs",
-              "RelativeToolTip": "WebBanTaiKhoan\\Data\\Migrations\\20260116173529_UpdateSystemSettingsV2.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-16T17:35:29.375Z"
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
             },
             {
               "$type": "Document",
@@ -333,7 +325,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "WebBanTaiKhoan.csproj",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\WebBanTaiKhoan.csproj",
               "RelativeDocumentMoniker": "WebBanTaiKhoan\\WebBanTaiKhoan.csproj",
@@ -346,6 +338,31 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Program.cs",
+              "RelativeDocumentMoniker": "WebBanTaiKhoan\\Program.cs",
+              "ToolTip": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Program.cs",
+              "RelativeToolTip": "WebBanTaiKhoan\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-16T02:07:36.029Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 66,
+              "Title": "20260116173529_UpdateSystemSettingsV2.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116173529_UpdateSystemSettingsV2.cs",
+              "RelativeDocumentMoniker": "WebBanTaiKhoan\\Data\\Migrations\\20260116173529_UpdateSystemSettingsV2.cs",
+              "ToolTip": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116173529_UpdateSystemSettingsV2.cs",
+              "RelativeToolTip": "WebBanTaiKhoan\\Data\\Migrations\\20260116173529_UpdateSystemSettingsV2.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-16T17:35:29.375Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 65,
               "Title": "20260116173914_UpdateBanners.cs",
               "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Data\\Migrations\\20260116173914_UpdateBanners.cs",
@@ -355,19 +372,6 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-16T17:39:14.926Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Program.cs",
-              "RelativeDocumentMoniker": "WebBanTaiKhoan\\Program.cs",
-              "ToolTip": "C:\\Users\\PC\\source\\repos\\WebBanTaiKhoan\\WebBanTaiKhoan\\Program.cs",
-              "RelativeToolTip": "WebBanTaiKhoan\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-16T02:07:36.029Z",
-              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -1148,10 +1152,6 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAABbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-15T07:52:08.82Z"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
             }
           ]
         }

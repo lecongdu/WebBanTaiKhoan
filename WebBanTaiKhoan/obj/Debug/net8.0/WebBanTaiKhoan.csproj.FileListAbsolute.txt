@@ -294,3 +294,10 @@ C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\bin\Debug\net8.0\runtimes
 C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\bin\Debug\net8.0\runtimes\win-arm64\native\e_sqlite3.dll
 C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\bin\Debug\net8.0\runtimes\win-x64\native\e_sqlite3.dll
 C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\bin\Debug\net8.0\runtimes\win-x86\native\e_sqlite3.dll
+C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\bin\Debug\net8.0\publish\web.config
+C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\bin\Debug\net8.0\publish\appsettings.Development.json
+C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\bin\Debug\net8.0\publish\appsettings.json
+C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\bin\Debug\net8.0\publish\WebBanTaiKhoan.deps.json
+C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\bin\Debug\net8.0\publish\WebBanTaiKhoan.runtimeconfig.json
+C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\bin\Debug\net8.0\publish\WebBanTaiKhoan.staticwebassets.endpoints.json
+C:\Users\PC\source\repos\WebBanTaiKhoan\WebBanTaiKhoan\obj\Debug\net8.0\WebBanTaiKhoan.sourcelink.json
