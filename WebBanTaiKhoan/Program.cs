@@ -5,7 +5,8 @@ using WebBanTaiKhoan.Data;
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenAnyIP(5000); // HTTP
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+    options.ListenAnyIP(int.Parse(port));
 });
 
 
@@ -75,5 +76,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
-
+app.MapFallbackToController("Index", "Home");
 app.Run();
