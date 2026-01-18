@@ -1,5 +1,16 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
+﻿## Visual Studio rác
+.vs/
+[Bb]in/
+[Oo]bj/
+*.user
+*.userosscache
+*.sln.docstates
 
-/.vs/WebBanTaiKhoan/FileContentIndex
+## Database tạm (gây ra đống 713 file của mày)
+*.db-shm
+*.db-wal
+*.db
+
+## File log và cache
+*.log
+.DS_Store

@@ -1,0 +1,117 @@
+﻿@model IEnumerable<WebBanTaiKhoan.Models.UserRoleViewModel>
+@{
+    ViewData["Title"] = "Quản lý nhân viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid pt-4">
+    @* --- NÚT QUAY TRỞ VỀ --- *@
+    <div class="mb-3">
+        <a asp-controller="Admin" asp-action="Index" class="btn btn-outline-secondary rounded-pill btn-sm px-3">
+            <i class="fa-solid fa-arrow-left me-1"></i> Quay về Trung tâm điều khiển
+        </a>
+    </div>
+
+    <div class="card shadow mb-4 border-0">
+        <div class="card-header py-3 bg-primary d-flex justify-content-between align-items-center rounded-top-4">
+            <h6 class="m-0 font-weight-bold text-white text-uppercase">
+                <i class="fas fa-users-cog"></i> Danh sách thành viên & Phân quyền
+            </h6>
+        </div>
+        <div class="card-body">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
+                    <i class="fas fa-check-circle me-1"></i> @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert">
+                    <i class="fas fa-exclamation-circle me-1"></i> @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" width="100%" cellspacing="0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="border-0">Tên tài khoản</th>
+                            <th class="border-0">Email</th>
+                            <th class="border-0">Quyền hiện tại</th>
+                            <th class="border-0 text-center">Hành động thay đổi quyền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold text-dark">@user.UserName</td>
+                                <td class="text-muted">@user.Email</td>
+                                <td>
+                                    @if (user.Role == "Admin")
+                                    {
+                                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger-subtle"><i class="fas fa-user-shield me-1"></i>Quản Trị Viên</span>
+                                    }
+                                    else if (user.Role == "Collaborator" || user.Role == "usert")
+                                    {
+                                        <span class="badge bg-info bg-opacity-10 text-info border border-info-subtle"><i class="fas fa-user-edit me-1"></i>CTV Đăng Hàng</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle"><i class="fas fa-user me-1"></i>Khách Hàng</span>
+                                    }
+                                </td>
+                                <td>
+                                    @* 🔥 Sửa Action: Đảm bảo trùng tên hàm ChangeRole trong AdminController *@
+                                    <form asp-controller="Admin" asp-action="ChangeRole" method="post" class="d-flex justify-content-center gap-2">
+                                        <input type="hidden" name="userId" value="@user.UserId" />
+                                        <div style="min-width: 200px;">
+                                            <select name="newRole" class="form-select form-select-sm border-primary-subtle" required>
+                                                <option value="">-- Chọn quyền mới --</option>
+                                                <option value="Admin">Admin (Full Quyền)</option>
+                                                <option value="Collaborator">CTV (Chỉ đăng Acc/SP)</option>
+                                                <option value="Member">Khách hàng (Hủy quyền)</option>
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-sm px-3 rounded-3 fw-bold" onclick="return confirm('Mày có chắc chắn muốn thay đổi quyền của tài khoản này?')">
+                                            <i class="fas fa-save me-1"></i> Lưu
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .badge {
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.5em 0.8em;
+    }
+
+    .table td {
+        padding: 1rem 0.75rem;
+    }
+
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .form-select {
+        border-radius: 8px;
+        transition: 0.2s;
+    }
+
+        .form-select:focus {
+            box-shadow: 0 0 0 0.25rem rgba(0, 97, 255, 0.1);
+        }
+</style>

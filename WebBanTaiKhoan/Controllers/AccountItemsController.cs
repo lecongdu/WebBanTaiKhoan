@@ -11,7 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace WebBanTaiKhoan.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    // KHÓA CỬA: Chỉ Admin và những người được bạn phân quyền (CTV) mới vào được đây
+    [Authorize(Roles = "Admin,Collaborator,usert")]
     public class AccountItemsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,26 +22,30 @@ namespace WebBanTaiKhoan.Controllers
             _context = context;
         }
 
-        // ==========================================
-        // DANH SÁCH TÀI KHOẢN - CÓ THÊM TÌM KIẾM
-        // ==========================================
+        // =======================================================
+        // DANH SÁCH TÀI KHOẢN - TÌM KIẾM ĐA NĂNG
+        // =======================================================
         public async Task<IActionResult> Index(string searchString)
         {
-            // Bắt đầu truy vấn bao gồm thông tin sản phẩm
             var query = _context.AccountItems
                 .Include(a => a.Product)
-                .AsNoTracking() // Tăng tốc độ load dữ liệu
+                .AsNoTracking()
                 .AsQueryable();
 
-            // Lọc theo từ khóa tìm kiếm (Tên tài khoản hoặc Tên sản phẩm)
+            ViewData["CurrentFilter"] = searchString;
+
             if (!string.IsNullOrEmpty(searchString))
             {
-                query = query.Where(s => s.Username.Contains(searchString)
-                                      || s.Product.Name.Contains(searchString));
-                ViewData["CurrentFilter"] = searchString;
+                searchString = searchString.Trim().ToLower();
+
+                query = query.Where(s =>
+                    (s.Product != null && s.Product.Name.ToLower().Contains(searchString)) ||
+                    (s.Username != null && s.Username.ToLower().Contains(searchString)) ||
+                    (s.Password != null && s.Password.ToLower().Contains(searchString)) ||
+                    (s.Data != null && s.Data.ToLower().Contains(searchString))
+                );
             }
 
-            // Sắp xếp: Ưu tiên tài khoản CHƯA BÁN lên đầu, sau đó theo ID mới nhất
             var list = await query
                 .OrderBy(a => a.IsSold)
                 .ThenByDescending(a => a.Id)
@@ -79,15 +84,16 @@ namespace WebBanTaiKhoan.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Username,Password,IsSold,ProductId")] AccountItem accountItem)
+        public async Task<IActionResult> Create([Bind("Id,Username,Password,Data,IsSold,ProductId")] AccountItem accountItem)
         {
-            // Xóa kiểm tra Product để tránh lỗi ModelState không hợp lệ
             ModelState.Remove("Product");
+            ModelState.Remove("Order");
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    accountItem.CreatedAt = DateTime.Now;
                     _context.Add(accountItem);
                     await _context.SaveChangesAsync();
 
@@ -120,11 +126,12 @@ namespace WebBanTaiKhoan.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Password,IsSold,ProductId")] AccountItem accountItem)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Password,Data,IsSold,ProductId,CreatedAt")] AccountItem accountItem)
         {
             if (id != accountItem.Id) return NotFound();
 
             ModelState.Remove("Product");
+            ModelState.Remove("Order");
 
             if (ModelState.IsValid)
             {
@@ -146,8 +153,9 @@ namespace WebBanTaiKhoan.Controllers
         }
 
         // ==========================================
-        // XÓA TÀI KHOẢN
+        // XÓA TÀI KHOẢN (Bảo mật: Chỉ Admin mới có quyền Xóa)
         // ==========================================
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -163,6 +171,7 @@ namespace WebBanTaiKhoan.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var accountItem = await _context.AccountItems.FindAsync(id);

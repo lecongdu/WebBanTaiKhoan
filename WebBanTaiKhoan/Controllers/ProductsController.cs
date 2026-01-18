@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,7 +13,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace WebBanTaiKhoan.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -23,7 +23,7 @@ namespace WebBanTaiKhoan.Controllers
         }
 
         // ==========================================
-        // 1. DANH SÁCH SẢN PHẨM
+        // 1. DANH SÁCH SẢN PHẨM (Ai cũng xem được)
         // ==========================================
         public async Task<IActionResult> Index()
         {
@@ -35,6 +35,7 @@ namespace WebBanTaiKhoan.Controllers
             return View(await products.OrderByDescending(p => p.Id).ToListAsync());
         }
 
+        // CHI TIẾT SẢN PHẨM
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -50,14 +51,61 @@ namespace WebBanTaiKhoan.Controllers
         }
 
         // ==========================================
-        // 2. TẠO MỚI SẢN PHẨM
+        // 2. CHỨC NĂNG MUA HÀNG (Dành cho thành viên)
         // ==========================================
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Buy(int id)
+        {
+            var product = await _context.Products
+                .Include(p => p.AccountItems)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (product == null) return NotFound();
+
+            var accountItem = product.AccountItems.FirstOrDefault(a => !a.IsSold);
+            if (accountItem == null)
+            {
+                TempData["Error"] = "Sản phẩm này tạm thời hết hàng!";
+                return RedirectToAction(nameof(Details), new { id = id });
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null) return RedirectToAction("Login", "Account");
+
+            if (user.Balance < product.Price)
+            {
+                TempData["Error"] = $"Số dư không đủ! Bạn còn thiếu {(product.Price - user.Balance):#,##0}đ.";
+                return RedirectToAction(nameof(Details), new { id = id });
+            }
+
+            user.Balance -= product.Price;
+            accountItem.IsSold = true;
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Mua hàng thành công! Kiểm tra mục 'Tài khoản của tôi'.";
+            TempData["BoughtAccount"] = accountItem.Data;
+
+            return RedirectToAction(nameof(Details), new { id = id });
+        }
+
+        // ==========================================
+        // 3. KHU VỰC QUẢN TRỊ (ADMIN & CTV)
+        // ==========================================
+
+        // Cho phép CTV vào trang Create, Edit và ImportStock
+        [Authorize(Roles = "Admin,Collaborator,usert")]
         public IActionResult Create()
         {
             ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name");
             return View();
         }
 
+        [Authorize(Roles = "Admin,Collaborator,usert")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,Price,ImageUrl,CategoryId")] Product product, IFormFile? ImageFile)
@@ -82,20 +130,16 @@ namespace WebBanTaiKhoan.Controllers
             return View(product);
         }
 
-        // ==========================================
-        // 3. NHẬP KHO HÀNG LOẠT (TỐI ƯU HÓA)
-        // ==========================================
-
+        [Authorize(Roles = "Admin,Collaborator,usert")]
         public async Task<IActionResult> ImportStock(int? id)
         {
             if (id == null) return NotFound();
-
             var product = await _context.Products.FindAsync(id);
             if (product == null) return NotFound();
-
             return View(product);
         }
 
+        [Authorize(Roles = "Admin,Collaborator,usert")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ImportStock(int productId, string listData)
@@ -106,23 +150,21 @@ namespace WebBanTaiKhoan.Controllers
                 return RedirectToAction(nameof(ImportStock), new { id = productId });
             }
 
-            // Tách các dòng dữ liệu, loại bỏ khoảng trắng và dòng trống
             var lines = listData.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
-                                .Select(l => l.Trim())
-                                .Where(l => !string.IsNullOrEmpty(l))
-                                .ToList();
+                                 .Select(l => l.Trim())
+                                 .Where(l => !string.IsNullOrEmpty(l))
+                                 .ToList();
 
             if (lines.Count > 0)
             {
                 var newItems = lines.Select(line => new AccountItem
                 {
                     ProductId = productId,
-                    Data = line, // Lưu nội dung "email|pass"
+                    Data = line,
                     CreatedAt = DateTime.Now,
                     IsSold = false
                 }).ToList();
 
-                // Sử dụng AddRange để đẩy dữ liệu nhanh hơn (1 lần request DB)
                 _context.AccountItems.AddRange(newItems);
                 await _context.SaveChangesAsync();
 
@@ -132,20 +174,17 @@ namespace WebBanTaiKhoan.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // ==========================================
-        // 4. CHỈNH SỬA SẢN PHẨM
-        // ==========================================
+        [Authorize(Roles = "Admin,Collaborator,usert")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
-
             var product = await _context.Products.FindAsync(id);
             if (product == null) return NotFound();
-
             ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name", product.CategoryId);
             return View(product);
         }
 
+        [Authorize(Roles = "Admin,Collaborator,usert")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price,ImageUrl,CategoryId")] Product product, IFormFile? ImageFile)
@@ -176,26 +215,25 @@ namespace WebBanTaiKhoan.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-
             ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name", product.CategoryId);
             return View(product);
         }
 
         // ==========================================
-        // 5. XÓA SẢN PHẨM
+        // XÓA SẢN PHẨM (Bảo mật: CHỈ ADMIN)
         // ==========================================
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
-
             var product = await _context.Products
                 .Include(p => p.Category)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null) return NotFound();
-
             return View(product);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -208,19 +246,16 @@ namespace WebBanTaiKhoan.Controllers
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Đã xóa sản phẩm!";
             }
-
             return RedirectToAction(nameof(Index));
         }
 
-        // --- CÁC HÀM PHỤ TRỢ (HELPER) ---
+        // --- CÁC HÀM PHỤ TRỢ ---
 
         private async Task<string> SaveImage(IFormFile file)
         {
             string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
             string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
-
             if (!Directory.Exists(uploadPath)) Directory.CreateDirectory(uploadPath);
-
             string filePath = Path.Combine(uploadPath, fileName);
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
@@ -243,7 +278,7 @@ namespace WebBanTaiKhoan.Controllers
 
         private bool ProductExists(int id)
         {
-            return _context.Products.Any(e => e.Id == id);
+            return _context.Products.Any(e => id == e.Id);
         }
     }
 }

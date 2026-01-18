@@ -3,25 +3,27 @@
 
 @{
     ViewData["Title"] = "Đăng nhập hệ thống";
-    Layout = "/Views/Shared/_Layout.cshtml"; // Đảm bảo dùng chung Layout đẹp bạn vừa sửa
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Dùng dấu ~/ để trỏ đúng thư mục gốc
 }
 
 <div class="container">
-    <div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
         <div class="col-md-5">
-            <div class="card border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
-                <div class="card-header bg-primary text-white text-center py-4 border-0">
+            <div class="card border-0 shadow-lg animate__animated animate__fadeInUp" style="border-radius: 20px; overflow: hidden;">
+                <div class="card-header text-white text-center py-4 border-0"
+                     style="background: linear-gradient(135deg, #0d6efd 0%, #0099ff 100%);">
                     <h3 class="fw-bold mb-0 text-uppercase tracking-wider">Đăng nhập</h3>
-                    <p class="small mb-0 opacity-75">Chào mừng bạn quay trở lại với Nick3s</p>
+                    <p class="small mb-0 opacity-75 mt-1">Chào mừng bạn quay trở lại!</p>
                 </div>
+
                 <div class="card-body p-5 bg-white">
                     <form id="account" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3 text-center fw-bold"></div>
 
                         <div class="form-floating mb-3">
                             <input asp-for="Input.Email" class="form-control border-0 bg-light shadow-none"
                                    style="border-radius: 12px;" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                            <label asp-for="Input.Email" class="text-muted"><i class="fa-solid fa-envelope me-2"></i>Địa chỉ Email</label>
+                            <label asp-for="Input.Email" class="text-muted"><i class="fa-solid fa-envelope me-2"></i>Email</label>
                             <span asp-validation-for="Input.Email" class="text-danger small"></span>
                         </div>
 
@@ -35,28 +37,34 @@
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div class="form-check">
                                 <input class="form-check-input" asp-for="Input.RememberMe" />
-                                <label class="form-check-label small text-muted" asp-for="Input.RememberMe">
-                                    Ghi nhớ tôi
+                                <label class="form-check-label small text-muted user-select-none" asp-for="Input.RememberMe">
+                                    Ghi nhớ đăng nhập
                                 </label>
                             </div>
-                            <a id="forgot-password" asp-page="./ForgotPassword" class="text-decoration-none small fw-bold">Quên mật khẩu?</a>
+                            <a id="forgot-password" asp-page="./ForgotPassword" class="text-decoration-none small fw-bold text-primary">
+                                Quên mật khẩu?
+                            </a>
                         </div>
 
-                        <button id="login-submit" type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow-sm"
-                                style="border-radius: 12px; transition: 0.3s;">
+                        <button id="login-submit" type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow-sm text-uppercase"
+                                style="border-radius: 12px; transition: 0.3s; background: linear-gradient(135deg, #0d6efd 0%, #0099ff 100%); border: none;">
                             VÀO CỬA HÀNG <i class="fa-solid fa-arrow-right-to-bracket ms-2"></i>
                         </button>
 
-                        <div class="text-center mt-4">
-                            <p class="small text-muted mb-0">Bạn chưa có tài khoản?</p>
-                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="fw-bold text-decoration-none">Đăng ký thành viên mới</a>
+                        <div class="text-center mt-4 pt-3 border-top">
+                            <p class="small text-muted mb-1">Bạn chưa có tài khoản?</p>
+                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="fw-bold text-decoration-none fs-6">
+                                <i class="fa-solid fa-user-plus me-1"></i> Đăng ký thành viên mới
+                            </a>
                         </div>
                     </form>
                 </div>
             </div>
 
             <div class="text-center mt-4">
-                <a asp-page="./ResendEmailConfirmation" class="text-muted small text-decoration-none me-3">Gửi lại email xác nhận</a>
+                <a asp-page="./ResendEmailConfirmation" class="text-muted small text-decoration-none opacity-75 hover-opacity-100">
+                    <i class="fa-regular fa-paper-plane me-1"></i> Gửi lại email xác nhận
+                </a>
             </div>
         </div>
     </div>
@@ -65,15 +73,18 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <style>
-        /* Hiệu ứng focus cho các ô nhập liệu */
         .form-control:focus {
             background-color: #fff !important;
             box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15) !important;
         }
-        /* Hiệu ứng hover cho nút */
-        .btn-primary:hover {
+
+        #login-submit:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3) !important;
+        }
+
+        .hover-opacity-100:hover {
+            opacity: 1 !important;
         }
     </style>
 }

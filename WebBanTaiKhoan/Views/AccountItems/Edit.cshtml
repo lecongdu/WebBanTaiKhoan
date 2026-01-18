@@ -1,49 +1,139 @@
 ﻿@model WebBanTaiKhoan.Models.AccountItem
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Chỉnh sửa tài khoản";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
 
-<h4>AccountItem</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Username" class="control-label"></label>
-                <input asp-for="Username" class="form-control" />
-                <span asp-validation-for="Username" class="text-danger"></span>
+            <div class="mb-3 d-flex justify-content-between align-items-center">
+                <a href="/Admin" class="btn btn-outline-secondary btn-sm rounded-pill px-3 shadow-sm border-2 fw-bold hover-up">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Trở lại Admin
+                </a>
+                <a asp-action="Index" class="text-muted small text-decoration-none fw-bold">
+                    <i class="fa-solid fa-boxes-stacked me-1"></i> Quay lại kho
+                </a>
             </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
+
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header border-0 py-3" style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%);">
+                    <h4 class="mb-0 fw-bold text-center text-white text-uppercase tracking-wider">
+                        <i class="fa-solid fa-key me-2 text-warning"></i>CẬP NHẬT TÀI KHOẢN
+                    </h4>
+                </div>
+
+                <div class="card-body p-4 p-md-5 bg-white">
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3 fw-bold"></div>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="CreatedAt" />
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-muted small text-uppercase">Sản phẩm liên kết</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-2"><i class="fa-solid fa-tag text-primary"></i></span>
+                                <input class="form-control border-2 bg-light fw-bold" value="@Model.Product?.Name" readonly />
+                                <input type="hidden" asp-for="ProductId" />
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Username" class="form-control rounded-3 border-2 shadow-sm font-monospace" placeholder="Email/Username" />
+                                    <label asp-for="Username" class="text-muted fw-bold">Tài khoản (Email/Username)</label>
+                                    <span asp-validation-for="Username" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Password" class="form-control rounded-3 border-2 shadow-sm font-monospace" placeholder="Password" />
+                                    <label asp-for="Password" class="text-muted fw-bold">Mật khẩu (Password)</label>
+                                    <span asp-validation-for="Password" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <textarea asp-for="Data" class="form-control rounded-3 border-2 shadow-sm font-monospace" placeholder="Data raw" style="height: 100px"></textarea>
+                            <label asp-for="Data" class="text-muted fw-bold">Dữ liệu thô (Định dạng: user|pass)</label>
+                            <span asp-validation-for="Data" class="text-danger small"></span>
+                        </div>
+
+                        <div class="p-3 rounded-3 mb-4 bg-light border d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <div class="status-icon me-3 @(Model.IsSold ? "text-danger" : "text-success")">
+                                    <i class="fa-solid @(Model.IsSold ? "fa-circle-xmark" : "fa-circle-check") fs-3"></i>
+                                </div>
+                                <div>
+                                    <label class="fw-bold mb-0 d-block">Trạng thái kho</label>
+                                    <small class="text-muted">@(Model.IsSold ? "Tài khoản này đã được bán" : "Tài khoản đang sẵn sàng để bán")</small>
+                                </div>
+                            </div>
+                            <div class="form-check form-switch fs-4">
+                                <input class="form-check-input shadow-none cursor-pointer" type="checkbox" asp-for="IsSold">
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-dark btn-lg rounded-pill fw-bold shadow hover-up py-3">
+                                <i class="fa-solid fa-floppy-disk me-2 text-warning"></i> LƯU THAY ĐỔI
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsSold" /> @Html.DisplayNameFor(model => model.IsSold)
-                </label>
+
+            <div class="text-center mt-4 text-muted small">
+                <p>Ngày nhập kho: <span class="fw-bold">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span></p>
             </div>
-            <div class="form-group">
-                <label asp-for="ProductId" class="control-label"></label>
-                <select asp-for="ProductId" class="form-control" asp-items="ViewBag.ProductId"></select>
-                <span asp-validation-for="ProductId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <style>
+        .font-monospace {
+            font-family: 'Consolas', 'Monaco', monospace !important;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus {
+            border-color: #334155;
+            box-shadow: 0 0 0 0.25rem rgba(51, 65, 85, 0.1);
+        }
+
+        .hover-up {
+            transition: all 0.3s ease;
+        }
+
+            .hover-up:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 15px rgba(0,0,0,0.2) !important;
+            }
+
+        .form-floating > label {
+            padding-left: 1.25rem;
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        body {
+            background-color: #f1f5f9;
+        }
+
+        .tracking-wider {
+            letter-spacing: 1px;
+        }
+    </style>
 }

@@ -1,54 +1,79 @@
 ﻿@model WebBanTaiKhoan.Models.BankAccount
 
 @{
-    ViewData["Title"] = "Thêm Ngân hàng";
+    ViewData["Title"] = "Thêm Ngân hàng mới";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container mt-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-success text-white">
-            <h3 class="fw-bold m-0"><i class="fa-solid fa-building-columns"></i> THÊM TÀI KHOẢN NGÂN HÀNG</h3>
-        </div>
-        <div class="card-body">
-            <form asp-action="Create" enctype="multipart/form-data">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="fw-bold control-label">Tên Ngân Hàng (Ví dụ: MBBank)</label>
-                        <input asp-for="BankName" class="form-control" placeholder="Nhập tên ngân hàng..." />
-                        <span asp-validation-for="BankName" class="text-danger"></span>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="fw-bold control-label">Số Tài Khoản</label>
-                        <input asp-for="AccountNumber" class="form-control" placeholder="0123xxxx..." />
-                        <span asp-validation-for="AccountNumber" class="text-danger"></span>
-                    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0 fw-bold text-center">
+                        <i class="fa-solid fa-building-columns me-2"></i>THÊM TÀI KHOẢN NGÂN HÀNG
+                    </h4>
                 </div>
+                <div class="card-body p-4 p-md-5 bg-white">
+                    <form asp-action="Create" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3 fw-bold"></div>
 
-                <div class="mb-3">
-                    <label class="fw-bold control-label">Tên Chủ Thẻ</label>
-                    <input asp-for="AccountName" class="form-control" placeholder="NGUYEN VAN A" />
-                    <span asp-validation-for="AccountName" class="text-danger"></span>
-                </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                @* Ô nhập tên ngân hàng - Có tính năng tự lấy Logo *@
+                                <div class="form-floating mb-3">
+                                    <input asp-for="BankName" id="bankNameInput" class="form-control rounded-3" placeholder="ACB" oninput="autoFetchLogo()" />
+                                    <label asp-for="BankName" class="text-muted">Tên Ngân Hàng (VD: ACB, MB Bank, VCB)</label>
+                                    <span asp-validation-for="BankName" class="text-danger small"></span>
+                                </div>
 
-                <div class="mb-3">
-                    <label class="fw-bold control-label">Logo Ngân hàng (Ảnh)</label>
-                    <input type="file" name="logoFile" class="form-control" accept="image/*" />
-                    <small class="text-muted">Chọn ảnh logo ngân hàng (png, jpg...)</small>
-                </div>
+                                <div class="form-floating mb-3">
+                                    <input asp-for="AccountNumber" class="form-control rounded-3 fw-bold font-monospace text-primary" placeholder="0000" />
+                                    <label asp-for="AccountNumber" class="text-muted">Số Tài Khoản</label>
+                                    <span asp-validation-for="AccountNumber" class="text-danger small"></span>
+                                </div>
 
-                <div class="mb-4">
-                    <label class="fw-bold control-label">Mã QR (Ảnh)</label>
-                    <input type="file" name="qrFile" class="form-control" accept="image/*" />
-                    <small class="text-muted">Upload ảnh mã QR để khách quét cho nhanh</small>
-                </div>
+                                <div class="form-floating mb-4">
+                                    <input asp-for="AccountName" class="form-control rounded-3 text-uppercase" placeholder="NGUYEN VAN A" />
+                                    <label asp-for="AccountName" class="text-muted">Chủ Tài Khoản (Không dấu)</label>
+                                    <span asp-validation-for="AccountName" class="text-danger small"></span>
+                                </div>
 
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a asp-action="Index" class="btn btn-secondary me-md-2">Quay lại</a>
-                    <button type="submit" class="btn btn-primary fw-bold px-5">THÊM MỚI</button>
+                                @* Phần Logo - Tự động hoặc Tải lên *@
+                                <div class="p-3 border rounded-3 bg-light mb-4">
+                                    <label class="fw-bold small mb-2 d-block text-primary">Biểu tượng Ngân hàng (Logo)</label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="border rounded-3 bg-white d-flex justify-content-center align-items-center"
+                                             style="width: 80px; height: 80px; padding: 5px;">
+                                            <img id="previewLogo" src="/images/default-bank.png" class="w-100 h-100 object-fit-contain" />
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <p class="small text-muted mb-2">Hệ thống sẽ tự lấy logo theo tên ngân hàng, hoặc bạn có thể tải ảnh khác lên.</p>
+                                            <input type="file" name="logoFile" class="form-control form-control-sm" accept="image/*" onchange="previewImage(this, 'previewLogo')" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="alert alert-info py-2 small">
+                                    <i class="fa-solid fa-circle-info me-1"></i>
+                                    <strong>Ghi chú:</strong> Hệ thống đã tự động tạo mã QR động. Bạn không cần phải tải ảnh mã QR lên nữa.
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4 op-2" />
+
+                        <div class="d-flex justify-content-center gap-3">
+                            <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 fw-bold">
+                                <i class="fa-solid fa-arrow-left me-2"></i>Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm">
+                                <i class="fa-solid fa-check me-2"></i>LƯU THÔNG TIN
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
@@ -57,4 +82,49 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        // Hàm xem trước ảnh khi chọn file
+        function previewImage(input, previewId) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById(previewId).src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Hàm tự động lấy Logo từ VietQR API dựa trên tên nhập vào
+        function autoFetchLogo() {
+            const name = document.getElementById('bankNameInput').value.toUpperCase();
+            let bankCode = "";
+
+            if (name.includes("ACB")) bankCode = "ACB";
+            else if (name.includes("MB")) bankCode = "MB";
+            else if (name.includes("VIETCOM") || name.includes("VCB")) bankCode = "VCB";
+            else if (name.includes("TECHCOM") || name.includes("TCB")) bankCode = "TCB";
+            else if (name.includes("VIETIN") || name.includes("ICB")) bankCode = "ICB";
+            else if (name.includes("BIDV")) bankCode = "BIDV";
+            else if (name.includes("TPB")) bankCode = "TPB";
+            else if (name.includes("VPB")) bankCode = "VPB";
+            else if (name.includes("AGRI")) bankCode = "VBA";
+
+            if (bankCode !== "") {
+                const logoUrl = `https://img.vietqr.io/image/${bankCode}-logo.png`;
+                document.getElementById('previewLogo').src = logoUrl;
+            }
+        }
+    </script>
+
+    <style>
+        .font-monospace {
+            font-family: 'Consolas', monospace;
+            letter-spacing: 1px;
+        }
+
+        .object-fit-contain {
+            object-fit: contain;
+        }
+    </style>
 }

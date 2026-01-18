@@ -1,42 +1,116 @@
 ﻿@model WebBanTaiKhoan.Models.Product
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi tiết sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
 
-<div>
-    <h4>Product</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageUrl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageUrl)
-        </dd>
-    </dl>
+            <div class="mb-4 d-flex justify-content-between align-items-center">
+                <a href="/Admin" class="btn btn-outline-secondary btn-sm rounded-pill px-3 shadow-sm border-2 fw-bold">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Trở lại Admin
+                </a>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none">Sản phẩm</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Chi tiết</li>
+                    </ol>
+                </nav>
+            </div>
+
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="row g-0">
+                    <div class="col-md-5 bg-light d-flex align-items-center justify-content-center p-4">
+                        <div class="product-image-container shadow-sm rounded-4 overflow-hidden bg-white">
+                            <img src="@Model.ImageUrl" class="img-fluid" alt="@Model.Name"
+                                 onerror="this.src='/images/default-product.png'" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-7">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="mb-2">
+                                <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-bold">
+                                    <i class="fa-solid fa-tag me-1"></i> ID: #@Model.Id
+                                </span>
+                            </div>
+
+                            <h1 class="fw-bold text-dark mb-3">@Model.Name</h1>
+
+                            <div class="price-box mb-4 p-3 rounded-3 bg-light border-start border-4 border-primary">
+                                <label class="text-muted small fw-bold text-uppercase d-block mb-1">Giá bán niêm yết</label>
+                                <span class="text-primary fs-2 fw-800">@Model.Price.ToString("N0")đ</span>
+                            </div>
+
+                            <div class="description-box mb-4">
+                                <h5 class="fw-bold mb-2 text-muted"><i class="fa-solid fa-align-left me-2"></i>Mô tả sản phẩm:</h5>
+                                <p class="text-secondary lh-lg" style="white-space: pre-line;">
+                                    @(string.IsNullOrEmpty(Model.Description) ? "Chưa có mô tả chi tiết cho sản phẩm này." : Model.Description)
+                                </p>
+                            </div>
+
+                            <hr class="my-4 opacity-25">
+
+                            <div class="d-flex gap-3">
+                                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow hover-up">
+                                    <i class="fa-solid fa-pen-to-square me-2"></i> CHỈNH SỬA
+                                </a>
+                                <a asp-action="Index" class="btn btn-outline-dark btn-lg rounded-pill px-4 fw-bold">
+                                    <i class="fa-solid fa-list me-2"></i> DANH SÁCH
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4 text-muted small">
+                <p><i class="fa-solid fa-shield-check me-1"></i> Dữ liệu sản phẩm được quản lý bởi hệ thống <strong>NICK3S</strong></p>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+@section Scripts {
+    <style>
+        .product-image-container {
+            max-width: 100%;
+            transition: transform 0.3s ease;
+        }
+
+            .product-image-container:hover {
+                transform: scale(1.02);
+            }
+
+            .product-image-container img {
+                width: 100%;
+                height: auto;
+                object-fit: contain;
+                max-height: 400px;
+            }
+
+        .fw-800 {
+            font-weight: 800;
+        }
+
+        .hover-up {
+            transition: all 0.3s ease;
+        }
+
+            .hover-up:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 20px rgba(13, 110, 253, 0.2) !important;
+            }
+
+        .bg-primary-subtle {
+            background-color: #e7f1ff;
+        }
+
+        body {
+            background-color: #f4f7f6;
+        }
+    </style>
+}

@@ -1,0 +1,1 @@
+﻿UPDATE AspNetUsers SET Balance = 0 WHERE Balance IS NULL

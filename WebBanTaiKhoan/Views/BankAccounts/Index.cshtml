@@ -1,67 +1,100 @@
 ﻿@model IEnumerable<WebBanTaiKhoan.Models.BankAccount>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Quản lý Ngân hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary">
-        <i class="fa-solid fa-arrow-left"></i> Quay lại Admin
-    </a>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-primary mb-0"><i class="fa-solid fa-building-columns me-2"></i>QUẢN LÝ NGÂN HÀNG</h2>
+            <p class="text-muted small mb-0">Danh sách các tài khoản nhận tiền nạp tự động</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/Admin" class="btn btn-outline-secondary rounded-pill px-3 fw-bold">
+                <i class="fa-solid fa-arrow-left me-1"></i> Quay lại
+            </a>
+            <a asp-action="Create" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
+                <i class="fa-solid fa-plus me-1"></i> Thêm ngân hàng mới
+            </a>
+        </div>
+    </div>
 
-    <a asp-action="Create" class="btn btn-success fw-bold">
-        <i class="fa-solid fa-plus"></i> Tạo sản phẩm mới
-    </a>
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5 bg-white rounded-4 shadow-sm">
+            <img src="/images/empty-bank.png" style="width: 150px; opacity: 0.5" />
+            <p class="mt-3 text-muted">Chưa có ngân hàng nào được thiết lập.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-up">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-light rounded-3 p-2 me-3 d-flex align-items-center justify-content-center" style="width: 65px; height: 65px;">
+                                    <img src="@item.LogoUrl" class="img-fluid" onerror="this.src='/images/default-bank.png'" />
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold mb-0 text-primary">@item.BankName</h5>
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle small">Hoạt động</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-light rounded-3 p-3 mb-3">
+                                <div class="small text-muted mb-1 text-uppercase fw-bold" style="font-size: 10px;">Số tài khoản</div>
+                                <div class="fs-5 fw-bold font-monospace text-dark">@item.AccountNumber</div>
+
+                                <div class="small text-muted mt-2 mb-1 text-uppercase fw-bold" style="font-size: 10px;">Chủ tài khoản</div>
+                                <div class="fw-bold text-uppercase">@item.AccountName</div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2 border-top pt-3">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                    <i class="fa-solid fa-pen-to-square"></i> Sửa
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info rounded-pill px-3">
+                                    <i class="fa-solid fa-eye"></i> Chi tiết
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                                    <i class="fa-solid fa-trash"></i> Xóa
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 </div>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.BankName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AccountNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AccountName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LogoUrl)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.QrUrl)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.BankName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AccountNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AccountName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LogoUrl)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.QrUrl)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+
+@section Scripts {
+    <style>
+        .hover-up {
+            transition: all 0.3s ease;
+        }
+
+            .hover-up:hover {
+                transform: translateY(-5px);
+                shadow: 0 10px 20px rgba(0,0,0,0.1);
+            }
+
+        .font-monospace {
+            font-family: 'Consolas', monospace;
+            letter-spacing: 1px;
+        }
+
+        .bg-success-subtle {
+            background-color: #e1f6eb !important;
+        }
+
+        .text-success {
+            color: #198754 !important;
+        }
+    </style>
 }
-    </tbody>
-</table>

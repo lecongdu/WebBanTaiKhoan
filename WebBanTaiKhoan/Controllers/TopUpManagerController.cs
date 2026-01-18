@@ -3,59 +3,70 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebBanTaiKhoan.Data;
 using WebBanTaiKhoan.Models;
+using Microsoft.AspNetCore.Identity; // Cần thêm để dùng UserManager
 
 namespace WebBanTaiKhoan.Controllers
 {
-    // Chỉ Admin mới được vào trang này
     [Authorize(Roles = "Admin")]
     public class TopUpManagerController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager; // Thêm UserManager
 
-        public TopUpManagerController(ApplicationDbContext context)
+        // Cập nhật Constructor để nhận UserManager
+        public TopUpManagerController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-        // 1. Xem danh sách các đơn nạp
         public async Task<IActionResult> Index()
         {
-            // SỬA LỖI: Đổi t.Date thành t.CreatedAt để SQL có thể hiểu và sắp xếp
             var list = await _context.TopUpTransactions
                                      .OrderByDescending(t => t.CreatedAt)
                                      .ToListAsync();
             return View(list);
         }
 
-        // 2. DUYỆT ĐƠN (Approve) -> Cộng tiền trực tiếp vào ví người dùng
+        // 2. DUYỆT ĐƠN (Approve) - ĐÃ SỬA LỖI CỘNG TIỀN
         public async Task<IActionResult> Approve(int id)
         {
             var transaction = await _context.TopUpTransactions.FindAsync(id);
 
             if (transaction != null && transaction.Status == "Pending")
             {
-                // Tìm người dùng sở hữu giao dịch này
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == transaction.UserId);
+                // Tìm người dùng bằng UserManager để đảm bảo tính đồng bộ của Identity
+                var user = await _userManager.FindByIdAsync(transaction.UserId);
 
                 if (user != null)
                 {
-                    // GIẢ SỬ: Bạn dùng Identity và có cột Wallet hoặc Balance trong bảng Users
-                    // Nếu bạn dùng bảng riêng cho số dư, hãy gọi bảng đó ở đây.
-                    // user.Wallet += transaction.Amount; 
+                    // THỰC HIỆN CỘNG TIỀN VÀO CỘT BALANCE
+                    user.Balance += transaction.Amount;
 
-                    // Đánh dấu thành công
+                    // Cập nhật trạng thái giao dịch
                     transaction.Status = "Success";
 
-                    _context.Update(transaction);
-                    await _context.SaveChangesAsync();
-
-                    TempData["Success"] = $"Đã duyệt thành công {transaction.Amount:N0}đ cho khách hàng.";
+                    // Lưu thay đổi của User và Giao dịch
+                    var updateResult = await _userManager.UpdateAsync(user);
+                    if (updateResult.Succeeded)
+                    {
+                        _context.Update(transaction);
+                        await _context.SaveChangesAsync();
+                        TempData["Success"] = $"Đã cộng {transaction.Amount:N0}đ vào ví của {user.Email}.";
+                    }
+                    else
+                    {
+                        TempData["Error"] = "Lỗi khi cập nhật số dư người dùng.";
+                    }
+                }
+                else
+                {
+                    TempData["Error"] = "Không tìm thấy người dùng này.";
                 }
             }
             return RedirectToAction("Index");
         }
 
-        // 3. HỦY ĐƠN (Reject) -> Chuyển thành Cancelled
         public async Task<IActionResult> Reject(int id)
         {
             var transaction = await _context.TopUpTransactions.FindAsync(id);
@@ -68,7 +79,6 @@ namespace WebBanTaiKhoan.Controllers
             return RedirectToAction("Index");
         }
 
-        // 4. Xóa lịch sử (Dọn dẹp)
         public async Task<IActionResult> Delete(int id)
         {
             var transaction = await _context.TopUpTransactions.FindAsync(id);

@@ -1,38 +1,95 @@
 ﻿@model WebBanTaiKhoan.Models.Category
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Thêm Danh Mục Mới";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
 
-<h4>Category</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+            <div class="mb-3 d-flex justify-content-start">
+                <a href="/Admin" class="btn btn-outline-secondary btn-sm rounded-pill px-3 shadow-sm border-2 fw-bold">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Trở lại Admin
+                </a>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header border-0 py-3" style="background: linear-gradient(135deg, #0d6efd 0%, #0046af 100%);">
+                    <h4 class="mb-0 fw-bold text-center text-white">
+                        <i class="fa-solid fa-layer-group me-2"></i>THÊM DANH MỤC MỚI
+                    </h4>
+                </div>
+
+                <div class="card-body p-4 p-md-5 bg-white">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3 fw-bold"></div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Name" class="form-control rounded-3 border-2 shadow-sm" placeholder="Netflix Premium" />
+                            <label asp-for="Name" class="text-muted fw-bold">Tên danh mục (VD: Giải trí, Học tập...)</label>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <textarea asp-for="Description" class="form-control rounded-3 border-2 shadow-sm" placeholder="Mô tả" style="height: 120px"></textarea>
+                            <label asp-for="Description" class="text-muted fw-bold">Mô tả ngắn về danh mục</label>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="alert alert-info py-2 mb-4 border-0 shadow-sm" style="background-color: #e7f1ff;">
+                            <small class="text-primary fw-bold">
+                                <i class="fa-solid fa-circle-info me-1"></i>
+                                Lưu ý: Danh mục này sẽ hiển thị trực tiếp trên thanh menu chính.
+                            </small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm hover-up py-3">
+                                <i class="fa-solid fa-cloud-arrow-up me-1"></i> LƯU DANH MỤC NGAY
+                            </button>
+                            <a asp-action="Index" class="btn btn-link text-decoration-none text-muted fw-bold mt-2">
+                                <i class="fa-solid fa-list me-1"></i> Quay lại danh sách quản lý
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <style>
+        /* Hiệu ứng khi focus vào ô nhập liệu */
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        }
+
+        /* Hiệu ứng di chuột cho nút bấm chính */
+        .hover-up {
+            transition: all 0.3s ease;
+        }
+
+            .hover-up:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 15px rgba(13, 110, 253, 0.3);
+                filter: brightness(1.1);
+            }
+
+        /* Cấu trúc nhãn nổi đẹp hơn */
+        .form-floating > label {
+            padding-left: 1.25rem;
+        }
+
+        body {
+            background-color: #f0f2f5;
+        }
+    </style>
 }

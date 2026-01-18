@@ -3,42 +3,50 @@
 @using Newtonsoft.Json
 @using WebBanTaiKhoan.Models
 @using Microsoft.EntityFrameworkCore
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @inject ApplicationDbContext _database
 
 @{
-    // 1. TÍNH TOÁN SỐ DƯ
+    // 1. LẤY SỐ DƯ THỰC TẾ VÀ QUYỀN
     decimal userBalance = 0;
+    string userName = "";
+    string userId = "";
+    bool isAdmin = false;
+    bool isStaff = false;
+
     if (SignInManager.IsSignedIn(User))
     {
-        try
+        var user = UserManager.GetUserAsync(User).Result;
+        if (user != null)
         {
-            var userId = UserManager.GetUserId(User);
-            decimal totalDeposit = _database.TopUpTransactions
-                .Where(t => t.UserId == userId && t.Status == "Success")
-                .Sum(t => (decimal?)t.Amount) ?? 0;
-
-            decimal totalSpent = _database.Orders
-                .Where(o => o.UserId == userId)
-                .Sum(o => (decimal?)o.TotalAmount) ?? 0;
-
-            userBalance = totalDeposit - totalSpent;
+            userBalance = user.Balance;
+            userName = user.UserName;
+            userId = user.Id;
         }
-        catch { userBalance = 0; }
+
+        isAdmin = User.IsInRole("Admin");
+        isStaff = isAdmin || User.IsInRole("Collaborator") || User.IsInRole("usert");
     }
 
-    // 2. GIỎ HÀNG
+    // 2. GIỎ HÀNG (ĐỌC TỪ DATABASE THEO USER)
     int cartCount = 0;
-    var sessionData = Context.Session.GetString("ShopCart");
-    if (!string.IsNullOrEmpty(sessionData))
+    if (SignInManager.IsSignedIn(User))
     {
-        var cart = JsonConvert.DeserializeObject<List<CartItem>>(sessionData);
-        cartCount = cart.Sum(x => x.Quantity);
+        cartCount = _database.CartItems.Where(c => c.UserId == userId).Sum(c => (int?)c.Quantity) ?? 0;
+    }
+    else
+    {
+        var sessionData = Context.Session.GetString("ShopCart");
+        if (!string.IsNullOrEmpty(sessionData))
+        {
+            var cart = JsonConvert.DeserializeObject<List<CartItem>>(sessionData);
+            cartCount = cart?.Sum(x => x.Quantity) ?? 0;
+        }
     }
 
     // 3. CÀI ĐẶT & DANH MỤC
-    var settings = _database.SystemSettings.FirstOrDefault();
+    var settings = _database.SystemSettings.AsNoTracking().FirstOrDefault();
     var phone = settings?.ContactPhone ?? "0943510229";
     var zalo = settings?.ContactZalo ?? phone;
     var categories = _database.Category.AsNoTracking().ToList();
@@ -57,6 +65,7 @@
         :root {
             --nick3s-primary: #0061ff;
             --nick3s-dark: #1a202c;
+            --nick3s-gold: #ffc107;
         }
 
         body {
@@ -66,7 +75,6 @@
             padding: 0;
         }
 
-        /* HEADER */
         .main-header {
             background: #ffffff;
             border-bottom: 1px solid #edf2f7;
@@ -96,7 +104,6 @@
             color: #adb5bd;
         }
 
-        /* THANH DANH MỤC */
         .sub-nav-wrapper {
             background: #ffffff !important;
             border-bottom: 1px solid #edf2f7;
@@ -114,13 +121,18 @@
             text-decoration: none;
             white-space: nowrap;
             transition: 0.2s;
+            display: flex;
+            align-items: center;
         }
 
             .sub-nav a:hover {
                 color: var(--nick3s-primary);
             }
 
-        /* WIDGETS */
+        .nav-highlight {
+            color: var(--nick3s-gold) !important;
+        }
+
         .balance-box {
             background: #f8f9fa;
             border: 1px solid #edf2f7;
@@ -130,6 +142,13 @@
             align-items: center;
             gap: 6px;
             white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .balance-link:hover .balance-box {
+            background: #eef4ff;
+            border-color: var(--nick3s-primary);
+            transform: translateY(-2px);
         }
 
         .btn-action {
@@ -157,7 +176,6 @@
             display: none;
         }
 
-        /* FOOTER NÂNG CẤP */
         .main-footer {
             background: var(--nick3s-dark);
             color: #e2e8f0;
@@ -205,7 +223,6 @@
                 opacity: 1;
             }
 
-        /* SOCIAL LINKS STYLE */
         .social-links-footer a {
             color: #a0aec0;
             font-size: 1.5rem;
@@ -217,44 +234,36 @@
                 transform: translateY(-3px);
             }
 
-        .social-links-footer .fb-icon:hover {
-            color: #1877F2;
-        }
-
-        .social-links-footer .yt-icon:hover {
-            color: #FF0000;
-        }
-
-        .social-links-footer .tt-icon:hover {
-            color: #ffffff;
-        }
-
-        /* NÚT CSKH NỔI */
         .cskh-float {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--nick3s-primary);
+            bottom: 110px;
+            right: 25px;
+            background: #25d366;
             color: white;
-            padding: 12px 25px;
+            padding: 12px 22px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 700;
             z-index: 9999;
-            box-shadow: 0 10px 20px rgba(0,97,255,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             transition: 0.3s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
         }
 
             .cskh-float:hover {
                 transform: translateY(-5px);
                 color: white;
+                box-shadow: 0 6px 20px rgba(37,211,102,0.4);
             }
 
-        /* DROPDOWN CUSTOM */
         .dropdown-menu {
             border-radius: 12px;
             padding: 8px;
             min-width: 220px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: none;
         }
 
         .dropdown-item {
@@ -269,6 +278,15 @@
                 width: 25px;
                 font-size: 1.1rem;
             }
+
+        .dropdown-header-custom {
+            font-size: 11px;
+            font-weight: 800;
+            color: #adb5bd;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 5px 15px;
+        }
     </style>
 </head>
 <body>
@@ -294,44 +312,30 @@
                     {
                         <div class="dropdown">
                             <button class="btn-action dropdown-toggle shadow-sm" data-bs-toggle="dropdown">
-                                <img src="https://ui-avatars.com/api/?name=@User.Identity.Name&background=0D8ABC&color=fff" class="rounded-circle" width="22" />
-                                <span class="small d-none d-xl-inline">@User.Identity.Name</span>
+                                <img src="https://ui-avatars.com/api/?name=@userName&background=0D8ABC&color=fff" class="rounded-circle" width="22" />
+                                <span class="small d-none d-xl-inline">@userName</span>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2">
-                                <li>
-                                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
-                                        <i class="fa-solid fa-user-gear text-info"></i> Quản lý hồ sơ
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-controller="Orders" asp-action="MyOrders">
-                                        <i class="fa-solid fa-clock-rotate-left text-primary"></i> Lịch sử mua
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-controller="Orders" asp-action="DepositHistory">
-                                        <i class="fa-solid fa-wallet text-success"></i> Lịch sử nạp
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-controller="Home" asp-action="Deposit">
-                                        <i class="fa-solid fa-circle-plus text-warning"></i> Nạp tiền ví
-                                    </a>
-                                </li>
+                            <ul class="dropdown-menu dropdown-menu-end mt-2">
+                                <div class="dropdown-header-custom">Cá nhân</div>
+                                <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index"><i class="fa-solid fa-user-gear text-info"></i> Quản lý hồ sơ</a></li>
+                                <li><a class="dropdown-item" asp-controller="Orders" asp-action="MyOrders"><i class="fa-solid fa-clock-rotate-left text-primary"></i> Lịch sử mua</a></li>
+                                <li><a class="dropdown-item" asp-controller="Orders" asp-action="DepositHistory"><i class="fa-solid fa-wallet text-success"></i> Lịch sử nạp</a></li>
+                                <li><a class="dropdown-item" asp-controller="Home" asp-action="Deposit"><i class="fa-solid fa-circle-plus text-warning"></i> Nạp tiền ví</a></li>
 
-                                @if (User.IsInRole("Admin"))
+                                @if (isStaff)
                                 {
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
-                                        <a class="dropdown-item fw-bold text-danger" asp-controller="Admin" asp-action="Index">
-                                            <i class="fa-solid fa-shield-halved"></i> TRANG QUẢN TRỊ
+                                        <a class="dropdown-item fw-bold text-danger py-2" asp-controller="Admin" asp-action="Index">
+                                            <i class="fa-solid fa-screwdriver-wrench"></i> TRUNG TÂM QUẢN TRỊ
                                         </a>
                                     </li>
                                 }
+
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                                        <button type="submit" class="dropdown-item text-danger border-0 bg-transparent w-100">
+                                        <button type="submit" class="dropdown-item text-danger border-0 bg-transparent w-100 text-start">
                                             <i class="fa-solid fa-power-off"></i> Đăng xuất
                                         </button>
                                     </form>
@@ -339,10 +343,13 @@
                             </ul>
                         </div>
 
-                        <div class="balance-box shadow-sm">
-                            <i class="fa-solid fa-coins text-warning"></i>
-                            <span class="fw-bold text-primary small">@userBalance.ToString("#,##0")đ</span>
-                        </div>
+                        <a asp-controller="Home" asp-action="Deposit" class="text-decoration-none balance-link">
+                            <div class="balance-box shadow-sm" title="Nạp tiền ngay">
+                                <i class="fa-solid fa-coins text-warning"></i>
+                                <span class="fw-bold text-primary small">@userBalance.ToString("#,##0")đ</span>
+                                <i class="fa-solid fa-circle-plus text-primary small ms-1 animate__animated animate__pulse animate__infinite"></i>
+                            </div>
+                        </a>
                     }
                     else
                     {
@@ -365,12 +372,11 @@
         <div class="container">
             <div class="sub-nav d-flex align-items-center overflow-auto no-scrollbar">
                 <a asp-controller="Home" asp-action="Index" asp-route-categoryId=""><i class="fa-solid fa-house-chimney me-2"></i> Trang chủ</a>
+                <a asp-controller="Home" asp-action="TopDeposit" class="nav-highlight"><i class="fa-solid fa-crown me-2 text-warning"></i> BXH Đại Gia</a>
                 @foreach (var cat in categories)
                 {
                     var iconClass = cat.Name.ToLower().Contains("game") ? "fa-gamepad" : "fa-layer-group";
-                    <a asp-controller="Home" asp-action="Index" asp-route-categoryId="@cat.Id">
-                        <i class="fa-solid @iconClass me-2 opacity-50"></i> @cat.Name
-                    </a>
+                    <a asp-controller="Home" asp-action="Index" asp-route-categoryId="@cat.Id"><i class="fa-solid @iconClass me-2 opacity-50"></i> @cat.Name</a>
                 }
                 <a asp-controller="Home" asp-action="Contact"><i class="fa-solid fa-headset me-2"></i> Liên hệ</a>
             </div>
@@ -383,53 +389,87 @@
 
     <footer class="main-footer pt-5 pb-4">
         <div class="container">
-            <div class="row mb-5 border-bottom border-secondary pb-4">
-                <div class="col-12 d-flex flex-wrap gap-4 align-items-center justify-content-center justify-content-md-start">
-                    <span class="small text-uppercase opacity-50 fw-bold">Thanh toán qua:</span>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" class="payment-logo" alt="Visa">
+            <div class="row g-4 border-bottom border-secondary pb-4 mb-4 text-center text-md-start">
+                <div class="col-md-6">
+                    <span class="small text-uppercase opacity-50 fw-bold me-3">Thanh toán qua:</span>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" class="payment-logo me-3" alt="Visa">
                     <img src="https://cdn.haitrieu.com/wp-content/uploads/2022/10/Logo-MoMo-Transparent.png" class="payment-logo" alt="MoMo">
                 </div>
-            </div>
-            <div class="row g-4">
-                <div class="col-lg-3 col-md-6">
-                    <h6 class="footer-title">Về NICK3S</h6>
-                    <p class="small text-muted mb-4 pe-3">
-                        @(settings?.FooterAbout ?? "Hệ thống phân phối tài khoản số uy tín hàng đầu Việt Nam. Giao dịch tự động, nhanh chóng và bảo mật.")
-                    </p>
+                <div class="col-md-6 text-md-end social-links-footer">
+                    <a href="@(settings?.FacebookUrl ?? "#")" target="_blank" class="me-3"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="@(settings?.YoutubeUrl ?? "#")" target="_blank" class="me-3"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="@(settings?.TiktokUrl ?? "#")" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
                 </div>
-                <div class="col-lg-3 col-md-6">
+            </div>
+            <div class="row g-4 text-center text-md-start">
+                <div class="col-lg-4 col-md-6">
+                    <h6 class="footer-title">Về NICK3S</h6>
+                    <p class="small text-muted pe-3">@(settings?.FooterAbout ?? "Hệ thống phân phối tài khoản số uy tín.")</p>
+                </div>
+                <div class="col-lg-4 col-md-6">
                     <h6 class="footer-title">Hỗ trợ khách hàng</h6>
                     <ul class="footer-links">
+                        @* 🟢 ĐÃ THÊM LINK VỀ TRANG LIÊN HỆ TẠI ĐÂY *@
                         <li><a asp-controller="Home" asp-action="Contact">Hướng dẫn mua hàng</a></li>
-                        <li><a asp-controller="Home" asp-action="Deposit">Hướng dẫn nạp tiền</a></li>
-                        <li><a asp-controller="Home" asp-action="Contact">Câu hỏi thường gặp</a></li>
+                        <li><a asp-controller="Home" asp-action="Contact">Hướng dẫn nạp tiền</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <h6 class="footer-title">Liên hệ</h6>
+                <div class="col-lg-4 col-md-6">
+                    <h6 class="footer-title">Thông tin liên hệ</h6>
                     <p class="small text-muted mb-1">Hotline: <strong>@phone</strong></p>
-                    <p class="small text-muted mb-3">Zalo: <strong>@zalo</strong></p>
-
-                    @* PHẦN NÚT MẠNG XÃ HỘI HIỆN CỐ ĐỊNH *@
-                    <div class="d-flex gap-3 social-links-footer">
-                        <a href="@(settings?.FacebookUrl ?? "https://facebook.com")" class="fb-icon" target="_blank"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="@(settings?.YoutubeUrl ?? "https://youtube.com")" class="yt-icon" target="_blank"><i class="fa-brands fa-youtube"></i></a>
-                        <a href="@(settings?.TiktokUrl ?? "https://tiktok.com")" class="tt-icon" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 text-md-end">
-                    <p class="small opacity-50">&copy; @DateTime.Now.Year Nick3s. Giao dịch tự động 24/7.</p>
+                    <p class="small text-muted">Zalo: <strong>@zalo</strong></p>
+                    <p class="small opacity-50">&copy; @DateTime.Now.Year Nick3s.</p>
                 </div>
             </div>
         </div>
     </footer>
 
-    <a href="https://zalo.me/@zalo" class="cskh-float" target="_blank" title="Chat qua Zalo ngay">
-        <i class="fa-solid fa-headset me-2"></i> Hỗ trợ Zalo
-    </a>
+    <a href="https://zalo.me/@zalo" class="cskh-float" target="_blank"><i class="fa-solid fa-comment-dots me-2"></i> Hỗ trợ Zalo</a>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script type="text/javascript">
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        (function(){
+        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+        s1.async=true;
+        s1.src='https://embed.tawk.to/696b91ac080157197cafc002/1jf6323eu';
+        s1.charset='UTF-8';
+        s1.setAttribute('crossorigin','*');
+        s0.parentNode.insertBefore(s1,s0);
+        })();
+    </script>
+
+    <script>
+        var successMsg = '@Html.Raw(TempData["Success"])';
+        var errorMsg = '@Html.Raw(TempData["Error"])';
+
+        if (successMsg && successMsg !== '') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                html: successMsg,
+                timer: 3000,
+                showConfirmButton: false,
+                background: '#ffffff',
+                customClass: { popup: 'rounded-4 shadow' }
+            });
+        }
+
+        if (errorMsg && errorMsg !== '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Thất bại!',
+                html: errorMsg,
+                confirmButtonColor: '#0061ff',
+                background: '#ffffff',
+                customClass: { popup: 'rounded-4 shadow' }
+            });
+        }
+    </script>
 </body>
 </html>

@@ -1,48 +1,91 @@
 ﻿@model WebBanTaiKhoan.Models.Order
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Tạo đơn hàng mới";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h1>Create</h1>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-primary">
+            <i class="fa-solid fa-cart-plus me-2"></i>Tạo đơn hàng thủ công
+        </h3>
+        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+            <i class="fa-solid fa-arrow-left me-2"></i>Quay lại danh sách
+        </a>
+    </div>
 
-<h4>Order</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" />
-                <span asp-validation-for="UserId" class="text-danger"></span>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-gradient-primary text-white py-3">
+                    <h6 class="m-0 fw-bold"><i class="fa-solid fa-pen-nib me-2"></i>Thông tin đơn hàng</h6>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="UserId" class="form-label fw-bold text-muted">Khách hàng</label>
+                            <select asp-for="UserId" class="form-select form-select-lg" asp-items="ViewBag.UserId">
+                                <option value="">-- Chọn khách hàng --</option>
+                            </select>
+                            <span asp-validation-for="UserId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ProductId" class="form-label fw-bold text-muted">Sản phẩm</label>
+                            <select asp-for="ProductId" class="form-select" asp-items="ViewBag.ProductId">
+                                <option value="">-- Chọn sản phẩm --</option>
+                            </select>
+                            <span asp-validation-for="ProductId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="TotalAmount" class="form-label fw-bold text-muted">Tổng tiền (VNĐ)</label>
+                                <div class="input-group">
+                                    <input asp-for="TotalAmount" class="form-control fw-bold text-success" type="number" placeholder="0" />
+                                    <span class="input-group-text">đ</span>
+                                </div>
+                                <span asp-validation-for="TotalAmount" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Status" class="form-label fw-bold text-muted">Trạng thái</label>
+                                <select asp-for="Status" class="form-select fw-bold">
+                                    <option value="Completed" class="text-success">Completed (Hoàn thành)</option>
+                                    <option value="Pending" class="text-warning">Pending (Đang chờ)</option>
+                                    <option value="Cancelled" class="text-danger">Cancelled (Đã hủy)</option>
+                                </select>
+                                <span asp-validation-for="Status" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-muted">Mã đơn hàng</label>
+                            <input type="text" class="form-control bg-light" value="(Tự động sinh khi lưu)" readonly />
+                        </div>
+
+                        <div class="alert alert-warning border-0 small">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                            <strong>Lưu ý:</strong> Tạo đơn hàng thủ công tại đây sẽ <strong>KHÔNG</strong> tự động trừ kho hoặc gán tài khoản (AccountItems) cho khách. Chức năng này chỉ dùng để ghi nhận giao dịch ngoài luồng hoặc sửa lỗi data.
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm fw-bold">
+                                <i class="fa-solid fa-save me-2"></i>Lưu đơn hàng
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="OrderDate" class="control-label"></label>
-                <input asp-for="OrderDate" class="form-control" />
-                <span asp-validation-for="OrderDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TotalAmount" class="control-label"></label>
-                <input asp-for="TotalAmount" class="form-control" />
-                <span asp-validation-for="TotalAmount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SoldAccountInfo" class="control-label"></label>
-                <input asp-for="SoldAccountInfo" class="form-control" />
-                <span asp-validation-for="SoldAccountInfo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

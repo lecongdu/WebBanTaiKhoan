@@ -13,8 +13,15 @@
         </ol>
     </nav>
 
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger fw-bold shadow-sm">
+            <i class="fa-solid fa-circle-exclamation me-2"></i> @TempData["Error"]
+        </div>
+    }
+
     <div class="row g-4">
-        @* --- CỘT 1: HÌNH ẢNH (Chiếm 4/12) --- *@
+        @* --- CỘT 1: HÌNH ẢNH --- *@
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden sticky-top" style="top: 100px;">
                 <img src="@Model.ImageUrl" class="img-fluid w-100" alt="@Model.Name">
@@ -24,7 +31,7 @@
             </div>
         </div>
 
-        @* --- CỘT 2: MÔ TẢ CHI TIẾT (Chiếm 5/12) --- *@
+        @* --- CỘT 2: MÔ TẢ --- *@
         <div class="col-lg-5">
             <div class="product-main-info mb-4">
                 <h1 class="fw-bold h3 text-dark mb-3">@Model.Name</h1>
@@ -33,25 +40,24 @@
                     <span class="text-muted"><i class="fa-solid fa-barcode me-1"></i> Mã: #@Model.Id</span>
                 </div>
                 <hr class="opacity-10">
-
                 <h5 class="fw-bold text-primary mb-3 text-uppercase small tracking-wider">Thông tin sản phẩm</h5>
                 <div class="product-description text-dark lh-lg">
                     @Html.Raw(Model.Description)
                 </div>
             </div>
-
             <div class="p-3 rounded-4 bg-primary bg-opacity-10 border border-primary border-opacity-25">
                 <h6 class="fw-bold text-primary mb-2"><i class="fa-solid fa-shield-check me-2"></i>Chế độ bảo hành</h6>
-                <p class="small mb-0 text-dark">Cam kết bảo hành 1 đổi 1 trong suốt thời gian sử dụng nếu tài khoản gặp lỗi từ phía nhà cung cấp.</p>
+                <p class="small mb-0 text-dark">Cam kết bảo hành 1 đổi 1 trong suốt thời gian sử dụng.</p>
             </div>
         </div>
 
-        @* --- CỘT 3: Ô MUA HÀNG (Chiếm 3/12) - GÓC BÊN PHẢI --- *@
+        @* --- CỘT 3: MUA HÀNG --- *@
         <div class="col-lg-3">
             <div class="card border-0 shadow-lg rounded-4 p-4 sticky-top bg-white border-top border-primary border-4" style="top: 100px;">
                 <div class="price-section mb-4">
                     <p class="text-muted small mb-1">Giá bán hiện tại:</p>
-                    <h2 class="fw-bold text-danger mb-0">@Model.Price.ToString("#,##0")đ</h2>
+                    @* Thêm id và data-price để JavaScript lấy giá gốc *@
+                    <h2 class="fw-bold text-danger mb-0" id="unitPrice" data-price="@Model.Price">@Model.Price.ToString("#,##0")đ</h2>
                     <del class="text-muted small">@((Model.Price * 1.5m).ToString("#,##0"))đ</del>
                 </div>
 
@@ -70,23 +76,37 @@
 
                 @if (stockCount > 0)
                 {
-                    <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                    <form method="post">
                         <input type="hidden" name="productId" value="@Model.Id" />
 
-                        <div class="quantity-select mb-4">
+                        <div class="quantity-select mb-3">
                             <label class="fw-bold small mb-2 text-uppercase">Số lượng mua:</label>
                             <div class="input-group">
-                                <button type="button" class="btn btn-outline-secondary px-3" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">-</button>
-                                <input type="number" name="quantity" value="1" min="1" max="@stockCount" class="form-control text-center fw-bold border-secondary border-opacity-25" />
-                                <button type="button" class="btn btn-outline-secondary px-3" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">+</button>
+                                <button type="button" class="btn btn-outline-secondary px-3" onclick="updateQty(-1)">-</button>
+                                @* Gán ID buyQuantity và sự kiện oninput *@
+                                <input type="number" id="buyQuantity" name="quantity" value="1" min="1" max="@stockCount"
+                                       class="form-control text-center fw-bold border-secondary border-opacity-25 shadow-none"
+                                       oninput="calculateTotal()" />
+                                <button type="button" class="btn btn-outline-secondary px-3" onclick="updateQty(1)">+</button>
                             </div>
                         </div>
 
+                        @* Hiển thị Tạm tính *@
+                        <div class="d-flex justify-content-between align-items-center mb-4 p-2 bg-light rounded-3 border border-dashed">
+                            <span class="small fw-bold text-muted">Tạm tính:</span>
+                            <span class="fw-bold text-primary fs-5" id="totalAmount">@Model.Price.ToString("#,##0")đ</span>
+                        </div>
+
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary py-3 fw-bold rounded-3 shadow">
+                            <button type="submit"
+                                    asp-controller="Orders" asp-action="BuyNow"
+                                    class="btn btn-primary py-3 fw-bold rounded-3 shadow">
                                 <i class="fa-solid fa-bolt me-2"></i> MUA NGAY
                             </button>
-                            <button type="submit" class="btn btn-outline-primary py-2 fw-bold rounded-3">
+
+                            <button type="submit"
+                                    asp-controller="Cart" asp-action="AddToCart"
+                                    class="btn btn-outline-primary py-2 fw-bold rounded-3">
                                 <i class="fa-solid fa-cart-plus me-2"></i> Thêm vào giỏ
                             </button>
                         </div>
@@ -94,17 +114,15 @@
                 }
                 else
                 {
-                    <button class="btn btn-secondary py-3 w-100 disabled rounded-3">LIÊN HỆ LẠI SAU</button>
+                    <button class="btn btn-secondary py-3 w-100 disabled rounded-3">HẾT HÀNG</button>
                 }
 
                 <div class="mt-4 pt-3 border-top border-light">
                     <div class="d-flex align-items-center mb-2 small">
-                        <i class="fa-solid fa-truck-fast text-muted me-3"></i>
-                        <span>Giao hàng ngay lập tức</span>
+                        <i class="fa-solid fa-truck-fast text-muted me-3"></i> <span>Giao hàng tự động</span>
                     </div>
                     <div class="d-flex align-items-center small">
-                        <i class="fa-solid fa-headset text-muted me-3"></i>
-                        <span>Hỗ trợ kỹ thuật 24/7</span>
+                        <i class="fa-solid fa-headset text-muted me-3"></i> <span>Hỗ trợ 24/7</span>
                     </div>
                 </div>
             </div>
@@ -141,4 +159,42 @@
     .sticky-top {
         transition: all 0.3s;
     }
+
+    .border-dashed {
+        border-style: dashed !important;
+    }
 </style>
+
+@section Scripts {
+    <script>
+        function calculateTotal() {
+            // Lấy đơn giá từ thuộc tính data-price
+            const price = parseInt(document.getElementById('unitPrice').getAttribute('data-price'));
+            const quantityInput = document.getElementById('buyQuantity');
+            const totalDisplay = document.getElementById('totalAmount');
+
+            let quantity = parseInt(quantityInput.value);
+            const maxStock = parseInt(quantityInput.getAttribute('max'));
+
+            // Kiểm tra tính hợp lệ của số lượng
+            if (isNaN(quantity) || quantity < 1) quantity = 1;
+            if (quantity > maxStock) quantity = maxStock;
+
+            // Cập nhật lại ô nhập nếu người dùng nhập lố
+            if(quantityInput.value !== "") {
+                quantityInput.value = quantity;
+            }
+
+            // Tính tổng và định dạng tiền tệ VNĐ
+            const total = price * quantity;
+            totalDisplay.innerText = total.toLocaleString('vi-VN') + 'đ';
+        }
+
+        function updateQty(step) {
+            const input = document.getElementById('buyQuantity');
+            let currentVal = parseInt(input.value) || 1;
+            input.value = currentVal + step;
+            calculateTotal(); // Gọi tính toán lại sau khi bấm +/-
+        }
+    </script>
+}

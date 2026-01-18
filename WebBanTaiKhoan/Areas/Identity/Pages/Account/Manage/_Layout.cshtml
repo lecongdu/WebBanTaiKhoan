@@ -1,26 +1,75 @@
 ﻿@{
-    Layout = "/Views/Shared/_Layout.cshtml"; // Dùng layout chính của web
+    // Dùng layout chính của web
+    Layout = "/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-5">
+<div class="container mt-5 pb-5">
     <div class="row g-4">
-        <div class="col-12">
-            <h2 class="fw-bold"><i class="fa-solid fa-user-gear me-2 text-primary"></i>CÀI ĐẶT TÀI KHOẢN</h2>
-            <hr class="opacity-10">
+        @* Tiêu đề trang *@
+        <div class="col-12 mb-2">
+            <div class="d-flex align-items-center">
+                <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                    <i class="fa-solid fa-user-gear fs-4 text-primary"></i>
+                </div>
+                <div>
+                    <h2 class="fw-bold mb-0">CÀI ĐẶT TÀI KHOẢN</h2>
+                    <p class="text-muted small mb-0">Quản lý thông tin cá nhân và bảo mật của bạn</p>
+                </div>
+            </div>
         </div>
 
         @* Thanh menu bên trái *@
         <div class="col-lg-3">
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                <partial name="_ManageNav" />
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden nav-manage-card">
+                <div class="card-body p-0">
+                    <partial name="_ManageNav" />
+                </div>
             </div>
         </div>
 
         @* Nội dung bên phải *@
         <div class="col-lg-9">
-            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white min-vh-50">
                 @RenderBody()
             </div>
         </div>
     </div>
 </div>
+
+@* --- ĐOẠN CODE QUAN TRỌNG ĐỂ FIX LỖI --- *@
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .min-vh-50 {
+        min-height: 50vh;
+    }
+
+    .rounded-4 {
+        border-radius: 1.25rem !important;
+    }
+
+    /* Làm đẹp menu bên trái */
+    .nav-manage-card .nav-pills .nav-link {
+        border-radius: 0;
+        padding: 12px 20px;
+        color: #4b5563;
+        font-weight: 500;
+        border-left: 4px solid transparent;
+    }
+
+        .nav-manage-card .nav-pills .nav-link.active {
+            background-color: #f0f7ff;
+            color: #0d6efd;
+            border-left-color: #0d6efd;
+        }
+
+        .nav-manage-card .nav-pills .nav-link:hover:not(.active) {
+            background-color: #f9fafb;
+        }
+</style>

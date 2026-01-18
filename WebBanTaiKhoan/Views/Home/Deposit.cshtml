@@ -1,81 +1,183 @@
 ﻿@model IEnumerable<WebBanTaiKhoan.Models.BankAccount>
 @{
-    ViewData["Title"] = "Nạp tiền";
-    string username = User.Identity.Name ?? "KHACH";
-    // Tạo mã nạp rút gọn từ tên đăng nhập
-    string codeNap = username.Contains("@") ? username.Split('@')[0] : username;
-    codeNap = System.Text.RegularExpressions.Regex.Replace(codeNap, "[^a-zA-Z0-9]", "");
-    string transferContent = $"NAP {codeNap.ToUpper()}";
+    ViewData["Title"] = "Nạp tiền tự động";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string username = User.Identity?.Name ?? "KHACH";
+    string codeNap = System.Text.RegularExpressions.Regex.Replace(username.Split('@')[0], "[^a-zA-Z0-9]", "").ToUpper();
+    string transferContent = $"NAP {codeNap}";
+
+    var customCss = @"
+        .hover-up:hover { transform: translateY(-3px); transition: 0.3s; }
+        .success-box { background: #ffffff; border-radius: 20px; padding: 50px 30px; text-align: center; }
+        .qr-card { border: 2px dashed #dee2e6; border-radius: 15px; padding: 20px; background: #fff; }
+        .bank-select-lg { height: 55px; font-size: 1.1rem; font-weight: 600; cursor: pointer; }
+        .header-logo-container { width: 60px; height: 60px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 5px; border: 2px solid rgba(255,255,255,0.2); }
+        .note-danger { background: #fff5f5; border-left: 4px solid #f56565; color: #c53030; }
+        .recovering-badge { position: absolute; top: 10px; right: 10px; font-size: 10px; z-index: 10; }
+    ";
 }
 
-<div class="container mt-5">
-    <h2 class="text-center fw-bold text-success mb-4">💰 TRUNG TÂM NẠP TIỀN</h2>
+<style>
+    @Html.Raw(customCss)
+</style>
 
-    @if (TempData["Success"] != null)
+<div class="container py-5">
+    @if (TempData["DepositSuccess"] != null)
     {
-        <div class="alert alert-success text-center fw-bold">@TempData["Success"]</div>
-    }
-
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card shadow border-primary">
-                <div class="card-header bg-primary text-white fw-bold fs-5 text-center">
-                    <i class="fa-solid fa-qrcode"></i> CHUYỂN KHOẢN TỰ ĐỘNG (VIETQR)
+        <div class="row justify-content-center animate__animated animate__fadeIn">
+            <div class="col-md-7">
+                <div class="success-box shadow-lg border-top border-5 border-success">
+                    <div class="mb-4">
+                        <i class="fa-solid fa-circle-check text-success" style="font-size: 90px;"></i>
+                    </div>
+                    <h2 class="fw-bold text-dark mb-3">Yêu cầu đã được gửi!</h2>
+                    <p class="fs-5 text-muted mb-5">
+                        Chúng tôi đã ghi nhận lệnh nạp <strong>@TempData["DepositAmount"]đ</strong> của bạn. <br />
+                        Tiền sẽ được cộng tự động vào ví sau <strong>1 - 3 phút</strong>.
+                    </p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="/" class="btn btn-light rounded-pill px-5 py-2 fw-bold border">Trang chủ</a>
+                        <a asp-action="Deposit" class="btn btn-success rounded-pill px-5 py-2 fw-bold shadow">Nạp thêm</a>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6 border-end">
-                            <h5 class="fw-bold mb-3"><i class="fa-solid fa-pen-to-square"></i> Bước 1: Nhập thông tin</h5>
+            </div>
+        </div>
+    }
+    else
+    {
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4">
+                <i class="fa-solid fa-triangle-exclamation me-2"></i> @TempData["Error"]
+            </div>
+        }
 
-                            <div class="mb-3">
-                                <label class="fw-bold mb-1">Số tiền muốn nạp (VNĐ):</label>
-                                <input type="number" id="inputAmount" class="form-control form-control-lg border-primary text-danger fw-bold" placeholder="Tối thiểu 10,000" min="10000">
+        @* 🟢 CỤM NÚT ĐIỀU HƯỚNG (THÊM LỊCH SỬ NẠP) *@
+        <div class="row justify-content-center mb-3">
+            <div class="col-lg-11 col-xl-10 d-flex justify-content-between align-items-center">
+                <a href="/" class="btn btn-outline-secondary rounded-pill px-4 btn-sm fw-bold border-2 shadow-sm hover-up">
+                    <i class="fa-solid fa-arrow-left me-2"></i> Quay lại trang chủ
+                </a>
+
+                <a asp-controller="Orders" asp-action="DepositHistory" class="btn btn-outline-primary rounded-pill px-4 btn-sm fw-bold border-2 shadow-sm hover-up">
+                    <i class="fa-solid fa-clock-rotate-left me-2"></i> Lịch sử nạp tiền
+                </a>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-11 col-xl-10">
+                <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+
+                    <div class="card-header border-0 p-4 shadow-sm" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
+                        <div class="d-flex align-items-center justify-content-center text-white">
+                            <div class="header-logo-container shadow-sm me-3 bg-white">
+                                <img id="headerBankLogo" src="@(Model.FirstOrDefault()?.LogoUrl ?? "/images/default-bank.png")"
+                                     class="img-fluid" alt="Bank Logo"
+                                     style="max-height: 100%; object-fit: contain;">
                             </div>
-
-                            <div class="mb-3">
-                                <label class="fw-bold mb-1">Chọn ngân hàng nhận:</label>
-                                <select id="selectBank" class="form-select border-primary">
-                                    @foreach (var bank in Model)
-                                    {
-                                        <option value="@bank.AccountNumber|@bank.BankName">@bank.BankName - @bank.AccountNumber (@bank.AccountName)</option>
-                                    }
-                                </select>
+                            <div class="text-center text-md-start">
+                                <h3 class="fw-bold mb-0 text-uppercase tracking-wider">Nạp tiền vào ví</h3>
+                                <p class="mb-0 opacity-75 small">Chuyển khoản chính xác nội dung để được cộng tiền tự động</p>
                             </div>
-
-                            <div class="alert alert-info py-2">
-                                <small>Nội dung chuyển khoản mặc định:</small><br />
-                                <strong class="text-danger fs-5">@transferContent</strong>
-                            </div>
-
-                            <button onclick="generateQR()" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm py-3 mt-2">
-                                <i class="fa-solid fa-magic"></i> TẠO MÃ QR NẠP TIỀN
-                            </button>
                         </div>
+                    </div>
 
-                        <div class="col-md-6 text-center">
-                            <h5 class="fw-bold mb-3"><i class="fa-solid fa-qrcode"></i> Bước 2: Quét mã & Xác nhận</h5>
+                    <div class="card-body p-0">
+                        <div class="row g-0">
+                            <div class="col-md-6 p-4 p-lg-5 bg-white">
+                                <h5 class="fw-bold mb-4 d-flex align-items-center text-primary">
+                                    <span class="badge bg-primary rounded-circle me-2" style="width: 28px; height: 28px; font-size: 14px; display: flex; align-items: center; justify-content: center;">1</span>
+                                    Cấu hình khoản nạp
+                                </h5>
 
-                            <div id="qrContainer" style="display: none;">
-                                <img id="imgQR" src="" class="img-fluid border border-3 border-dark rounded shadow mb-3" style="max-width: 230px;">
-
-                                <div class="bg-light p-2 rounded border mb-2 text-start">
-                                    <p class="mb-1 small"><strong>Số tiền:</strong> <span id="displayAmount" class="text-danger fw-bold">0</span> đ</p>
-                                    <p class="mb-0 small"><strong>Nội dung:</strong> <span class="text-primary fw-bold">@transferContent</span></p>
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold text-muted small text-uppercase">Chọn Ngân hàng thụ hưởng</label>
+                                    <select id="selectBank" class="form-select bank-select-lg border-2 shadow-sm" onchange="updateBankInfo()">
+                                        @foreach (var bank in Model)
+                                        {
+                                            <option value="@bank.AccountNumber"
+                                                    data-bankname="@bank.BankName"
+                                                    data-accountname="@bank.AccountName"
+                                                    data-logo="@bank.LogoUrl">
+                                                @bank.BankName - @bank.AccountNumber
+                                            </option>
+                                        }
+                                    </select>
                                 </div>
 
-                                <form asp-action="ProcessBanking" method="post">
-                                    <input type="hidden" name="amount" id="finalAmount">
-                                    <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow">
-                                        <i class="fa-solid fa-circle-check"></i> XÁC NHẬN ĐÃ CHUYỂN
-                                    </button>
-                                </form>
-                                <p class="text-muted mt-2 small"><i>(Sau khi bấm xác nhận, vui lòng chờ Admin duyệt)</i></p>
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold text-muted small text-uppercase">Số tiền cần nạp</label>
+                                    <div class="input-group input-group-lg">
+                                        <input type="number" id="inputAmount" class="form-control border-2 fw-bold text-success"
+                                               placeholder="Ví dụ: 100000" min="10000" oninput="resetQR()">
+                                        <span class="input-group-text bg-light border-2 fw-bold text-muted">VNĐ</span>
+                                    </div>
+                                </div>
+
+                                <div class="p-3 rounded-3 mb-4 shadow-sm" style="background-color: #fff9db; border: 1px dashed #fab005;">
+                                    <label class="d-block text-muted small fw-bold mb-1 text-uppercase" style="font-size: 11px;">Nội dung chuyển khoản:</label>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fs-4 fw-bold text-danger" id="txtContent">@transferContent</span>
+                                        <button class="btn btn-sm btn-dark rounded-pill px-3 shadow-sm" onclick="copyToClipboard('@transferContent')">
+                                            <i class="fa-regular fa-copy me-1"></i> Copy
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <button type="button" onclick="generateQR()" class="btn btn-primary w-100 py-3 rounded-3 fw-bold fs-5 shadow-lg hover-up">
+                                    TẠO MÃ QR THANH TOÁN <i class="fa-solid fa-qrcode ms-2"></i>
+                                </button>
+
+                                <div class="mt-3 p-2 note-danger rounded small">
+                                    <i class="fa-solid fa-info-circle me-1"></i>
+                                    <b>Lưu ý:</b> Hệ thống tự động ghi nhận lệnh. Nếu thoát trang rồi quay lại, mã QR sẽ được khôi phục cho bạn.
+                                </div>
                             </div>
 
-                            <div id="qrPlaceholder" class="d-flex align-items-center justify-content-center h-100 bg-light rounded border" style="min-height: 300px;">
-                                <div class="text-muted">
-                                    <i class="fa-solid fa-hand-pointer fs-1 mb-2"></i>
-                                    <p>Nhập số tiền bên trái để tạo mã QR</p>
+                            <div class="col-md-6 p-4 p-lg-5 bg-light border-start d-flex flex-column align-items-center justify-content-center text-center position-relative">
+                                <h5 class="fw-bold mb-4 d-flex align-items-center text-success">
+                                    <span class="badge bg-success rounded-circle me-2" style="width: 28px; height: 28px; font-size: 14px; display: flex; align-items: center; justify-content: center;">2</span>
+                                    Quét mã VietQR
+                                </h5>
+
+                                <div id="qrPlaceholder" class="py-5">
+                                    <div class="bg-white rounded-circle shadow-sm d-inline-flex p-4 mb-3" style="width: 130px; height: 130px; align-items: center; justify-content: center; border: 5px solid #f8f9fa;">
+                                        <i class="fa-solid fa-camera-retro text-muted" style="font-size: 50px;"></i>
+                                    </div>
+                                    <p class="text-muted small px-4 fw-bold">Vui lòng nhập số tiền và nhấn nút <br /> "Tạo mã QR" để thanh toán.</p>
+                                </div>
+
+                                <div id="qrContainer" style="display: none;" class="w-100 animate__animated animate__zoomIn">
+                                    <span id="restoreBadge" class="badge bg-info recovering-badge shadow-sm" style="display:none;">LỆNH CŨ ĐÃ KHÔI PHỤC</span>
+                                    <div class="qr-card shadow-lg mb-4 d-inline-block bg-white position-relative border-0" style="padding: 10px;">
+                                        <img id="imgQR" src="" class="img-fluid" style="max-width: 280px; min-height: 280px;" alt="QR Code">
+                                        <div class="position-absolute top-0 start-50 translate-middle badge bg-danger rounded-pill shadow">VietQR Chính Chủ</div>
+                                    </div>
+
+                                    <div class="text-start bg-white p-3 rounded-3 border mb-4 mx-auto shadow-sm" style="max-width: 340px;">
+                                        <div class="small d-flex justify-content-between mb-2 border-bottom pb-1">
+                                            <span class="text-muted">Chủ tài khoản:</span>
+                                            <span class="fw-bold text-primary" id="displayAccountName">...</span>
+                                        </div>
+                                        <div class="small d-flex justify-content-between pt-1">
+                                            <span class="text-muted">Số tiền:</span>
+                                            <span class="fw-bold text-danger fs-5" id="displayAmount">0đ</span>
+                                        </div>
+                                    </div>
+
+                                    <form id="confirmForm" asp-action="ProcessBanking" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="amount" id="finalAmount">
+                                        <button type="submit" class="btn btn-success w-100 py-3 fw-bold shadow-lg rounded-3">
+                                            <i class="fa-solid fa-check-circle me-2"></i> XÁC NHẬN ĐÃ CHUYỂN TIỀN
+                                        </button>
+                                    </form>
+                                    <p class="mt-3 text-muted x-small italic text-danger fw-bold">
+                                        <i class="fa-solid fa-info-circle me-1"></i>
+                                        Đừng quên ấn xác nhận sau khi chuyển tiền xong!
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -83,30 +185,115 @@
                 </div>
             </div>
         </div>
-    </div>
+    }
 </div>
 
-<script>
-    function generateQR() {
-        const amount = document.getElementById('inputAmount').value;
-        const bankData = document.getElementById('selectBank').value.split('|');
-        const stk = bankData[0];
-        const bankName = bankData[1];
-        const content = "@transferContent";
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            updateBankInfo();
 
-        if (!amount || amount < 10000) {
-            alert("Vui lòng nhập số tiền nạp tối thiểu 10.000 VNĐ");
-            return;
+            @if (ViewBag.PendingTrans != null)
+            {
+                        <text>
+                        const pAmount = "@ViewBag.PendingTrans.Amount";
+                        $('#inputAmount').val(parseInt(pAmount));
+                        $('#restoreBadge').show();
+                        generateQR(true);
+                        </text>
+            }
+        });
+
+        function updateBankInfo() {
+            const select = document.getElementById('selectBank');
+            const selectedOption = select.options[select.selectedIndex];
+            const logoUrl = selectedOption.getAttribute('data-logo');
+
+            if(logoUrl) {
+                $('#headerBankLogo').attr('src', logoUrl);
+            }
+            resetQR();
         }
 
-        // Tạo link VietQR tự động điền số tiền và nội dung
-        const qrUrl = `https://img.vietqr.io/image/${bankName}-${stk}-compact.png?amount=${amount}&addInfo=${encodeURIComponent(content)}`;
+        function resetQR() {
+            $('#qrContainer').hide();
+            $('#qrPlaceholder').show();
+            $('#restoreBadge').hide();
+        }
 
-        document.getElementById('imgQR').src = qrUrl;
-        document.getElementById('displayAmount').innerText = parseInt(amount).toLocaleString();
-        document.getElementById('finalAmount').value = amount;
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            Swal.fire({
+                icon: 'success',
+                title: 'Đã sao chép!',
+                text: 'Nội dung: ' + text,
+                timer: 1500,
+                showConfirmButton: false,
+                position: 'top-end',
+                toast: true
+            });
+        }
 
-        document.getElementById('qrPlaceholder').style.display = 'none';
-        document.getElementById('qrContainer').style.display = 'block';
-    }
-</script>
+        function generateQR(isRestoring = false) {
+            const amount = $('#inputAmount').val();
+            const select = document.getElementById('selectBank');
+
+            if (!amount || amount < 10000) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Số tiền không hợp lệ',
+                    text: 'Vui lòng nhập số tiền từ 10,000 VNĐ trở lên',
+                    confirmButtonColor: '#0061ff'
+                });
+                return;
+            }
+
+            const selectedOption = select.options[select.selectedIndex];
+            const stk = select.value;
+            const bankName = (selectedOption.getAttribute('data-bankname') || "").toUpperCase();
+            const accountName = selectedOption.getAttribute('data-accountname');
+            const content = "@transferContent";
+
+            if (!isRestoring) {
+                $.ajax({
+                    url: '@Url.Action("CreatePendingDeposit", "Home")',
+                    type: 'POST',
+                    data: {
+                        amount: amount,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        console.log("Đã tạo lệnh chờ mới.");
+                    }
+                });
+            }
+
+            showQR(bankName, stk, accountName, amount, content);
+        }
+
+        function showQR(bankName, stk, accountName, amount, content) {
+            let bankCode = "ICB";
+            if (bankName.includes("TECHCOM") || bankName.includes("TCB")) bankCode = "TCB";
+            else if (bankName.includes("MB")) bankCode = "MB";
+            else if (bankName.includes("VIETCOM") || bankName.includes("VCB")) bankCode = "VCB";
+            else if (bankName.includes("ACB")) bankCode = "ACB";
+            else if (bankName.includes("BIDV")) bankCode = "BIDV";
+            else if (bankName.includes("VIETIN")) bankCode = "ICB";
+            else if (bankName.includes("AGRI")) bankCode = "VBA";
+            else if (bankName.includes("TPB")) bankCode = "TPB";
+            else if (bankName.includes("VPB")) bankCode = "VPB";
+            else if (bankName.includes("SACOM")) bankCode = "STB";
+            else if (bankName.includes("VIB")) bankCode = "VIB";
+
+            const qrUrl = `https://img.vietqr.io/image/${bankCode}-${stk}-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(content)}&accountName=${encodeURIComponent(accountName)}`;
+
+            $('#imgQR').attr('src', qrUrl);
+            $('#displayAccountName').text(accountName);
+            $('#displayAmount').text(parseInt(amount).toLocaleString() + 'đ');
+            $('#finalAmount').val(amount);
+
+            $('#qrPlaceholder').hide();
+            $('#qrContainer').show().addClass('animate__animated animate__zoomIn');
+        }
+    </script>
+}

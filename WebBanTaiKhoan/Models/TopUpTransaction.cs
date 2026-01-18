@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema; // Thêm thư viện này
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebBanTaiKhoan.Models
 {
@@ -11,14 +11,15 @@ namespace WebBanTaiKhoan.Models
         [Required]
         public string UserId { get; set; } = string.Empty;
 
-        // Chỉ định rõ kiểu dữ liệu tiền tệ để tránh lỗi SQL
+        // Thiết lập mối quan hệ với bảng User để lấy tên khách hàng trong Admin
+        [ForeignKey("UserId")]
+        public virtual ApplicationUser? User { get; set; }
+
         [Column(TypeName = "decimal(18,2)")]
         public decimal Amount { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        // Dùng [NotMapped] để Entity Framework không cố gắng tạo thêm cột 'Date' trong Database
-        // Vì 'Date' và 'CreatedAt' lúc này là một
         [NotMapped]
         public DateTime Date
         {
@@ -26,10 +27,20 @@ namespace WebBanTaiKhoan.Models
             set => CreatedAt = value;
         }
 
-        public string Method { get; set; } = "Chuyển khoản Ngân hàng";
+        public string Method { get; set; } = "Chuyển khoản VietQR";
 
+        /// <summary>
+        /// TRẠNG THÁI GIAO DỊCH:
+        /// Pending: Hệ thống đã tạo QR (Khách chưa ấn xác nhận)
+        /// Processing: Khách đã bấm nút "Xác nhận đã chuyển tiền"
+        /// Success: Admin đã duyệt và cộng tiền thành công
+        /// Cancelled: Giao dịch bị hủy hoặc quá thời gian
+        /// </summary>
         public string Status { get; set; } = "Pending";
 
         public string? TransactionCode { get; set; }
+
+        // Ghi chú của Admin khi duyệt (Ví dụ: "Đã khớp tiền Techcombank")
+        public string? AdminNote { get; set; }
     }
 }

@@ -5,100 +5,131 @@
 }
 
 <div class="container mt-4 pb-5">
-    @* --- THANH ĐIỀU HƯỚNG --- *@
-    <div class="mb-3">
-        <a asp-action="Index" class="btn btn-outline-secondary btn-sm fw-bold shadow-sm">
-            <i class="fa-solid fa-arrow-left me-1"></i> Quay lại danh sách
-        </a>
-    </div>
-
-    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-        <div class="card-header bg-success text-white py-3">
-            <h4 class="m-0 fw-bold"><i class="fa-solid fa-plus-circle me-2"></i> THÊM SẢN PHẨM MỚI</h4>
-        </div>
-
-        <div class="card-body p-4 bg-light">
-            @* QUAN TRỌNG: enctype="multipart/form-data" để cho phép tải ảnh lên *@
-            <form asp-action="Create" enctype="multipart/form-data">
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-                <div class="row g-4">
-                    @* --- CỘT TRÁI: THÔNG TIN SẢN PHẨM --- *@
-                    <div class="col-lg-8">
-                        <div class="card border-0 shadow-sm p-4 rounded-3 h-100">
-                            <h5 class="fw-bold text-success mb-3 border-bottom pb-2">📦 Thông tin cơ bản</h5>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-bold small">Tên sản phẩm</label>
-                                <input asp-for="Name" class="form-control border-2" placeholder="Ví dụ: Tài khoản Netflix 1 Tháng Premium" />
-                                <span asp-validation-for="Name" class="text-danger small"></span>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold small">Danh mục sản phẩm</label>
-                                    <select asp-for="CategoryId" class="form-select border-2" asp-items="ViewBag.CategoryId">
-                                        <option value="">-- Chọn danh mục --</option>
-                                    </select>
-                                    <span asp-validation-for="CategoryId" class="text-danger small"></span>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold small">Giá bán (VNĐ)</label>
-                                    <input asp-for="Price" type="number" class="form-control border-2 fw-bold text-danger" placeholder="0" />
-                                    <span asp-validation-for="Price" class="text-danger small"></span>
-                                </div>
-                            </div>
-
-                            <div class="mb-0">
-                                <label class="form-label fw-bold small">Mô tả sản phẩm</label>
-                                <textarea asp-for="Description" class="form-control border-2" rows="6" placeholder="Nhập đặc điểm, bảo hành..."></textarea>
-                                <span asp-validation-for="Description" class="text-danger small"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    @* --- CỘT PHẢI: HÌNH ẢNH & XÁC NHẬN --- *@
-                    <div class="col-lg-4">
-                        <div class="card border-0 shadow-sm p-4 rounded-3 mb-4 text-center">
-                            <h5 class="fw-bold text-dark mb-3 border-bottom pb-2">🖼️ Hình ảnh</h5>
-
-                            <div class="mb-3 border rounded-3 p-2 bg-white d-flex align-items-center justify-content-center" style="height: 200px; overflow: hidden;">
-                                <img id="previewImg" src="/images/no-image.png" class="img-fluid rounded" style="max-height: 100%;" />
-                            </div>
-
-                            <input type="file" name="imgFile" id="imgInput" class="form-control form-control-sm border-2" accept="image/*" />
-                            <small class="text-muted mt-2 d-block small">Hệ thống sẽ tự động lưu ảnh vào thư mục máy chủ.</small>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-success btn-lg fw-bold py-3 shadow-sm rounded-3">
-                                <i class="fa-solid fa-cloud-arrow-up me-2"></i> XÁC NHẬN TẠO MỚI
-                            </button>
-                            <a asp-action="Index" class="btn btn-light border fw-bold py-2 rounded-3 text-muted">Hủy bỏ</a>
-                        </div>
-                    </div>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-success text-white py-3">
+                    <h4 class="mb-0 fw-bold"><i class="fa-solid fa-plus-circle me-2"></i>THÊM SẢN PHẨM MỚI</h4>
                 </div>
-            </form>
+                <div class="card-body p-4 bg-white">
+                    <form asp-action="Create" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Name" class="control-label fw-bold">Tên sản phẩm</label>
+                            <input asp-for="Name" class="form-control border-2 shadow-none" placeholder="Ví dụ: Netflix 1 Tháng Premium" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="CategoryId" class="control-label fw-bold text-success">
+                                <i class="fa-solid fa-tags me-1"></i> Danh mục sản phẩm
+                            </label>
+                            <select asp-for="CategoryId" class="form-select border-2 shadow-none" asp-items="ViewBag.CategoryId">
+                                <option value="">-- Chọn danh mục --</option>
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Description" class="control-label fw-bold">Mô tả chi tiết</label>
+                            <textarea asp-for="Description" class="form-control border-2 shadow-none" rows="4" placeholder="Nhập thông tin chi tiết về sản phẩm..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        @* --- PHẦN GIÁ BÁN (ĐÃ SỬA) --- *@
+                        <div class="form-group mb-4">
+                            <label asp-for="Price" class="control-label fw-bold">Giá bán (VNĐ)</label>
+                            <div class="input-group">
+                                @* Dùng type="text" và id="priceInput" để JS xử lý dấu phẩy *@
+                                <input asp-for="Price"
+                                       id="priceInput"
+                                       type="text"
+                                       class="form-control border-2 shadow-none fw-bold text-danger fs-5"
+                                       placeholder="0" />
+                                <span class="input-group-text bg-light fw-bold">đ</span>
+                            </div>
+                            <span asp-validation-for="Price" class="text-danger small"></span>
+                        </div>
+                        @* ----------------------------- *@
+
+                        <div class="form-group mb-4">
+                            <label class="control-label fw-bold d-block mb-2">Hình ảnh minh họa</label>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="position-relative">
+                                    <img src="/images/no-image.png"
+                                         id="currentImage" width="120" class="img-thumbnail rounded-3 shadow-sm" />
+                                </div>
+                                <div>
+                                    <label class="btn btn-success btn-sm rounded-pill px-3 shadow-sm">
+                                        <i class="fa-solid fa-upload me-1"></i> Tải ảnh lên
+                                        <input type="file" name="ImageFile" class="d-none" accept="image/*" onchange="previewImage(this)">
+                                    </label>
+                                    <p class="x-small text-muted mt-2 mb-0 italic">Nên chọn ảnh vuông 500x500px.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-4 border-top pt-4">
+                            <button type="submit" class="btn btn-success px-5 shadow-sm fw-bold rounded-pill py-2">
+                                <i class="fa-solid fa-check me-1"></i> TẠO SẢN PHẨM
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary px-4 ms-2 rounded-pill py-2">Quay lại</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+    .x-small {
+        font-size: 0.75rem;
+    }
+
+    .italic {
+        font-style: italic;
+    }
+</style>
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
     <script>
-        // Script xem trước ảnh khi chọn file từ máy tính
-        document.getElementById('imgInput').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('previewImg').src = e.target.result;
-                }
-                reader.readAsDataURL(file);
+        // Hàm xem trước ảnh
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('currentImage').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
             }
+        }
+
+        // --- SCRIPT XỬ LÝ DẤU PHẨY CHO GIÁ TIỀN (GIỐNG TRANG EDIT) ---
+        document.addEventListener("DOMContentLoaded", function () {
+            var priceInput = document.getElementById("priceInput");
+            var form = priceInput.closest("form");
+
+            // 1. Khi đang nhập: Tự động thêm dấu phẩy
+            priceInput.addEventListener("input", function (e) {
+                // Xóa hết ký tự không phải số
+                var value = this.value.replace(/[^0-9]/g, "");
+
+                // Format lại (VD: 1,000,000)
+                if (value) {
+                    this.value = new Intl.NumberFormat('en-US').format(value);
+                }
+            });
+
+            // 2. Trước khi bấm Lưu (Submit): Xóa dấu phẩy để Server hiểu được
+            form.addEventListener("submit", function () {
+                var rawValue = priceInput.value.replace(/,/g, "");
+                priceInput.value = rawValue;
+            });
         });
     </script>
 }

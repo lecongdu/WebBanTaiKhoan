@@ -4,33 +4,36 @@ using WebBanTaiKhoan.Models;
 
 namespace WebBanTaiKhoan.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
 
-        // --- CÁC BẢNG DỮ LIỆU CŨ ---
+        // --- CÁC BẢNG DỮ LIỆU ---
         public DbSet<Product> Products { get; set; }
         public DbSet<AccountItem> AccountItems { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<TopUpTransaction> TopUpTransactions { get; set; }
-
-        // --- MỚI THÊM: ĐÃ SỬA TÊN THÀNH SystemSettings (Có chữ s) ĐỂ KHỚP VỚI CONTROLLER ---
         public DbSet<BankAccount> BankAccounts { get; set; }
-        public DbSet<SystemSetting> SystemSettings { get; set; } // Đổi tên thuộc tính ở đây để hết lỗi gạch đỏ ở Controller
+        public DbSet<SystemSetting> SystemSettings { get; set; }
+        public DbSet<Category> Category { get; set; }
 
-        // --- CẤU HÌNH ---
+        // --- THÊM BẢNG GIỎ HÀNG Ở ĐÂY ---
+        public DbSet<CartItem> CartItems { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            // Cấu hình số thập phân cho tiền tệ
             builder.Entity<Product>().Property(p => p.Price).HasColumnType("decimal(18,2)");
             builder.Entity<Order>().Property(o => o.TotalAmount).HasColumnType("decimal(18,2)");
             builder.Entity<TopUpTransaction>().Property(t => t.Amount).HasColumnType("decimal(18,2)");
+            builder.Entity<ApplicationUser>().Property(u => u.Balance).HasColumnType("decimal(18,2)");
+
+            // Cấu hình bảng CartItem (Số tiền trong giỏ)
+            builder.Entity<CartItem>().Property(c => c.Price).HasColumnType("decimal(18,2)");
         }
-        public DbSet<WebBanTaiKhoan.Models.Category> Category { get; set; } = default!;
     }
 }

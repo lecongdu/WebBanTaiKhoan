@@ -1,39 +1,103 @@
 ﻿@model WebBanTaiKhoan.Models.Category
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Chỉnh sửa Danh Mục";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
 
-<h4>Category</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+            <div class="mb-3 d-flex justify-content-between align-items-center">
+                <a href="/Admin" class="btn btn-outline-secondary btn-sm rounded-pill px-3 shadow-sm border-2 fw-bold">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Trở lại Admin
+                </a>
+                <a asp-action="Index" class="text-muted small text-decoration-none fw-bold">
+                    <i class="fa-solid fa-list me-1"></i> Danh sách danh mục
+                </a>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header border-0 py-3" style="background: linear-gradient(135deg, #0d6efd 0%, #0046af 100%);">
+                    <h4 class="mb-0 fw-bold text-center text-white text-uppercase tracking-wider">
+                        <i class="fa-solid fa-pen-to-square me-2"></i>Cập nhật Danh mục
+                    </h4>
+                </div>
+
+                <div class="card-body p-4 p-md-5 bg-white">
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3 fw-bold"></div>
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Name" class="form-control rounded-3 border-2 shadow-sm" placeholder="Tên danh mục" />
+                            <label asp-for="Name" class="text-muted fw-bold">Tên danh mục mới</label>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <textarea asp-for="Description" class="form-control rounded-3 border-2 shadow-sm" placeholder="Mô tả" style="height: 130px"></textarea>
+                            <label asp-for="Description" class="text-muted fw-bold">Mô tả sản phẩm trong danh mục này</label>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="p-3 rounded-3 mb-4 border-start border-4 border-primary shadow-sm" style="background-color: #f0f7ff;">
+                            <div class="d-flex align-items-center">
+                                <i class="fa-solid fa-circle-info text-primary fs-4 me-3"></i>
+                                <div>
+                                    <p class="mb-0 fw-bold text-primary small text-uppercase">Mẹo nhỏ</p>
+                                    <p class="mb-0 text-muted small">Mô tả hay sẽ giúp khách hàng tin tưởng và mua hàng nhanh hơn!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold shadow hover-up py-3">
+                                <i class="fa-solid fa-floppy-disk me-1"></i> CẬP NHẬT THAY ĐỔI
+                            </button>
+                            <button type="reset" class="btn btn-light rounded-pill text-muted small fw-bold mt-1">
+                                <i class="fa-solid fa-rotate-left me-1"></i> Khôi phục dữ liệu ban đầu
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+
+            <p class="text-center text-muted mt-4 small">ID Danh mục: <span class="badge bg-light text-dark border">#@Model.Id</span></p>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <style>
+        /* Tùy chỉnh màu sắc khi click vào ô nhập liệu */
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        }
+
+        /* Hiệu ứng nút bấm nổi khi di chuột */
+        .hover-up {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+            .hover-up:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 20px rgba(13, 110, 253, 0.3) !important;
+            }
+
+        /* Nền trang nhã cho khu vực quản trị */
+        body {
+            background-color: #f4f7f6;
+        }
+
+        .tracking-wider {
+            letter-spacing: 1px;
+        }
+    </style>
 }

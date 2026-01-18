@@ -1,68 +1,106 @@
 ﻿@model WebBanTaiKhoan.Models.BankAccount
 
 @{
-    ViewData["Title"] = "Sửa Ngân hàng";
+    ViewData["Title"] = "Cập nhật Ngân hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container mt-4">
-    <div class="card shadow-sm border-warning">
-        <div class="card-header bg-warning text-dark">
-            <h3 class="fw-bold m-0"><i class="fa-solid fa-pen-to-square"></i> CẬP NHẬT NGÂN HÀNG</h3>
-        </div>
-        <div class="card-body">
-            <form asp-action="Edit" enctype="multipart/form-data">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="Id" />
-
-                <input type="hidden" asp-for="LogoUrl" />
-                <input type="hidden" asp-for="QrUrl" />
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="fw-bold control-label">Tên Ngân Hàng</label>
-                        <input asp-for="BankName" class="form-control" />
-                        <span asp-validation-for="BankName" class="text-danger"></span>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="fw-bold control-label">Số Tài Khoản</label>
-                        <input asp-for="AccountNumber" class="form-control" />
-                        <span asp-validation-for="AccountNumber" class="text-danger"></span>
-                    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-warning text-dark py-3">
+                    <h4 class="mb-0 fw-bold text-center">
+                        <i class="fa-solid fa-pen-to-square me-2"></i>CẬP NHẬT THÔNG TIN NGÂN HÀNG
+                    </h4>
                 </div>
+                <div class="card-body p-4 p-md-5 bg-white">
+                    <form asp-action="Edit" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3 fw-bold"></div>
 
-                <div class="mb-3">
-                    <label class="fw-bold control-label">Tên Chủ Thẻ</label>
-                    <input asp-for="AccountName" class="form-control" />
-                    <span asp-validation-for="AccountName" class="text-danger"></span>
+                        @* --- GIỮ LẠI CÁC TRƯỜNG ẨN QUAN TRỌNG --- *@
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="LogoUrl" />
+                        <input type="hidden" asp-for="QrUrl" />
+
+                        <div class="row">
+                            @* CỘT TRÁI: THÔNG TIN VĂN BẢN *@
+                            <div class="col-md-6 border-end-md">
+                                <h6 class="fw-bold text-muted mb-3"><i class="fa-solid fa-circle-info me-2"></i>Thông tin tài khoản</h6>
+
+                                <div class="form-floating mb-3">
+                                    <input asp-for="BankName" class="form-control rounded-3" placeholder="Tên ngân hàng" />
+                                    <label asp-for="BankName">Tên Ngân Hàng</label>
+                                    <span asp-validation-for="BankName" class="text-danger small"></span>
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    <input asp-for="AccountNumber" class="form-control rounded-3 fw-bold font-monospace text-primary" placeholder="Số tài khoản" />
+                                    <label asp-for="AccountNumber">Số Tài Khoản</label>
+                                    <span asp-validation-for="AccountNumber" class="text-danger small"></span>
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    <input asp-for="AccountName" class="form-control rounded-3 text-uppercase" placeholder="Tên chủ thẻ" />
+                                    <label asp-for="AccountName">Chủ Tài Khoản</label>
+                                    <span asp-validation-for="AccountName" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            @* CỘT PHẢI: QUẢN LÝ HÌNH ẢNH *@
+                            <div class="col-md-6 ps-md-4">
+                                <h6 class="fw-bold text-muted mb-3"><i class="fa-solid fa-images me-2"></i>Hình ảnh hiển thị</h6>
+
+                                <div class="mb-4">
+                                    <label class="fw-bold small mb-2 d-block">Logo Ngân hàng</label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="border rounded-3 d-flex justify-content-center align-items-center bg-light position-relative"
+                                             style="width: 70px; height: 70px;">
+                                            @* Hiển thị ảnh cũ hoặc ảnh mặc định *@
+                                            <img id="previewLogo"
+                                                 src="@(string.IsNullOrEmpty(Model.LogoUrl) ? "/images/default-bank.png" : Model.LogoUrl)"
+                                                 class="w-100 h-100 object-fit-contain p-1"
+                                                 onerror="this.src='/images/default-bank.png'" />
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <input type="file" name="logoFile" class="form-control form-control-sm mb-1" accept="image/*" onchange="previewImage(this, 'previewLogo')" />
+                                            <small class="text-muted fst-italic d-block" style="font-size: 0.75rem;">Chọn ảnh mới để thay thế logo cũ.</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="fw-bold small mb-2 d-block">Mã QR (Quét tiền)</label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="border rounded-3 d-flex justify-content-center align-items-center bg-light"
+                                             style="width: 70px; height: 70px;">
+                                            <img id="previewQr"
+                                                 src="@(string.IsNullOrEmpty(Model.QrUrl) ? "/images/qr-placeholder.png" : Model.QrUrl)"
+                                                 class="w-100 h-100 object-fit-cover"
+                                                 onerror="this.src='/images/qr-placeholder.png'" />
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <input type="file" name="qrFile" class="form-control form-control-sm mb-1" accept="image/*" onchange="previewImage(this, 'previewQr')" />
+                                            <small class="text-muted fst-italic d-block" style="font-size: 0.75rem;">Chọn ảnh mới để thay thế QR cũ.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4 op-2" />
+
+                        <div class="d-flex justify-content-center gap-3">
+                            <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 fw-bold">
+                                <i class="fa-solid fa-arrow-left me-2"></i>Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-warning rounded-pill px-5 fw-bold shadow-sm">
+                                <i class="fa-solid fa-check me-2"></i>LƯU CẬP NHẬT
+                            </button>
+                        </div>
+                    </form>
                 </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="fw-bold d-block">Logo hiện tại:</label>
-                        @if (!string.IsNullOrEmpty(Model.LogoUrl))
-                        {
-                            <img src="@Model.LogoUrl" height="60" class="mb-2 border rounded p-1" />
-                        }
-                        <label class="text-muted small">Chọn ảnh mới nếu muốn thay đổi:</label>
-                        <input type="file" name="logoFile" class="form-control" accept="image/*" />
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label class="fw-bold d-block">Mã QR hiện tại:</label>
-                        @if (!string.IsNullOrEmpty(Model.QrUrl))
-                        {
-                            <img src="@Model.QrUrl" height="100" class="mb-2 border rounded" />
-                        }
-                        <label class="text-muted small">Chọn ảnh mới nếu muốn thay đổi:</label>
-                        <input type="file" name="qrFile" class="form-control" accept="image/*" />
-                    </div>
-                </div>
-
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                    <a asp-action="Index" class="btn btn-secondary me-md-2">Quay lại</a>
-                    <button type="submit" class="btn btn-warning fw-bold px-5">LƯU THAY ĐỔI</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
@@ -71,4 +109,39 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        // Script xem trước ảnh khi chọn file mới
+        function previewImage(input, previewId) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById(previewId).src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+
+    <style>
+        .font-monospace {
+            font-family: 'Consolas', monospace;
+            letter-spacing: 1px;
+        }
+
+        .object-fit-contain {
+            object-fit: contain;
+        }
+
+        .object-fit-cover {
+            object-fit: cover;
+        }
+
+        /* QUAN TRỌNG: Đã thêm 2 chữ @@ để sửa lỗi cú pháp Razor */
+        @@media (min-width: 768px) {
+            .border-end-md {
+                border-right: 1px solid #dee2e6;
+            }
+        }
+    </style>
 }

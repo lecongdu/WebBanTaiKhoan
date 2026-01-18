@@ -16,15 +16,34 @@ namespace WebBanTaiKhoan.Controllers
             _hostEnvironment = hostEnvironment;
         }
 
-        // 1. Tự động điều hướng: Nếu có dữ liệu rồi thì vào Edit, chưa có thì vào Create
+        // --- SỬA ĐỔI QUAN TRỌNG TẠI ĐÂY ---
         public async Task<IActionResult> Index()
         {
-            var settings = await _context.SystemSettings.AsNoTracking().FirstOrDefaultAsync();
-            if (settings == null) return RedirectToAction(nameof(Create));
+            // 1. Tìm xem có bản ghi cấu hình nào chưa
+            var settings = await _context.SystemSettings.FirstOrDefaultAsync();
+
+            // 2. Nếu chưa có (Database trắng), tự động tạo mới luôn
+            if (settings == null)
+            {
+                settings = new SystemSetting
+                {
+                    // Điền dữ liệu giả để không bị lỗi NULL
+                    ContactAddress = "Địa chỉ shop (Chưa cập nhật)",
+                    ContactEmail = "admin@gmail.com",
+                    ContactPhone = "0987654321",
+                    BannerUrl = "/images/no-image.png" // Ảnh tạm
+                };
+
+                _context.Add(settings);
+                await _context.SaveChangesAsync(); // Lưu ngay vào DB
+            }
+
+            // 3. Có dữ liệu rồi (hoặc vừa tạo xong), chuyển thẳng sang trang Edit đẹp
             return RedirectToAction(nameof(Edit), new { id = settings.Id });
         }
+        // -----------------------------------
 
-        // 2. Tạo mới cấu hình (Chỉ dùng cho lần đầu tiên)
+        // Trang Create (Vẫn giữ để dự phòng, nhưng thực tế sẽ ít dùng tới)
         public IActionResult Create() => View();
 
         [HttpPost]
@@ -33,26 +52,17 @@ namespace WebBanTaiKhoan.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
-                {
-                    systemSetting.BannerUrl = await SaveFile(bannerFile1);
-                    systemSetting.BannerUrl2 = await SaveFile(bannerFile2);
-                    systemSetting.BannerUrl3 = await SaveFile(bannerFile3);
+                systemSetting.BannerUrl = await SaveFile(bannerFile1);
+                systemSetting.BannerUrl2 = await SaveFile(bannerFile2);
+                systemSetting.BannerUrl3 = await SaveFile(bannerFile3);
 
-                    _context.Add(systemSetting);
-                    await _context.SaveChangesAsync();
-                    TempData["Success"] = "Khởi tạo cấu hình thành công!";
-                    return RedirectToAction("Index", "Admin");
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", "Lỗi khi tạo mới: " + ex.Message);
-                }
+                _context.Add(systemSetting);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Admin");
             }
             return View(systemSetting);
         }
 
-        // 3. Chỉnh sửa cấu hình
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -71,57 +81,39 @@ namespace WebBanTaiKhoan.Controllers
             {
                 try
                 {
-                    // Lấy dữ liệu hiện tại từ DB để so sánh
-                    var existingSetting = await _context.SystemSettings.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
-                    if (existingSetting == null) return NotFound();
+                    // Lấy dữ liệu cũ để giữ lại ảnh nếu không upload mới
+                    var existing = await _context.SystemSettings.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
+                    if (existing == null) return NotFound();
 
-                    // Xử lý logic ảnh: Nếu có file mới thì upload, không thì lấy lại Url cũ từ DB
-                    systemSetting.BannerUrl = (bannerFile1 != null) ? await SaveFile(bannerFile1) : existingSetting.BannerUrl;
-                    systemSetting.BannerUrl2 = (bannerFile2 != null) ? await SaveFile(bannerFile2) : existingSetting.BannerUrl2;
-                    systemSetting.BannerUrl3 = (bannerFile3 != null) ? await SaveFile(bannerFile3) : existingSetting.BannerUrl3;
+                    // Logic: Có file mới -> Lưu file mới. Không có -> Giữ file cũ
+                    systemSetting.BannerUrl = (bannerFile1 != null) ? await SaveFile(bannerFile1) : existing.BannerUrl;
+                    systemSetting.BannerUrl2 = (bannerFile2 != null) ? await SaveFile(bannerFile2) : existing.BannerUrl2;
+                    systemSetting.BannerUrl3 = (bannerFile3 != null) ? await SaveFile(bannerFile3) : existing.BannerUrl3;
 
                     _context.Update(systemSetting);
                     await _context.SaveChangesAsync();
 
-                    TempData["Success"] = "Cập nhật cấu hình hệ thống thành công!";
-                    return RedirectToAction("Index", "Admin");
-                }
-                catch (DbUpdateException dbEx)
-                {
-                    var message = dbEx.InnerException?.Message ?? dbEx.Message;
-                    ModelState.AddModelError("", "Lỗi Database (Kiểm tra các trường bắt buộc): " + message);
+                    // Thông báo thành công (tùy chọn)
+                    TempData["Success"] = "Đã lưu cấu hình thành công!";
+                    return RedirectToAction(nameof(Edit), new { id = systemSetting.Id }); // Ở lại trang Edit để xem kết quả luôn
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", "Lỗi hệ thống: " + ex.Message);
+                    ModelState.AddModelError("", "Lỗi: " + ex.Message);
                 }
             }
             return View(systemSetting);
         }
 
-        // 4. Hàm phụ xử lý lưu File
         private async Task<string?> SaveFile(IFormFile? file)
         {
             if (file == null || file.Length == 0) return null;
-
-            try
-            {
-                string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "images");
-                if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
-
-                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                string uploadPath = Path.Combine(uploadsFolder, fileName);
-
-                using (var stream = new FileStream(uploadPath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
-                return "/images/" + fileName;
-            }
-            catch
-            {
-                return null; // Trả về null nếu quá trình lưu file thất bại
-            }
+            string folder = Path.Combine(_hostEnvironment.WebRootPath, "images");
+            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            string path = Path.Combine(folder, fileName);
+            using (var stream = new FileStream(path, FileMode.Create)) await file.CopyToAsync(stream);
+            return "/images/" + fileName;
         }
     }
 }

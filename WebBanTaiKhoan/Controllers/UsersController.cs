@@ -10,95 +10,147 @@ namespace WebBanTaiKhoan.Controllers
     [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
 
-        public UsersController(UserManager<IdentityUser> userManager, ApplicationDbContext context)
+        public UsersController(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
             _userManager = userManager;
             _context = context;
         }
 
-        // 1. HIỂN THỊ DANH SÁCH THÀNH VIÊN KÈM SỐ DƯ
+        // 1. HIỂN THỊ DANH SÁCH THÀNH VIÊN (Đã đồng bộ UserRoleViewModel)
         public async Task<IActionResult> Index()
         {
-            var users = await _userManager.Users.ToListAsync();
-            var userList = new List<UserViewModel>();
+            var users = await _userManager.Users.AsNoTracking().ToListAsync();
+            var userList = new List<UserRoleViewModel>();
 
             foreach (var user in users)
             {
-                // Tính tổng nạp (Trạng thái thành công)
-                decimal totalDeposit = _context.TopUpTransactions
-                    .Where(t => t.UserId == user.Id && t.Status == "Success")
-                    .Sum(t => (decimal?)t.Amount) ?? 0;
+                // Lấy quyền của người dùng
+                var roles = await _userManager.GetRolesAsync(user);
 
-                // Tính tổng chi (Các đơn hàng đã mua)
-                decimal totalSpent = _context.Orders
-                    .Where(o => o.UserId == user.Id)
-                    .Sum(o => (decimal?)o.TotalAmount) ?? 0;
+                // Tính tổng nạp thành công
+                decimal totalDeposit = await _context.TopUpTransactions
+                    .AsNoTracking()
+                    .Where(t => t.UserId == user.Id && t.Status == "Success" && t.Amount > 0)
+                    .SumAsync(t => (decimal?)t.Amount) ?? 0;
 
-                userList.Add(new UserViewModel
+                userList.Add(new UserRoleViewModel
                 {
-                    Id = user.Id,
+                    UserId = user.Id, // Đã đổi từ Id sang UserId cho khớp Model
                     UserName = user.UserName,
                     Email = user.Email,
                     TotalDeposit = totalDeposit,
-                    Balance = totalDeposit - totalSpent
+                    Balance = user.Balance,
+                    Role = roles.FirstOrDefault() ?? "Khách" // Lấy quyền hiện tại
                 });
             }
 
             return View(userList);
         }
 
-        // 2. HÀM CỘNG/TRỪ TIỀN (SỬA SỐ DƯ)
+        // 2. HÀM CỘNG/TRỪ TIỀN (Giữ nguyên Transaction an toàn)
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateBalance(string userId, decimal amount, string type)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null) return NotFound();
 
-            // Đảm bảo số tiền nạp là số dương
             if (amount <= 0)
             {
                 TempData["Error"] = "Số tiền phải lớn hơn 0!";
                 return RedirectToAction(nameof(Index));
             }
 
-            // Tạo một bản ghi giao dịch mới để lưu vết lịch sử
-            var transaction = new TopUpTransaction
+            using var dbTransaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                UserId = userId,
-                Amount = amount,
-                Status = "Success",
-                // Tạo mã giao dịch để Admin dễ nhận biết
-                TransactionCode = (type == "Plus" ? "ADMIN_CONG_" : "ADMIN_TRU_") + Guid.NewGuid().ToString().Substring(0, 8).ToUpper(),
-                CreatedAt = DateTime.Now
-            };
+                string actionType = type?.ToLower() ?? "plus";
+                decimal oldBalance = user.Balance;
 
-            _context.TopUpTransactions.Add(transaction);
-            await _context.SaveChangesAsync();
+                if (actionType == "minus")
+                {
+                    if (user.Balance < amount)
+                    {
+                        TempData["Error"] = $"Số dư không đủ! (Hiện có: {user.Balance:N0}đ)";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    user.Balance -= amount;
+                }
+                else
+                {
+                    user.Balance += amount;
+                }
 
-            TempData["Success"] = $"Đã {(type == "Plus" ? "CỘNG" : "TRỪ")} {amount.ToString("#,##0")}đ cho thành viên {user.UserName}";
+                var result = await _userManager.UpdateAsync(user);
+                if (!result.Succeeded) throw new Exception("Không thể cập nhật User vào DB.");
+
+                var transaction = new TopUpTransaction
+                {
+                    UserId = userId,
+                    Amount = (actionType == "minus") ? -amount : amount,
+                    Status = "Success",
+                    TransactionCode = (actionType == "minus" ? "AD_TRU_" : "AD_CONG_") +
+                                     $"{oldBalance:N0}->{user.Balance:N0}_" +
+                                     Guid.NewGuid().ToString()[..4].ToUpper(),
+                    CreatedAt = DateTime.Now
+                };
+
+                _context.TopUpTransactions.Add(transaction);
+                await _context.SaveChangesAsync();
+
+                await dbTransaction.CommitAsync();
+
+                TempData["Success"] = $"Đã {(actionType == "minus" ? "TRỪ" : "CỘNG")} {amount:N0}đ cho {user.UserName}. Số dư mới: {user.Balance:N0}đ";
+            }
+            catch (Exception ex)
+            {
+                await dbTransaction.RollbackAsync();
+                TempData["Error"] = "Lỗi hệ thống: " + ex.Message;
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
         // 3. XÓA THÀNH VIÊN
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if (user != null)
-            {
-                // Kiểm tra nếu admin tự xóa chính mình
-                if (user.UserName == User.Identity.Name)
-                {
-                    TempData["Error"] = "Bạn không thể tự xóa tài khoản admin của chính mình!";
-                    return RedirectToAction(nameof(Index));
-                }
+            if (user == null) return NotFound();
 
-                await _userManager.DeleteAsync(user);
-                TempData["Success"] = "Đã xóa thành viên thành công!";
+            if (user.UserName == User.Identity.Name)
+            {
+                TempData["Error"] = "Bạn không thể tự xóa chính mình!";
+                return RedirectToAction(nameof(Index));
             }
+
+            using var dbTransaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var transactions = _context.TopUpTransactions.Where(t => t.UserId == id);
+                _context.TopUpTransactions.RemoveRange(transactions);
+
+                var orders = _context.Orders.Where(o => o.UserId == id);
+                _context.Orders.RemoveRange(orders);
+
+                await _context.SaveChangesAsync();
+
+                var result = await _userManager.DeleteAsync(user);
+                if (!result.Succeeded) throw new Exception("Lỗi khi xóa User.");
+
+                await dbTransaction.CommitAsync();
+                TempData["Success"] = $"Đã xóa sạch dữ liệu của {user.UserName}.";
+            }
+            catch (Exception ex)
+            {
+                await dbTransaction.RollbackAsync();
+                TempData["Error"] = "Lỗi khi xóa: " + ex.Message;
+            }
+
             return RedirectToAction(nameof(Index));
         }
     }

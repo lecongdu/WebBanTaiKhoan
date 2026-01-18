@@ -1,21 +1,119 @@
 ﻿@model WebBanTaiKhoan.Models.Order
+@{
+    ViewData["Title"] = "Mua hàng thành công";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
-<div class="container text-center mt-5">
-    <div class="alert alert-success display-4">
-        🎉 MUA THÀNH CÔNG!
-    </div>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-success text-white text-center py-4">
+                    <div class="mb-3">
+                        <i class="fa-solid fa-circle-check" style="font-size: 60px;"></i>
+                    </div>
+                    <h2 class="fw-bold mb-0">GIAO DỊCH THÀNH CÔNG!</h2>
+                    <p class="mb-0 opacity-75">Cảm ơn bạn đã tin tưởng ủng hộ Shop.</p>
+                </div>
 
-    <div class="card shadow-lg mx-auto border-success" style="max-width: 600px;">
-        <div class="card-header bg-success text-white">
-            <h3>Thông tin tài khoản của bạn</h3>
-        </div>
-        <div class="card-body">
-            <h5 class="text-muted">Copy dòng dưới đây để đăng nhập:</h5>
-            <div class="p-4 bg-light border rounded mb-3 display-6 fw-bold text-danger">
-                @Model.SoldAccountInfo
+                <div class="card-body p-4 p-md-5 bg-light">
+                    <div class="text-center mb-4">
+                        <span class="badge bg-primary fs-6 mb-2">Đơn hàng #@Model.OrderCode</span>
+                        <h4 class="fw-bold text-dark">@Model.Product?.Name</h4>
+                        <p class="text-muted">Tổng thanh toán: <b class="text-danger">@Model.TotalAmount.ToString("#,##0")đ</b></p>
+                    </div>
+
+                    <hr class="opacity-10 my-4">
+
+                    <h5 class="fw-bold text-primary mb-3"><i class="fa-solid fa-gift me-2"></i>Tài khoản của bạn:</h5>
+
+                    <div class="account-list">
+                        @if (Model.AccountItems != null && Model.AccountItems.Any())
+                        {
+                            @foreach (var item in Model.AccountItems.Select((value, index) => new { value, index }))
+                            {
+                                // Xử lý hiển thị: Ưu tiên Data, nếu không có thì hiện User|Pass
+                                string info = !string.IsNullOrEmpty(item.value.Data)
+                                ? item.value.Data
+                                : $"{item.value.Username} | {item.value.Password}";
+
+                                <div class="mb-3">
+                                    <label class="small text-muted fw-bold mb-1">Tài khoản @(item.index + 1):</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control fw-bold font-monospace text-dark bg-white border-success"
+                                               value="@info" id="acc_@item.value.Id" readonly>
+
+                                        <button class="btn btn-success px-3" onclick="copyToClipboard('acc_@item.value.Id')">
+                                            <i class="fa-regular fa-copy"></i> Copy
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            // Trường hợp không có dữ liệu (Hiếm gặp nếu code Controller đúng)
+                            <div class="alert alert-warning text-center">
+                                <i class="fa-solid fa-spinner fa-spin me-2"></i>
+                                Đang cập nhật dữ liệu tài khoản. Vui lòng kiểm tra lại trong phần <a asp-controller="Orders" asp-action="MyOrders">Lịch sử đơn hàng</a>.
+                            </div>
+                        }
+                    </div>
+
+                    <div class="alert alert-warning border-0 d-flex align-items-center mt-4" role="alert">
+                        <i class="fa-solid fa-triangle-exclamation fs-4 me-3"></i>
+                        <div class="small">
+                            <strong>Lưu ý quan trọng:</strong><br />
+                            Vui lòng đổi mật khẩu ngay sau khi nhận để bảo mật tài khoản.
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+                        <a href="/" class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-bold">
+                            <i class="fa-solid fa-house me-2"></i>Trang chủ
+                        </a>
+                        <a asp-controller="Orders" asp-action="MyOrders" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm">
+                            <i class="fa-solid fa-clock-rotate-left me-2"></i>Lịch sử mua
+                        </a>
+                    </div>
+                </div>
             </div>
-            <p>Vui lòng đổi mật khẩu ngay sau khi nhận.</p>
-            <a href="/" class="btn btn-outline-primary">Quay lại mua tiếp</a>
         </div>
     </div>
 </div>
+
+<script>
+    function copyToClipboard(elementId) {
+        var copyText = document.getElementById(elementId);
+
+        // Chọn nội dung
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // Hỗ trợ mobile
+
+        // Thực hiện lệnh copy
+        navigator.clipboard.writeText(copyText.value).then(function() {
+            // Hiệu ứng nút bấm (Optional)
+            alert("Đã copy thành công!");
+        }, function(err) {
+            console.error('Lỗi copy: ', err);
+            alert("Lỗi copy, vui lòng bôi đen thủ công.");
+        });
+    }
+</script>
+
+<style>
+    /* Font chữ Monospace giúp nhìn User/Pass rõ ràng hơn, không bị nhầm ký tự */
+    .font-monospace {
+        font-family: 'Consolas', 'Monaco', monospace !important;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-success {
+        background-color: #198754;
+        border-color: #198754;
+    }
+
+        .btn-success:hover {
+            background-color: #157347;
+        }
+</style>

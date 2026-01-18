@@ -6,43 +6,103 @@
     Layout = "_Layout.cshtml";
 }
 
-<h4 class="fw-bold mb-4 text-primary text-uppercase"><i class="fa-solid fa-envelope-open-text me-2"></i>Thay đổi địa chỉ Email</h4>
+<div class="mb-4">
+    <h4 class="fw-bold text-dark text-uppercase d-flex align-items-center">
+        <span class="bg-primary bg-opacity-10 p-2 rounded-3 me-3">
+            <i class="fa-solid fa-envelope-open-text text-primary"></i>
+        </span>
+        Thay đổi địa chỉ Email
+    </h4>
+    <p class="text-muted small ms-5">Cập nhật email để nhận thông báo đơn hàng và bảo mật tài khoản.</p>
+</div>
+
 <partial name="_StatusMessage" for="StatusMessage" />
 
 <div class="row">
-    <div class="col-md-9">
-        <form id="email-form" method="post">
-            <div asp-validation-summary="All" class="text-danger small mb-3"></div>
+    <div class="col-md-10 col-lg-8">
+        <form id="email-form" method="post" class="p-2">
+            <div asp-validation-summary="All" class="text-danger small mb-3 fw-bold"></div>
 
             @if (Model.IsEmailConfirmed)
             {
-                <div class="form-floating mb-3 input-group">
-                    <input asp-for="Email" class="form-control bg-light border-0" disabled placeholder="Email hiện tại" />
-                    <label asp-for="Email">Email hiện tại</label>
-                    <span class="input-group-text bg-success text-white border-0"><i class="fa-solid fa-circle-check me-1"></i> Đã xác minh</span>
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-muted small">EMAIL HIỆN TẠI</label>
+                    <div class="input-group">
+                        <div class="form-floating flex-grow-1">
+                            <input asp-for="Email" class="form-control bg-light border-0 shadow-none"
+                                   disabled style="border-top-left-radius: 12px; border-bottom-left-radius: 12px;" />
+                            <label asp-for="Email">Email đang sử dụng</label>
+                        </div>
+                        <span class="input-group-text bg-success bg-opacity-10 text-success border-0 px-3 fw-bold"
+                              style="border-top-right-radius: 12px; border-bottom-right-radius: 12px;">
+                            <i class="fa-solid fa-circle-check me-1"></i> Đã xác minh
+                        </span>
+                    </div>
                 </div>
             }
             else
             {
-                <div class="form-floating mb-3">
-                    <input asp-for="Email" class="form-control bg-light border-0" disabled placeholder="Email chưa xác minh" />
-                    <label asp-for="Email">Email hiện tại</label>
-                    <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="btn btn-link text-decoration-none small fw-bold mt-1">Gửi lại mã xác minh</button>
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-muted small">EMAIL HIỆN TẠI</label>
+                    <div class="form-floating mb-2">
+                        <input asp-for="Email" class="form-control bg-light border-0 shadow-none rounded-3" disabled />
+                        <label asp-for="Email">Email hiện tại</label>
+                    </div>
+                    <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail"
+                            class="btn btn-link text-warning text-decoration-none small fw-bold p-0">
+                        <i class="fa-solid fa-triangle-exclamation me-1"></i> Gửi lại mã xác minh
+                    </button>
                 </div>
             }
 
-            <div class="form-floating mb-4">
-                <input asp-for="Input.NewEmail" class="form-control border-primary border-opacity-25 shadow-none" style="border-radius: 12px;" autocomplete="email" aria-required="true" placeholder="Nhập email mới" />
-                <label asp-for="Input.NewEmail">Địa chỉ Email mới</label>
-                <span asp-validation-for="Input.NewEmail" class="text-danger small"></span>
+            <div class="mb-4">
+                <label class="form-label fw-bold text-muted small">EMAIL MỚI</label>
+                <div class="form-floating">
+                    <input asp-for="Input.NewEmail" class="form-control border-2 shadow-sm custom-input"
+                           autocomplete="email" aria-required="true" placeholder="Nhập email mới" />
+                    <label asp-for="Input.NewEmail">Nhập địa chỉ Email mới của bạn</label>
+                </div>
+                <span asp-validation-for="Input.NewEmail" class="text-danger x-small mt-1 d-block fw-medium"></span>
             </div>
 
-            <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="btn btn-primary px-5 py-3 fw-bold shadow-sm rounded-pill">
-                CẬP NHẬT EMAIL <i class="fa-solid fa-paper-plane ms-2"></i>
-            </button>
+            <div class="mt-4">
+                <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail"
+                        class="btn btn-primary px-5 py-3 fw-bold shadow rounded-pill btn-hover-effect">
+                    CẬP NHẬT EMAIL <i class="fa-solid fa-paper-plane ms-2"></i>
+                </button>
+            </div>
         </form>
     </div>
 </div>
+
+<style>
+    .custom-input {
+        border-radius: 12px !important;
+        border-color: #dee2e6 !important;
+        transition: all 0.3s ease;
+    }
+
+        .custom-input:focus {
+            border-color: #0d6efd !important;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1) !important;
+        }
+
+    .btn-hover-effect {
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #0d6efd 0%, #0046af 100%);
+        border: none;
+    }
+
+        .btn-hover-effect:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3) !important;
+            filter: brightness(1.1);
+        }
+
+    .x-small {
+        font-size: 0.75rem;
+    }
+</style>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
