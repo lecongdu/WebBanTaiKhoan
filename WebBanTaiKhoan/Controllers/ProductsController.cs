@@ -27,12 +27,21 @@ namespace WebBanTaiKhoan.Controllers
         // ==========================================
         public async Task<IActionResult> Index()
         {
-            var products = _context.Products
+            var products = await _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.AccountItems)
-                .AsNoTracking();
+                .OrderByDescending(p => p.Id)
+                .ToListAsync();
 
-            return View(await products.OrderByDescending(p => p.Id).ToListAsync());
+            // --- TAO THEM DOAN NAY DE TU DONG DEM SO LUONG ---
+            foreach (var item in products)
+            {
+                item.StockQuantity = item.AccountItems.Count(a => !a.IsSold);
+                item.SoldQuantity = item.AccountItems.Count(a => a.IsSold);
+            }
+            // ------------------------------------------------
+
+            return View(products);
         }
 
         // CHI TIẾT SẢN PHẨM
@@ -46,6 +55,10 @@ namespace WebBanTaiKhoan.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (product == null) return NotFound();
+
+            // --- CAP NHAT SO LUONG TRUOC KHI SANG VIEW ---
+            product.StockQuantity = product.AccountItems.Count(a => !a.IsSold);
+            product.SoldQuantity = product.AccountItems.Count(a => a.IsSold);
 
             return View(product);
         }
@@ -97,7 +110,6 @@ namespace WebBanTaiKhoan.Controllers
         // 3. KHU VỰC QUẢN TRỊ (ADMIN & CTV)
         // ==========================================
 
-        // Cho phép CTV vào trang Create, Edit và ImportStock
         [Authorize(Roles = "Admin,Collaborator,usert")]
         public IActionResult Create()
         {
@@ -151,9 +163,9 @@ namespace WebBanTaiKhoan.Controllers
             }
 
             var lines = listData.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
-                                 .Select(l => l.Trim())
-                                 .Where(l => !string.IsNullOrEmpty(l))
-                                 .ToList();
+                                     .Select(l => l.Trim())
+                                     .Where(l => !string.IsNullOrEmpty(l))
+                                     .ToList();
 
             if (lines.Count > 0)
             {
@@ -178,8 +190,17 @@ namespace WebBanTaiKhoan.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
-            var product = await _context.Products.FindAsync(id);
+
+            // --- THEM INCLUDE ACCOUNT ITEMS DE DEM SO LUONG ---
+            var product = await _context.Products
+                .Include(p => p.AccountItems)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (product == null) return NotFound();
+
+            product.StockQuantity = product.AccountItems.Count(a => !a.IsSold);
+            product.SoldQuantity = product.AccountItems.Count(a => a.IsSold);
+
             ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name", product.CategoryId);
             return View(product);
         }
@@ -219,9 +240,6 @@ namespace WebBanTaiKhoan.Controllers
             return View(product);
         }
 
-        // ==========================================
-        // XÓA SẢN PHẨM (Bảo mật: CHỈ ADMIN)
-        // ==========================================
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -248,8 +266,6 @@ namespace WebBanTaiKhoan.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
-
-        // --- CÁC HÀM PHỤ TRỢ ---
 
         private async Task<string> SaveImage(IFormFile file)
         {

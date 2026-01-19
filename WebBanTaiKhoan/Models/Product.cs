@@ -24,6 +24,16 @@ namespace WebBanTaiKhoan.Models
         [Display(Name = "Hình ảnh")]
         public string? ImageUrl { get; set; }
 
+        // === TAO THEM 2 DONG NAY DE HIEN THI SO LUONG ===
+        [NotMapped] // Dung NotMapped neu may muon tu dem trong code ma khong can tao cot SQL
+        [Display(Name = "Còn hàng")]
+        public int StockQuantity { get; set; }
+
+        [NotMapped] // Dung NotMapped neu may muon tu dem trong code ma khong can tao cot SQL
+        [Display(Name = "Đã bán")]
+        public int SoldQuantity { get; set; }
+        // ================================================
+
         // ==========================================
         // QUẢN LÝ DANH MỤC (ADMIN CÓ THỂ ĐIỀU CHỈNH)
         // ==========================================
