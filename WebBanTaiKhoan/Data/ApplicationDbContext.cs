@@ -20,8 +20,11 @@ namespace WebBanTaiKhoan.Data
         public DbSet<SystemSetting> SystemSettings { get; set; }
         public DbSet<Category> Category { get; set; }
 
-        // --- THÊM BẢNG GIỎ HÀNG Ở ĐÂY ---
+        // --- BẢNG GIỎ HÀNG ---
         public DbSet<CartItem> CartItems { get; set; }
+
+        // --- 🟢 THÊM BẢNG CHIẾT KHẤU THẺ CÀO Ở ĐÂY ---
+        public DbSet<CardDiscount> CardDiscounts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -34,6 +37,10 @@ namespace WebBanTaiKhoan.Data
 
             // Cấu hình bảng CartItem (Số tiền trong giỏ)
             builder.Entity<CartItem>().Property(c => c.Price).HasColumnType("decimal(18,2)");
+
+            // 🟢 Cấu hình thêm cho bảng CardDiscount (Nếu cần dùng decimal)
+            // Nếu ReceiveAmount trong Model là decimal thì dùng dòng dưới, nếu là int thì thôi
+            // builder.Entity<CardDiscount>().Property(d => d.ReceiveAmount).HasColumnType("decimal(18,2)");
         }
     }
 }

@@ -53,7 +53,6 @@ namespace WebBanTaiKhoan.Controllers
 
             if (item != null)
             {
-                // Nếu đã có trong giỏ, kiểm tra xem cộng thêm có quá kho không
                 if (item.Quantity + quantity > stockCount)
                 {
                     TempData["Error"] = $"Kho chỉ còn {stockCount} sản phẩm!";
@@ -67,7 +66,6 @@ namespace WebBanTaiKhoan.Controllers
             }
             else
             {
-                // Nếu chưa có, tạo mới bản ghi vào DB
                 if (quantity > stockCount) quantity = stockCount;
 
                 _context.CartItems.Add(new CartItem
@@ -77,7 +75,6 @@ namespace WebBanTaiKhoan.Controllers
                     ProductName = product.Name,
                     Price = product.Price,
                     Quantity = quantity,
-                    // 🔥 SỬA LỖI: Gán ImageUrl để không bị lỗi NULL Database
                     ImageUrl = product.ImageUrl ?? ""
                 });
             }
@@ -95,7 +92,6 @@ namespace WebBanTaiKhoan.Controllers
         public async Task<IActionResult> UpdateQuantity(int id, int quantity)
         {
             var userId = _userManager.GetUserId(User);
-            // Tìm sản phẩm trong giỏ dựa trên ProductId và UserId
             var item = await _context.CartItems.FirstOrDefaultAsync(p => p.ProductId == id && p.UserId == userId);
 
             if (item != null)
@@ -126,7 +122,6 @@ namespace WebBanTaiKhoan.Controllers
         public async Task<IActionResult> Remove(int id)
         {
             var userId = _userManager.GetUserId(User);
-            // Xóa dựa trên ProductId của user đó
             var item = await _context.CartItems.FirstOrDefaultAsync(p => p.ProductId == id && p.UserId == userId);
             if (item != null)
             {
@@ -137,7 +132,78 @@ namespace WebBanTaiKhoan.Controllers
         }
 
         // ==========================================
-        // 5. 🔥 THANH TOÁN (CHECKOUT) 🔥
+        // 5. 🔥 MUA NGAY (QUICK BUY) - MỚI THÊM 🔥
+        // ==========================================
+        [HttpPost]
+        public async Task<IActionResult> QuickBuy(int productId, int quantity = 1)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Json(new { success = false, message = "Vui lòng đăng nhập!" });
+
+            var product = await _context.Products.FindAsync(productId);
+            if (product == null || quantity <= 0) return Json(new { success = false, message = "Sản phẩm không tồn tại!" });
+
+            decimal totalAmount = product.Price * quantity;
+
+            // 🔴 KIỂM TRA SỐ DƯ
+            if (user.Balance < totalAmount)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = $"Số dư không đủ! Bạn cần nạp thêm {(totalAmount - user.Balance):#,##0}đ để chốt đơn này."
+                });
+            }
+
+            // 🟡 KIỂM TRA KHO
+            var accountsToSell = await _context.AccountItems
+                .Where(a => a.ProductId == productId && !a.IsSold)
+                .Take(quantity)
+                .ToListAsync();
+
+            if (accountsToSell.Count < quantity)
+            {
+                return Json(new { success = false, message = "Số lượng trong kho không đủ!" });
+            }
+
+            using var dbTransaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                // 1. Trừ tiền
+                user.Balance -= totalAmount;
+                var updateResult = await _userManager.UpdateAsync(user);
+                if (!updateResult.Succeeded) throw new Exception("Lỗi cập nhật ví.");
+
+                // 2. Tạo đơn hàng
+                var order = new Order
+                {
+                    UserId = user.Id,
+                    ProductId = productId,
+                    Price = product.Price,
+                    TotalAmount = totalAmount,
+                    Status = "Completed",
+                    CreatedAt = DateTime.Now,
+                    OrderCode = "DHQ" + Guid.NewGuid().ToString()[..6].ToUpper(),
+                    AccountItems = accountsToSell
+                };
+
+                foreach (var acc in accountsToSell) { acc.IsSold = true; }
+                _context.Orders.Add(order);
+
+                await _context.SaveChangesAsync();
+                await dbTransaction.CommitAsync();
+
+                return Json(new { success = true, message = "Mua hàng thành công!" });
+            }
+            catch (Exception ex)
+            {
+                await dbTransaction.RollbackAsync();
+                return Json(new { success = false, message = "Lỗi xử lý: " + ex.Message });
+            }
+        }
+
+        // ==========================================
+        // 6. 🔥 THANH TOÁN GIỎ HÀNG (CHECKOUT) 🔥
         // ==========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -193,9 +259,7 @@ namespace WebBanTaiKhoan.Controllers
                     _context.Orders.Add(order);
                 }
 
-                // XÓA GIỎ HÀNG TRONG DATABASE SAU KHI MUA XONG
                 _context.CartItems.RemoveRange(cart);
-
                 await _context.SaveChangesAsync();
                 await dbTransaction.CommitAsync();
 

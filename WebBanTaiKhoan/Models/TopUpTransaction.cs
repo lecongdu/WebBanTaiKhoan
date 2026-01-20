@@ -31,8 +31,8 @@ namespace WebBanTaiKhoan.Models
 
         /// <summary>
         /// TRẠNG THÁI GIAO DỊCH:
-        /// Pending: Hệ thống đã tạo QR (Khách chưa ấn xác nhận)
-        /// Processing: Khách đã bấm nút "Xác nhận đã chuyển tiền"
+        /// Pending: Hệ thống đã tạo QR (Khách chưa ấn xác nhận) hoặc Khách vừa gửi thẻ cào
+        /// Processing: Khách đã bấm nút "Xác nhận đã chuyển tiền" (dành cho Bank)
         /// Success: Admin đã duyệt và cộng tiền thành công
         /// Cancelled: Giao dịch bị hủy hoặc quá thời gian
         /// </summary>
@@ -42,5 +42,15 @@ namespace WebBanTaiKhoan.Models
 
         // Ghi chú của Admin khi duyệt (Ví dụ: "Đã khớp tiền Techcombank")
         public string? AdminNote { get; set; }
+
+        // ==========================================
+        // 🟢 MỚI THÊM: PHỤC VỤ NẠP THẺ CÀO
+        // ==========================================
+
+        [Display(Name = "Số Seri")]
+        public string? Serial { get; set; }
+
+        [Display(Name = "Mã thẻ (Pin)")]
+        public string? Pin { get; set; }
     }
 }

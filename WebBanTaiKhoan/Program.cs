@@ -33,7 +33,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders()
 .AddDefaultUI()
-.AddErrorDescriber<VietnameseIdentityErrorDescriber>(); // <--- THÊM DÒNG NÀY ĐỂ TIẾNG VIỆT HÓA LỖI
+.AddErrorDescriber<VietnameseIdentityErrorDescriber>();
 
 // Cấu hình Cookie để đảm bảo chuyển hướng đúng khi chưa đăng nhập
 builder.Services.ConfigureApplicationCookie(options =>
@@ -58,7 +58,7 @@ builder.Services.AddSession(options =>
 var app = builder.Build();
 
 // ==================================================================
-// --- BẮT ĐẦU: SEED DATA (TỰ ĐỘNG TẠO DỮ LIỆU) ---
+// --- BẮT ĐẦU: SEED DATA (GIỮ NGUYÊN TOÀN BỘ) ---
 // ==================================================================
 using (var scope = app.Services.CreateScope())
 {
@@ -165,6 +165,7 @@ app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// 🔴 SỬA LỖI Ở ĐÂY: Dùng Index làm mặc định để không bị hiện Welcome sau khi Login
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

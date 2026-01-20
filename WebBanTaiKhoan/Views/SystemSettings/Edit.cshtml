@@ -51,6 +51,35 @@
                 </div>
             </div>
 
+            @* --- 🟢 MỚI: CẤU HÌNH TRANG CHÀO (WELCOME PAGE) --- *@
+            <div class="col-12 mb-4">
+                <div class="card shadow-sm border-primary border-top border-4 rounded-4">
+                    <div class="card-header bg-white fw-bold text-primary">
+                        <i class="fa-solid fa-handshake me-2"></i>Cấu hình trang Chào (Welcome Page)
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="small fw-bold">Badge thương hiệu (Dòng chữ nhỏ trên đầu):</label>
+                                <input asp-for="WelcomeBadge" class="form-control" placeholder="Vd: Nick3s - Uy Tín Tạo Thương Hiệu" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small fw-bold">Chữ trên nút bấm:</label>
+                                <input asp-for="WelcomeButtonText" class="form-control" placeholder="Vd: VÀO CỬA HÀNG NGAY" />
+                            </div>
+                            <div class="col-md-12">
+                                <label class="small fw-bold">Tiêu đề chính (Dùng &lt;br&gt; để xuống dòng):</label>
+                                <textarea asp-for="WelcomeTitle" class="form-control" rows="2" placeholder="Vd: KHO TÀI KHOẢN SỐ <br> LỚN NHẤT VIỆT NAM"></textarea>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="small fw-bold">Mô tả chi tiết bên dưới:</label>
+                                <textarea asp-for="WelcomeSubTitle" class="form-control" rows="3" placeholder="Mô tả ngắn về dịch vụ của mày..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             @* --- CỘT 2: THÔNG TIN & MAP --- *@
             <div class="col-md-6 mb-4">
                 <div class="card shadow-sm h-100 border-info border-top border-4 rounded-4">

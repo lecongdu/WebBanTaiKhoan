@@ -1,0 +1,134 @@
+﻿@model IEnumerable<WebBanTaiKhoan.Models.CardDiscount>
+@{
+    ViewData["Title"] = "Cấu hình chiết khấu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4 pb-5">
+    @* --- HEADER --- *@
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="text-danger fw-bold border-bottom border-danger border-3 pb-2 mb-0">
+                <i class="fa-solid fa-percent me-2"></i>QUẢN LÝ CHIẾT KHẤU
+            </h2>
+            <p class="text-muted small mt-2">Điều chỉnh số tiền thực nhận cho từng mệnh giá thẻ cào.</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary fw-bold rounded-pill px-4 shadow-sm hover-up">
+            <i class="fa-solid fa-arrow-left me-1"></i> QUAY LẠI
+        </a>
+    </div>
+
+    @* --- BẢNG CẤU HÌNH --- *@
+    <div class="card shadow-lg border-0 rounded-4 overflow-hidden animate__animated animate__fadeIn">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 text-center">
+                <thead class="bg-dark text-white text-uppercase small fw-bold">
+                    <tr>
+                        <th class="py-3">Mệnh giá nạp (VNĐ)</th>
+                        <th>Khách thực nhận (VNĐ)</th>
+                        <th>Tỷ lệ thực nhận (%)</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold fs-5 text-primary">@item.Amount.ToString("#,##0")đ</td>
+                                <td>
+                                    <div class="d-flex justify-content-center">
+                                        <div class="input-group input-group-sm" style="max-width: 180px;">
+                                            <input type="number" id="receive-@item.Id"
+                                                   class="form-control fw-bold text-success border-2 border-success border-opacity-25"
+                                                   value="@item.ReceiveAmount">
+                                            <span class="input-group-text bg-success text-white fw-bold">đ</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="badge bg-primary-subtle text-primary border border-primary px-3 py-2 rounded-pill fw-bold">
+                                        <i class="fa-solid fa-chart-line me-1"></i>
+                                        @( (item.ReceiveAmount * 100.0 / item.Amount).ToString("0.##") )%
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn btn-dark btn-sm fw-bold px-4 rounded-pill shadow-sm hover-up"
+                                            onclick="saveDiscount(@item.Id)">
+                                        <i class="fa-solid fa-floppy-disk me-1"></i> LƯU LẠI
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="py-5 text-muted italic">
+                                <i class="fa-solid fa-triangle-exclamation mb-2 fs-3"></i><br>
+                                Chưa có mệnh giá nào trong Database.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .rounded-4 {
+        border-radius: 1.2rem !important;
+    }
+
+    .hover-up:hover {
+        transform: translateY(-3px);
+        transition: 0.3s;
+    }
+
+    .table thead th {
+        letter-spacing: 1px;
+        font-size: 0.75rem;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        opacity: 1;
+    }
+
+    .bg-primary-subtle {
+        background-color: #e7f1ff !important;
+    }
+</style>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function saveDiscount(id) {
+            const val = document.getElementById('receive-' + id).value;
+
+            // Hiện loading cho chuyên nghiệp
+            Swal.fire({
+                title: 'Đang lưu...',
+                didOpen: () => { Swal.showLoading() }
+            });
+
+            $.post('/Admin/UpdateDiscount', { id: id, receive: val }, function(res) {
+                if(res.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đã cập nhật!',
+                        text: 'Tỷ lệ chiết khấu mới đã được áp dụng.',
+                        timer: 1200,
+                        showConfirmButton: false
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Lỗi!', 'Không thể cập nhật, hãy thử lại.', 'error');
+                }
+            });
+        }
+    </script>
+}

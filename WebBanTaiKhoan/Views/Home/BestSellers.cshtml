@@ -1,0 +1,144 @@
+﻿@model IEnumerable<WebBanTaiKhoan.Models.Product>
+@{
+    ViewData["Title"] = "Siêu Cấp Bán Chạy";
+}
+
+@* 1. NÚT QUAY LẠI Ở ĐẦU TRANG *@
+<div class="container mt-3">
+    <a asp-action="Index" class="btn btn-back rounded-pill px-4 shadow-sm fw-bold transition-all">
+        <i class="fa-solid fa-arrow-left-long me-2"></i> Quay lại trang chủ
+    </a>
+</div>
+
+<div class="container mt-4 pb-5">
+    @* Tiêu đề trang *@
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-uppercase display-6"><i class="fa-solid fa-fire text-danger me-2 animate-bounce"></i> SẢN PHẨM BÁN CHẠY NHẤT</h2>
+        <p class="text-muted">Đây là những tài khoản hot nhất, được cộng đồng săn đón nhiều nhất trong tuần qua.</p>
+        <div class="d-flex justify-content-center">
+            <hr style="width: 100px; height: 5px; background: linear-gradient(to right, #ff4d4d, #f9cb28); border: none; border-radius: 5px;">
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center py-5 rounded-4 shadow-sm">
+            <i class="fa-solid fa-box-open fs-1 mb-3 d-block opacity-50"></i>
+            Hiện chưa có dữ liệu bán hàng. Hãy quay lại sau nhé!
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm position-relative overflow-hidden card-hover" style="border-radius: 20px; transition: 0.3s;">
+
+                        @* Nhãn Top Sales *@
+                        <div class="position-absolute top-0 start-0 m-3" style="z-index: 5;">
+                            <span class="badge bg-danger text-white fw-bold px-3 py-2 shadow-sm rounded-pill">
+                                <i class="fa-solid fa-crown me-1"></i> TOP @(Model.ToList().IndexOf(item) + 1)
+                            </span>
+                        </div>
+
+                        <div class="p-4 text-center bg-light" style="min-height: 200px; display: flex; align-items: center; justify-content: center;">
+                            <a asp-action="ProductDetail" asp-route-id="@item.Id">
+                                <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/no-image.png" : item.ImageUrl)"
+                                     class="img-fluid rounded transition-all" style="max-height: 150px; object-fit: contain;">
+                            </a>
+                        </div>
+
+                        <div class="card-body d-flex flex-column text-center">
+                            <h6 class="fw-bold text-dark text-truncate mb-2">@item.Name</h6>
+
+                            <div class="mb-3">
+                                <span class="text-danger fw-bold fs-4">@item.Price.ToString("#,##0")đ</span>
+                            </div>
+
+                            @* Thanh hiển thị tỉ lệ bán hàng *@
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between small text-muted mb-1">
+                                    <span><i class="fa-solid fa-cart-shopping me-1"></i> Đã bán: <b>@item.SoldQuantity</b></span>
+                                    <span>Còn: <b>@item.StockQuantity</b></span>
+                                </div>
+                                <div class="progress" style="height: 8px; border-radius: 10px; background-color: #eee;">
+                                    @{
+                                        var total = item.SoldQuantity + item.StockQuantity;
+                                        var percent = total > 0 ? (item.SoldQuantity * 100 / total) : 0;
+                                    }
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger"
+                                         role="progressbar" style="width: @percent%"></div>
+                                </div>
+                            </div>
+
+                            <a asp-action="ProductDetail" asp-route-id="@item.Id"
+                               class="btn btn-outline-danger w-100 rounded-pill fw-bold mt-auto py-2 shadow-sm btn-detail">
+                                XEM CHI TIẾT <i class="fa-solid fa-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @* 2. NÚT KHÁM PHÁ THÊM Ở CUỐI TRANG *@
+        <div class="text-center mt-5 pt-4">
+            <a asp-action="Index" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow-sm transition-all">
+                TIẾP TỤC KHÁM PHÁ <i class="fa-solid fa-rocket ms-2"></i>
+            </a>
+        </div>
+    }
+</div>
+
+<style>
+    .btn-back {
+        background: #fff;
+        border: 2px solid #eee;
+        color: #666;
+    }
+
+        .btn-back:hover {
+            background: #f8f9fa;
+            border-color: #0061ff;
+            color: #0061ff;
+            transform: translateX(-5px);
+        }
+
+    .card-hover:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(255, 77, 77, 0.15) !important;
+    }
+
+        .card-hover:hover img {
+            transform: scale(1.1);
+        }
+
+    .btn-detail:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .animate-bounce {
+        animation: bounce 2s infinite;
+    }
+
+    @@keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-5px);
+        }
+    }
+
+    .transition-all {
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: scale(1.05);
+        background-color: #0052d4;
+    }
+</style>

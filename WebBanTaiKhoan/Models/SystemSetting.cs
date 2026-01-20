@@ -13,6 +13,12 @@ namespace WebBanTaiKhoan.Models
         public string? BannerUrl3 { get; set; }  // Banner phụ 2
         public string? MarqueeText { get; set; } // Chữ chạy
 
+        // --- 🟢 CẤU HÌNH TRANG CHÀO (WELCOME PAGE) ---
+        public string? WelcomeBadge { get; set; }      // Dòng chữ nhỏ trên đầu (Vd: Nick3s - Uy Tín...)
+        public string? WelcomeTitle { get; set; }      // Tiêu đề chính (Vd: KHO TÀI KHOẢN SỐ...)
+        public string? WelcomeSubTitle { get; set; }   // Mô tả ngắn bên dưới
+        public string? WelcomeButtonText { get; set; } // Chữ trên nút bấm vào shop
+
         // --- THÔNG TIN LIÊN HỆ ---
         public string? ContactZalo { get; set; }
         public string? ContactPhone { get; set; }

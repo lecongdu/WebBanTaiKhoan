@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBanTaiKhoan.Data;
 
@@ -11,9 +12,11 @@ using WebBanTaiKhoan.Data;
 namespace WebBanTaiKhoan.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260119150651_AddCardDiscountTable")]
+    partial class AddCardDiscountTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -490,18 +493,6 @@ namespace WebBanTaiKhoan.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TiktokUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WelcomeBadge")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WelcomeButtonText")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WelcomeSubTitle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WelcomeTitle")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("YoutubeUrl")

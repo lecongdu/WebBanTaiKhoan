@@ -2,156 +2,229 @@
 @{
     ViewData["Title"] = "Quản lý Nạp tiền";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Tách dữ liệu từ Model được gửi từ AdminController
+    var bankTrans = ViewBag.BankTrans as List<WebBanTaiKhoan.Models.TopUpTransaction> ?? new List<WebBanTaiKhoan.Models.TopUpTransaction>();
+    var cardTrans = ViewBag.CardTrans as List<WebBanTaiKhoan.Models.TopUpTransaction> ?? new List<WebBanTaiKhoan.Models.TopUpTransaction>();
 }
 
 <div class="container mt-4 pb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-primary fw-bold border-bottom border-primary border-3 pb-2">
-            💸 QUẢN LÝ YÊU CẦU NẠP TIỀN
+            💸 TRUNG TÂM DUYỆT NẠP
         </h2>
-        <div class="d-flex gap-2">
-            <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary fw-bold shadow-sm">
-                <i class="fa-solid fa-arrow-left"></i> Quay lại
-            </a>
-        </div>
+        <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary fw-bold shadow-sm">
+            <i class="fa-solid fa-arrow-left me-1"></i> Quay lại
+        </a>
     </div>
 
     @if (TempData["Success"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 rounded-3 mb-4" role="alert">
             <i class="fa-solid fa-circle-check me-2"></i> @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0 rounded-3 mb-4" role="alert">
-            <i class="fa-solid fa-triangle-exclamation me-2"></i> @TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
 
-    <div class="row mb-3 g-2">
-        <div class="col-md-4">
-            <div class="p-2 border rounded bg-white shadow-sm small">
-                <span class="badge bg-secondary me-1">Pending</span>: Khách mới xem QR
-                <span class="badge bg-warning text-dark mx-1">Processing</span>: Khách đã báo nạp
-                <span class="badge bg-success mx-1">Success</span>: Đã cộng tiền
-            </div>
+    @* --- 🟢 THANH LỌC THEO NGÀY GIỜ (GỬI VỀ SERVER) --- *@
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body bg-light rounded-4 p-3 border">
+            <form method="get" asp-action="TopUpManager" class="row g-2 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted text-uppercase">Từ ngày</label>
+                    <input type="date" name="startDate" class="form-control form-control-sm border-2" value="@ViewBag.StartDate">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted text-uppercase">Đến ngày</label>
+                    <input type="date" name="endDate" class="form-control form-control-sm border-2" value="@ViewBag.EndDate">
+                </div>
+                <div class="col-md-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary btn-sm fw-bold w-100 shadow-sm"><i class="fa-solid fa-filter me-1"></i> LỌC NGÀY</button>
+                    <a asp-action="TopUpManager" class="btn btn-outline-secondary btn-sm fw-bold w-100">RESET</a>
+                </div>
+            </form>
         </div>
     </div>
 
-    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-        <div class="card-header bg-dark text-white py-3 fw-bold d-flex justify-content-between align-items-center">
-            <span><i class="fa-solid fa-list-check me-2"></i>DANH SÁCH GIAO DỊCH</span>
-            <span class="badge bg-primary">Tổng đơn: @Model.Count()</span>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light text-center">
-                        <tr class="text-uppercase small fw-bold">
-                            <th style="width: 15%">Thời gian</th>
-                            <th style="width: 25%">Khách hàng</th>
-                            <th style="width: 15%">Số tiền</th>
-                            <th style="width: 20%">Nội dung / Mã</th>
-                            <th style="width: 15%">Trạng thái</th>
-                            <th style="width: 10%">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model != null && Model.Any())
-                        {
-                            @foreach (var item in Model.OrderByDescending(x => x.CreatedAt))
+    @* --- 🔵 THANH TAB NGANG CHỌN PHƯƠNG THỨC --- *@
+    <div class="bg-white p-2 rounded-pill shadow-sm mb-4 d-flex justify-content-center border">
+        <ul class="nav nav-pills border-0" id="topupTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active rounded-pill fw-bold px-4" id="pane-card-btn" data-bs-toggle="pill" data-bs-target="#pane-card" type="button">
+                    <i class="fa-solid fa-ticket me-2"></i> DUYỆT THẺ CÀO
+                    <span class="badge bg-danger ms-1">@cardTrans.Count(x => x.Status == "Pending")</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link rounded-pill fw-bold px-4" id="pane-bank-btn" data-bs-toggle="pill" data-bs-target="#pane-bank" type="button">
+                    <i class="fa-solid fa-building-columns me-2"></i> DUYỆT BANK
+                    <span class="badge bg-primary ms-1">@bankTrans.Count(x => x.Status == "Processing" || x.Status == "Pending")</span>
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="tab-content" id="topupTabContent">
+        @* TAB 1: DUYỆT THẺ CÀO *@
+        <div class="tab-pane fade show active" id="pane-card" role="tabpanel">
+            <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+                <span class="text-muted fw-bold small">TRẠNG THÁI:</span>
+                <button class="btn btn-sm btn-outline-warning filter-btn" data-target="card-table" data-status="pending">ĐANG CHỜ</button>
+                <button class="btn btn-sm btn-outline-success filter-btn" data-target="card-table" data-status="success">THÀNH CÔNG</button>
+                <button class="btn btn-sm btn-outline-danger filter-btn" data-target="card-table" data-status="cancelled">ĐÃ HỦY</button>
+                <button class="btn btn-sm btn-dark filter-btn" data-target="card-table" data-status="all">TẤT CẢ</button>
+            </div>
+
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="card-table">
+                        <thead class="bg-danger text-white text-center">
+                            <tr class="text-uppercase small fw-bold">
+                                <th>Thời gian</th>
+                                <th>Khách hàng</th>
+                                <th>Mệnh giá</th>
+                                <th>Chi tiết thẻ (Copy)</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in cardTrans)
                             {
-                                <tr class="@(item.Status == "Processing" ? "bg-warning bg-opacity-10" : "")">
+                                <tr class="item-row" data-status="@item.Status.ToLower()">
                                     <td class="text-center small">
                                         <div class="fw-bold">@item.CreatedAt.ToString("dd/MM/yyyy")</div>
-                                        <div class="text-muted">@item.CreatedAt.ToString("HH:mm:ss")</div>
+                                        <div class="text-muted">@item.CreatedAt.ToString("HH:mm")</div>
                                     </td>
                                     <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-sm me-2">
-                                                <img src="https://ui-avatars.com/api/?name=@(item.User?.UserName ?? "User")&background=random" class="rounded-circle" width="35">
-                                            </div>
-                                            <div>
-                                                <div class="fw-bold text-dark">@(item.User?.UserName ?? "Ẩn danh")</div>
-                                                <div class="x-small text-muted">ID: #@item.Id</div>
-                                            </div>
-                                        </div>
+                                        <div class="fw-bold text-dark">@(item.User?.UserName ?? "Ẩn danh")</div>
+                                        <div class="x-small text-muted">ID: #@item.Id</div>
                                     </td>
                                     <td class="text-center">
-                                        <span class="fw-bold text-danger fs-5">@item.Amount.ToString("#,##0")</span><span class="small text-danger">đ</span>
+                                        <span class="fw-bold text-danger fs-5 amount-val">@item.Amount.ToString("#,##0")đ</span>
+                                        <div class="x-small fw-bold">@item.Method.Replace("Thẻ cào", "").Trim()</div>
                                     </td>
                                     <td>
-                                        <div class="small"><b>PT:</b> @item.Method</div>
-                                        <div class="mt-1">
-                                            <code class="px-2 py-1 bg-dark text-warning rounded small">@item.TransactionCode</code>
+                                        <div class="p-2 border rounded bg-light shadow-sm small" style="min-width: 200px;">
+                                            <div class="d-flex justify-content-between mb-1 border-bottom pb-1">
+                                                <span>Seri: <code class="text-dark fw-bold">@item.Serial</code></span>
+                                                <button class="btn btn-sm p-0 text-primary" onclick="copyToClipboard('@item.Serial')"><i class="fa-regular fa-copy"></i></button>
+                                            </div>
+                                            <div class="d-flex justify-content-between pt-1">
+                                                <span>Mã: <code class="text-danger fw-bold">@item.Pin</code></span>
+                                                <button class="btn btn-sm p-0 text-danger" onclick="copyToClipboard('@item.Pin')"><i class="fa-regular fa-copy"></i></button>
+                                            </div>
                                         </div>
-                                        @if (!string.IsNullOrEmpty(item.AdminNote))
-                                        {
-                                            <div class="x-small text-muted mt-1 italic">Note: @item.AdminNote</div>
-                                        }
                                     </td>
                                     <td class="text-center">
                                         @if (item.Status == "Success")
                                         {
-                                            <span class="badge bg-success-subtle text-success border border-success px-3">
-                                                <i class="fa-solid fa-check-double me-1"></i> THÀNH CÔNG
-                                            </span>
-                                        }
-                                        else if (item.Status == "Processing")
-                                        {
-                                            <span class="badge bg-warning text-dark border border-dark px-3 shadow-sm pulse-orange">
-                                                <i class="fa-solid fa-bell me-1"></i> KHÁCH BÁO NẠP
-                                            </span>
+                                            <span class="badge bg-success">THÀNH CÔNG</span>
                                         }
                                         else if (item.Status == "Pending")
                                         {
-                                            <span class="badge bg-light text-muted border px-3">
-                                                <i class="fa-solid fa-qrcode me-1"></i> CHỜ QUÉT QR
-                                            </span>
+
+                                            <span class="badge bg-warning text-dark pulse-orange">ĐANG CHỜ</span>
                                         }
                                         else
                                         {
-                                            <span class="badge bg-danger px-3">ĐÃ HỦY</span>
+
+                                            <span class="badge bg-danger">ĐÃ HỦY</span>
                                         }
                                     </td>
-                                    <td class="text-center">
-                                        @if (item.Status != "Success" && item.Status != "Cancelled")
+                                    <td class="text-center text-nowrap">
+                                        @if (item.Status == "Pending")
                                         {
                                             <div class="d-flex flex-column gap-1">
-                                                @* SỬA NÚT DUYỆT *@
-                                                <button type="button" class="btn btn-success btn-sm fw-bold shadow-sm"
-                                                        onclick="confirmApprove('@item.Id', '@(item.User?.UserName)', '@item.Amount.ToString("#,##0")')">
-                                                    DUYỆT
-                                                </button>
-                                                @* SỬA NÚT HỦY *@
-                                                <button type="button" class="btn btn-outline-danger btn-sm x-small"
-                                                        onclick="confirmReject('@item.Id', '@(item.User?.UserName)')">
-                                                    HỦY
-                                                </button>
+                                                <button class="btn btn-success btn-sm fw-bold shadow-sm approve-btn" onclick="confirmApprove('@item.Id', '@(item.User?.UserName)', '@item.Amount', true)">DUYỆT</button>
+                                                <button class="btn btn-outline-danger btn-sm x-small" onclick="confirmReject('@item.Id', '@(item.User?.UserName)')">HỦY</button>
                                             </div>
                                         }
                                         else
                                         {
-                                            <span class="text-muted small italic"><i class="fa-solid fa-lock me-1"></i>Đã xong</span>
+
+                                            <span class="text-muted small italic">Hoàn tất</span>
                                         }
                                     </td>
                                 </tr>
                             }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="6" class="text-center py-5">
-                                    <img src="https://cdn-icons-png.flaticon.com/512/4076/4076432.png" width="80" class="opacity-25 mb-3">
-                                    <p class="text-muted">Chưa có giao dịch nạp tiền nào được ghi nhận.</p>
-                                </td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        @* TAB 2: DUYỆT BANK *@
+        <div class="tab-pane fade" id="pane-bank" role="tabpanel">
+            <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+                <span class="text-muted fw-bold small">TRẠNG THÁI:</span>
+                <button class="btn btn-sm btn-outline-info filter-btn" data-target="bank-table" data-status="processing">KHÁCH BÁO NẠP</button>
+                <button class="btn btn-sm btn-outline-success filter-btn" data-target="bank-table" data-status="success">THÀNH CÔNG</button>
+                <button class="btn btn-sm btn-outline-danger filter-btn" data-target="bank-table" data-status="cancelled">ĐÃ HỦY</button>
+                <button class="btn btn-sm btn-dark filter-btn" data-target="bank-table" data-status="all">TẤT CẢ</button>
+            </div>
+
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="bank-table">
+                        <thead class="bg-primary text-white text-center">
+                            <tr class="text-uppercase small fw-bold">
+                                <th>Thời gian</th>
+                                <th>Khách hàng</th>
+                                <th>Số tiền</th>
+                                <th>Nội dung</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in bankTrans)
+                            {
+                                <tr class="item-row" data-status="@item.Status.ToLower()">
+                                    <td class="text-center small">@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td class="fw-bold">@item.User?.UserName</td>
+                                    <td class="text-center text-success fw-bold">@item.Amount.ToString("#,##0")đ</td>
+                                    <td class="text-center"><code class="bg-dark text-warning p-1 rounded">@item.TransactionCode</code></td>
+                                    <td class="text-center">
+                                        @if (item.Status == "Success")
+                                        {
+                                            <span class="badge bg-success">THÀNH CÔNG</span>
+                                        }
+                                        else if (item.Status == "Processing")
+                                        {
+
+                                            <span class="badge bg-info pulse-orange">KHÁCH BÁO NẠP</span>
+                                        }
+                                        else if (item.Status == "Cancelled")
+                                        {
+
+                                            <span class="badge bg-danger">ĐÃ HỦY</span>
+                                        }
+                                        else
+                                        {
+
+                                            <span class="badge bg-light text-muted border px-2">CHỜ QUÉT</span>
+                                        }
+                                    </td>
+                                    <td class="text-center text-nowrap">
+                                        @if (item.Status != "Success" && item.Status != "Cancelled")
+                                        {
+                                            <div class="d-flex flex-column gap-1">
+                                                <button class="btn btn-primary btn-sm fw-bold approve-btn" onclick="confirmApprove('@item.Id', '@(item.User?.UserName)', '@item.Amount', false)">DUYỆT BANK</button>
+                                                <button class="btn btn-outline-danger btn-sm x-small" onclick="confirmReject('@item.Id', '@(item.User?.UserName)')">HỦY</button>
+                                            </div>
+                                        }
+                                        else
+                                        {
+
+                                            <span class="text-muted small italic">Hoàn tất</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -165,6 +238,33 @@
     .x-small {
         font-size: 0.7rem;
     }
+
+    .nav-pills .nav-link {
+        color: #495057;
+        border: 1px solid #dee2e6;
+        margin: 0 5px;
+        transition: 0.3s;
+    }
+
+        .nav-pills .nav-link.active {
+            background-color: #0d6efd;
+            color: white;
+            border-color: #0d6efd;
+            box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
+        }
+
+    .filter-btn {
+        border-radius: 20px;
+        font-weight: bold;
+        padding: 5px 15px;
+        border: 1px solid #dee2e6;
+    }
+
+        .filter-btn.active {
+            background-color: #212529 !important;
+            color: white !important;
+            border-color: #212529 !important;
+        }
 
     .pulse-orange {
         animation: pulse-orange-animation 2s infinite;
@@ -184,62 +284,107 @@
         }
     }
 
-    .bg-success-subtle {
-        background-color: #d1e7dd;
+    code {
+        font-family: 'Consolas', monospace;
+        font-size: 0.9rem;
     }
 
-    .italic {
-        font-style: italic;
+    .pointer {
+        cursor: pointer;
     }
 </style>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Hàm xác nhận DUYỆT (Cộng tiền)
-        function confirmApprove(id, user, amount) {
+        // 🔵 LỌC TRẠNG THÁI TẠI CHỖ (JS)
+        $(document).on('click', '.filter-btn', function() {
+            const tableId = $(this).data('target');
+            const status = $(this).data('status').toLowerCase();
+
+            $(`.filter-btn[data-target="${tableId}"]`).removeClass('active');
+            $(this).addClass('active');
+
+            if (status === 'all') {
+                $(`#${tableId} .item-row`).fadeIn(200);
+            } else if (status === 'processing') {
+                $(`#${tableId} .item-row`).hide();
+                $(`#${tableId} .item-row[data-status="processing"]`).fadeIn(200);
+                $(`#${tableId} .item-row[data-status="pending"]`).fadeIn(200);
+            } else {
+                $(`#${tableId} .item-row`).hide();
+                $(`#${tableId} .item-row[data-status="${status}"]`).fadeIn(200);
+            }
+        });
+
+        // 🟢 FIX: TỰ ĐỘNG HIỆN ĐƠN CẦN DUYỆT KHI VÀO TRANG
+        $(document).ready(function() {
+            $('.item-row').hide();
+            $('#card-table .item-row[data-status="pending"]').show();
+            $('#bank-table .item-row[data-status="processing"]').show();
+            $('#bank-table .item-row[data-status="pending"]').show();
+
+            $('[data-status="pending"]').addClass('active');
+            $('[data-status="processing"]').addClass('active');
+        });
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            Swal.fire({ icon: 'success', title: 'Đã copy!', text: text, timer: 800, showConfirmButton: false, toast: true, position: 'top-end' });
+        }
+
+        // 🟢 LOGIC DUYỆT NẠP: TỰ ĐỘNG TÍNH CHIẾT KHẤU TRÊN GIAO DIỆN
+        function confirmApprove(id, user, amount, isCard) {
+            let originalAmount = parseInt(amount);
+            let actualAmount = originalAmount;
+
+            // Nếu là Thẻ cào thì áp dụng bảng tính chiết khấu ngay tại JS
+            if (isCard) {
+                switch (originalAmount) {
+                    case 10000: actualAmount = 8000; break;
+                    case 20000: actualAmount = 16000; break;
+                    case 30000: actualAmount = 24000; break;
+                    case 50000: actualAmount = 40000; break;
+                    case 100000: actualAmount = 82000; break;
+                    case 200000: actualAmount = 164000; break;
+                    case 300000: actualAmount = 246000; break;
+                    case 500000: actualAmount = 410000; break;
+                    case 1000000: actualAmount = 820000; break;
+                    default: actualAmount = originalAmount * 0.8;
+                }
+            }
+
             Swal.fire({
-                title: 'Xác nhận cộng tiền?',
-                html: `Bạn có chắc chắn muốn cộng <b class="text-success">${amount}đ</b> cho tài khoản <b>${user}</b>?`,
+                title: 'Xác nhận duyệt nạp?',
+                html: `
+                    <div class="text-start">
+                        <p class="mb-1">Khách hàng: <b>${user}</b></p>
+                        <p class="mb-1">Mệnh giá gốc: <span class="text-decoration-line-through text-muted">${originalAmount.toLocaleString()}đ</span></p>
+                        <p class="mb-0">Thực cộng ví: <b class="text-success fs-4">${actualAmount.toLocaleString()}đ</b></p>
+                        <hr class="my-2">
+                        <p class="text-danger x-small mb-0"><i>* Hệ thống đã tự động tính chiết khấu.</i></p>
+                    </div>
+                `,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#198754',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Xác nhận cộng ngay',
-                cancelButtonText: 'Hủy',
-                background: '#ffffff',
-                customClass: { popup: 'rounded-4 shadow' }
+                confirmButtonText: 'Đúng, duyệt ngay!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Đang xử lý...',
-                        didOpen: () => { Swal.showLoading() },
-                        allowOutsideClick: false,
-                        showConfirmButton: false
-                    });
                     window.location.href = '/Admin/Approve/' + id;
                 }
             });
         }
 
-        // Hàm xác nhận HỦY đơn
         function confirmReject(id, user) {
             Swal.fire({
-                title: 'Bạn muốn hủy đơn?',
-                html: `Hành động này sẽ hủy yêu cầu nạp của <b>${user}</b> và không thể hoàn tác!`,
+                title: 'Hủy đơn nạp?',
+                html: `Từ chối đơn của <b>${user}</b>?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Vẫn hủy đơn',
-                cancelButtonText: 'Quay lại',
-                background: '#ffffff',
-                customClass: { popup: 'rounded-4 shadow' }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '/Admin/Reject/' + id;
-                }
-            });
+                confirmButtonText: 'Hủy ngay'
+            }).then((result) => { if (result.isConfirmed) window.location.href = '/Admin/Reject/' + id; });
         }
     </script>
 }

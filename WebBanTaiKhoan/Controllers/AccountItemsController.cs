@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,21 +24,26 @@ namespace WebBanTaiKhoan.Controllers
         }
 
         // =======================================================
-        // DANH SÁCH TÀI KHOẢN - TÌM KIẾM ĐA NĂNG
+        // DANH SÁCH TÀI KHOẢN - TÌM KIẾM ĐA NĂNG & BỘ LỌC TRẠNG THÁI
         // =======================================================
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string searchString, string status)
         {
+            // 1. Khởi tạo Query lấy dữ liệu gốc
             var query = _context.AccountItems
                 .Include(a => a.Product)
                 .AsNoTracking()
                 .AsQueryable();
 
-            ViewData["CurrentFilter"] = searchString;
+            // 2. THỐNG KÊ TỔNG (Luôn đếm trên toàn bộ database để hiện số trên nút)
+            ViewBag.TotalAvailable = await _context.AccountItems.CountAsync(a => !a.IsSold);
+            ViewBag.TotalSold = await _context.AccountItems.CountAsync(a => a.IsSold);
+            ViewBag.CurrentStatus = status; // Lưu trạng thái hiện tại để highlight nút
 
+            // 3. LỌC THEO TÌM KIẾM (Nếu có)
+            ViewData["CurrentFilter"] = searchString;
             if (!string.IsNullOrEmpty(searchString))
             {
                 searchString = searchString.Trim().ToLower();
-
                 query = query.Where(s =>
                     (s.Product != null && s.Product.Name.ToLower().Contains(searchString)) ||
                     (s.Username != null && s.Username.ToLower().Contains(searchString)) ||
@@ -46,6 +52,17 @@ namespace WebBanTaiKhoan.Controllers
                 );
             }
 
+            // 4. LỌC THEO NÚT TRẠNG THÁI (Mới thêm)
+            if (status == "available")
+            {
+                query = query.Where(a => !a.IsSold);
+            }
+            else if (status == "sold")
+            {
+                query = query.Where(a => a.IsSold);
+            }
+
+            // 5. SẮP XẾP VÀ TRẢ VỀ DANH SÁCH
             var list = await query
                 .OrderBy(a => a.IsSold)
                 .ThenByDescending(a => a.Id)

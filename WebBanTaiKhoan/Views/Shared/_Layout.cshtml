@@ -45,11 +45,10 @@
         }
     }
 
-    // 3. CÀI ĐẶT & DANH MỤC
+    // 3. CÀI ĐẶT
     var settings = _database.SystemSettings.AsNoTracking().FirstOrDefault();
     var phone = settings?.ContactPhone ?? "0943510229";
     var zalo = settings?.ContactZalo ?? phone;
-    var categories = _database.Category.AsNoTracking().ToList();
 }
 
 <!DOCTYPE html>
@@ -61,6 +60,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <style>
         :root {
             --nick3s-primary: #0061ff;
@@ -117,7 +117,7 @@
             font-size: 14px;
             font-weight: 700;
             color: #4a5568;
-            padding: 15px 20px;
+            padding: 15px 25px;
             text-decoration: none;
             white-space: nowrap;
             transition: 0.2s;
@@ -127,10 +127,15 @@
 
             .sub-nav a:hover {
                 color: var(--nick3s-primary);
+                background-color: #f8faff;
             }
 
         .nav-highlight {
             color: var(--nick3s-gold) !important;
+        }
+
+        .nav-hot {
+            color: #ff4d4d !important;
         }
 
         .balance-box {
@@ -372,12 +377,8 @@
         <div class="container">
             <div class="sub-nav d-flex align-items-center overflow-auto no-scrollbar">
                 <a asp-controller="Home" asp-action="Index" asp-route-categoryId=""><i class="fa-solid fa-house-chimney me-2"></i> Trang chủ</a>
+                <a asp-controller="Home" asp-action="BestSellers" class="nav-hot"><i class="fa-solid fa-fire-flame-curved me-2"></i> BÁN CHẠY</a>
                 <a asp-controller="Home" asp-action="TopDeposit" class="nav-highlight"><i class="fa-solid fa-crown me-2 text-warning"></i> BXH Đại Gia</a>
-                @foreach (var cat in categories)
-                {
-                    var iconClass = cat.Name.ToLower().Contains("game") ? "fa-gamepad" : "fa-layer-group";
-                    <a asp-controller="Home" asp-action="Index" asp-route-categoryId="@cat.Id"><i class="fa-solid @iconClass me-2 opacity-50"></i> @cat.Name</a>
-                }
                 <a asp-controller="Home" asp-action="Contact"><i class="fa-solid fa-headset me-2"></i> Liên hệ</a>
             </div>
         </div>
@@ -409,7 +410,6 @@
                 <div class="col-lg-4 col-md-6">
                     <h6 class="footer-title">Hỗ trợ khách hàng</h6>
                     <ul class="footer-links">
-                        @* 🟢 ĐÃ THÊM LINK VỀ TRANG LIÊN HỆ TẠI ĐÂY *@
                         <li><a asp-controller="Home" asp-action="Contact">Hướng dẫn mua hàng</a></li>
                         <li><a asp-controller="Home" asp-action="Contact">Hướng dẫn nạp tiền</a></li>
                     </ul>
@@ -470,6 +470,19 @@
                 customClass: { popup: 'rounded-4 shadow' }
             });
         }
+                <!--Start of Tawk.to Script-->
+        <script type="text/javascript">
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        (function(){
+        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+        s1.async=true;
+        s1.src='https://embed.tawk.to/696b91ac080157197cafc002/1jf6323eu';
+        s1.charset='UTF-8';
+        s1.setAttribute('crossorigin','*');
+        s0.parentNode.insertBefore(s1,s0);
+        })();
+    </script>
+    <!--End of Tawk.to Script-->
     </script>
 </body>
 </html>

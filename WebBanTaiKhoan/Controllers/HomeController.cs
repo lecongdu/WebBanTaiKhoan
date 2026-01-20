@@ -19,9 +19,32 @@ namespace WebBanTaiKhoan.Controllers
             _userManager = userManager;
         }
 
-        // 1. TRANG CHỦ
-        public async Task<IActionResult> Index(string search, int? categoryId)
+        // =========================================================
+        // 0. 🟢 TRANG CHÀO (LẤY DỮ LIỆU TỪ DATABASE)
+        // =========================================================
+        public async Task<IActionResult> Welcome()
         {
+            // Lấy bản ghi cài đặt từ Database
+            var settings = await _context.SystemSettings.AsNoTracking().FirstOrDefaultAsync();
+
+            // Đưa vào ViewBag để trang Welcome.cshtml sử dụng
+            ViewBag.WelcomeBadge = settings?.WelcomeBadge ?? "Nick3s - Uy Tín Tạo Thương Hiệu";
+            ViewBag.WelcomeTitle = settings?.WelcomeTitle ?? "KHO TÀI KHOẢN SỐ<br>LỚN NHẤT VIỆT NAM";
+            ViewBag.WelcomeSubTitle = settings?.WelcomeSubTitle ?? "Cung cấp tài khoản Game, Netflix, Youtube Premium, ChatGPT và các dịch vụ số bản quyền với giá rẻ nhất thị trường. Giao dịch tự động 24/7!";
+            ViewBag.WelcomeButtonText = settings?.WelcomeButtonText ?? "VÀO CỬA HÀNG NGAY";
+
+            return View();
+        }
+
+        // 1. TRANG CHỦ (SHOP)
+        public async Task<IActionResult> Index(string search, int? categoryId, string welcome)
+        {
+            // Logic đá sang trang chào nếu chưa đăng nhập và chưa bấm nút vào shop
+            if (!User.Identity.IsAuthenticated && string.IsNullOrEmpty(welcome))
+            {
+                return RedirectToAction("Welcome");
+            }
+
             var settings = await _context.SystemSettings.AsNoTracking().FirstOrDefaultAsync();
             ViewBag.Settings = settings ?? new SystemSetting
             {
@@ -51,6 +74,37 @@ namespace WebBanTaiKhoan.Controllers
             }
 
             var results = await productsQuery.OrderByDescending(p => p.Id).ToListAsync();
+
+            foreach (var item in results)
+            {
+                item.StockQuantity = item.AccountItems.Count(a => !a.IsSold);
+                item.SoldQuantity = item.AccountItems.Count(a => a.IsSold);
+            }
+
+            return View(results);
+        }
+
+        // --- MỚI: TRANG SẢN PHẨM BÁN CHẠY RIÊNG BIỆT ---
+        public async Task<IActionResult> BestSellers()
+        {
+            var products = await _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.AccountItems)
+                .AsNoTracking()
+                .ToListAsync();
+
+            foreach (var item in products)
+            {
+                item.StockQuantity = item.AccountItems.Count(a => !a.IsSold);
+                item.SoldQuantity = item.AccountItems.Count(a => a.IsSold);
+            }
+
+            var results = products
+                .Where(p => p.SoldQuantity > 0)
+                .OrderByDescending(p => p.SoldQuantity)
+                .Take(20)
+                .ToList();
+
             return View(results);
         }
 
@@ -64,7 +118,11 @@ namespace WebBanTaiKhoan.Controllers
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null) return NotFound();
-            ViewBag.StockCount = product.AccountItems.Count(a => !a.IsSold);
+
+            product.StockQuantity = product.AccountItems.Count(a => !a.IsSold);
+            product.SoldQuantity = product.AccountItems.Count(a => a.IsSold);
+
+            ViewBag.StockCount = product.StockQuantity;
             return View(product);
         }
 
@@ -92,7 +150,43 @@ namespace WebBanTaiKhoan.Controllers
             return View(banks ?? new List<BankAccount>());
         }
 
-        // 5. TẠO LỆNH NẠP CHỜ
+        // --- 🔴 XỬ LÝ GỬI THẺ CÀO ---
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PostCard(string cardType, string serial, string pin, decimal amount)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Redirect("/Identity/Account/Login");
+
+            if (string.IsNullOrEmpty(serial) || string.IsNullOrEmpty(pin) || amount <= 0)
+            {
+                TempData["Error"] = "Vui lòng nhập đầy đủ Seri, Mã thẻ và Mệnh giá!";
+                return RedirectToAction(nameof(Deposit));
+            }
+
+            var transaction = new TopUpTransaction
+            {
+                UserId = user.Id,
+                Amount = amount,
+                Status = "Pending",
+                Serial = serial.Trim(),
+                Pin = pin.Trim(),
+                TransactionCode = $"CARD_{cardType.ToUpper()}_{DateTime.Now.ToString("ssmmHH")}",
+                Method = $"Thẻ cào {cardType}",
+                CreatedAt = DateTime.Now
+            };
+
+            _context.TopUpTransactions.Add(transaction);
+            await _context.SaveChangesAsync();
+
+            TempData["DepositSuccess"] = true;
+            TempData["DepositAmount"] = amount.ToString("#,##0");
+
+            return RedirectToAction(nameof(Deposit));
+        }
+
+        // 5. TẠO LỆNH NẠP CHỜ (VIETQR)
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> CreatePendingDeposit(decimal amount)
@@ -175,30 +269,25 @@ namespace WebBanTaiKhoan.Controllers
             return RedirectToAction(nameof(Deposit));
         }
 
-        // ==========================================
-        // 6. BẢNG XẾP HẠNG ĐẠI GIA (SỬA LẠI: THEO TỔNG NẠP)
-        // ==========================================
+        // 6. BẢNG XẾP HẠNG ĐẠI GIA
         public async Task<IActionResult> TopDeposit()
         {
-            // Lấy danh sách User kèm theo Tổng số tiền đã nạp thành công (Status = Success)
             var topUsers = await _userManager.Users
                 .Select(u => new
                 {
                     OriginalName = u.UserName,
-                    // Sum số tiền từ bảng TopUpTransactions nơi Status là Success
                     TotalDeposited = _context.TopUpTransactions
                         .Where(t => t.UserId == u.Id && t.Status == "Success")
                         .Sum(t => (decimal?)t.Amount) ?? 0m
                 })
-                .Where(x => x.TotalDeposited > 0) // Chỉ hiện những người đã từng nạp
+                .Where(x => x.TotalDeposited > 0)
                 .OrderByDescending(x => x.TotalDeposited)
                 .Take(10)
                 .ToListAsync();
 
-            // Format lại tên và trả về View
             var results = topUsers.Select(u => new {
                 DisplayName = u.OriginalName.Length > 3 ? u.OriginalName.Substring(0, 3) + "***" : u.OriginalName + "***",
-                Balance = u.TotalDeposited // Gán TotalDeposited vào biến Balance để không phải sửa View nhiều
+                Balance = u.TotalDeposited
             }).ToList();
 
             return View(results);

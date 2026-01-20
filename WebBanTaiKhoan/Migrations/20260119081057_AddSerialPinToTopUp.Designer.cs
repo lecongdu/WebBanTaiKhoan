@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBanTaiKhoan.Data;
 
@@ -11,9 +12,11 @@ using WebBanTaiKhoan.Data;
 namespace WebBanTaiKhoan.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260119081057_AddSerialPinToTopUp")]
+    partial class AddSerialPinToTopUp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -298,25 +301,6 @@ namespace WebBanTaiKhoan.Migrations
                     b.ToTable("BankAccounts");
                 });
 
-            modelBuilder.Entity("WebBanTaiKhoan.Models.CardDiscount", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReceiveAmount")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CardDiscounts");
-                });
-
             modelBuilder.Entity("WebBanTaiKhoan.Models.CartItem", b =>
                 {
                     b.Property<int>("Id")
@@ -490,18 +474,6 @@ namespace WebBanTaiKhoan.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TiktokUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WelcomeBadge")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WelcomeButtonText")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WelcomeSubTitle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WelcomeTitle")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("YoutubeUrl")

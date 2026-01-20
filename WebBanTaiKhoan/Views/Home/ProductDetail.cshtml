@@ -5,13 +5,20 @@
 }
 
 <div class="container mt-4 pb-5">
-    @* --- THANH ĐIỀU HƯỚNG --- *@
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb bg-transparent p-0 small">
-            <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-primary"><i class="fa-solid fa-house"></i></a></li>
-            <li class="breadcrumb-item active text-dark fw-bold">@Model.Name</li>
-        </ol>
-    </nav>
+    @* --- THANH ĐIỀU HƯỚNG & NÚT QUAY LẠI --- *@
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-transparent p-0 mb-0 small">
+                <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-primary"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
+                <li class="breadcrumb-item active text-dark fw-bold">@Model.Name</li>
+            </ol>
+        </nav>
+
+        @* 🟢 NÚT QUAY LẠI CỰC XỊN *@
+        <a href="javascript:history.back()" class="btn btn-white btn-sm rounded-pill px-3 shadow-sm border fw-bold text-muted">
+            <i class="fa-solid fa-arrow-left me-1"></i> Quay lại
+        </a>
+    </div>
 
     @if (TempData["Error"] != null)
     {
@@ -56,7 +63,6 @@
             <div class="card border-0 shadow-lg rounded-4 p-4 sticky-top bg-white border-top border-primary border-4" style="top: 100px;">
                 <div class="price-section mb-4">
                     <p class="text-muted small mb-1">Giá bán hiện tại:</p>
-                    @* Thêm id và data-price để JavaScript lấy giá gốc *@
                     <h2 class="fw-bold text-danger mb-0" id="unitPrice" data-price="@Model.Price">@Model.Price.ToString("#,##0")đ</h2>
                     <del class="text-muted small">@((Model.Price * 1.5m).ToString("#,##0"))đ</del>
                 </div>
@@ -76,41 +82,35 @@
 
                 @if (stockCount > 0)
                 {
-                    <form method="post">
-                        <input type="hidden" name="productId" value="@Model.Id" />
-
-                        <div class="quantity-select mb-3">
-                            <label class="fw-bold small mb-2 text-uppercase">Số lượng mua:</label>
-                            <div class="input-group">
-                                <button type="button" class="btn btn-outline-secondary px-3" onclick="updateQty(-1)">-</button>
-                                @* Gán ID buyQuantity và sự kiện oninput *@
-                                <input type="number" id="buyQuantity" name="quantity" value="1" min="1" max="@stockCount"
-                                       class="form-control text-center fw-bold border-secondary border-opacity-25 shadow-none"
-                                       oninput="calculateTotal()" />
-                                <button type="button" class="btn btn-outline-secondary px-3" onclick="updateQty(1)">+</button>
-                            </div>
+                    <div class="quantity-select mb-3">
+                        <label class="fw-bold small mb-2 text-uppercase">Số lượng mua:</label>
+                        <div class="input-group">
+                            <button type="button" class="btn btn-outline-secondary px-3" onclick="updateQty(-1)">-</button>
+                            <input type="number" id="buyQuantity" name="quantity" value="1" min="1" max="@stockCount"
+                                   class="form-control text-center fw-bold border-secondary border-opacity-25 shadow-none"
+                                   oninput="calculateTotal()" />
+                            <button type="button" class="btn btn-outline-secondary px-3" onclick="updateQty(1)">+</button>
                         </div>
+                    </div>
 
-                        @* Hiển thị Tạm tính *@
-                        <div class="d-flex justify-content-between align-items-center mb-4 p-2 bg-light rounded-3 border border-dashed">
-                            <span class="small fw-bold text-muted">Tạm tính:</span>
-                            <span class="fw-bold text-primary fs-5" id="totalAmount">@Model.Price.ToString("#,##0")đ</span>
-                        </div>
+                    <div class="d-flex justify-content-between align-items-center mb-4 p-2 bg-light rounded-3 border border-dashed">
+                        <span class="small fw-bold text-muted">Tạm tính:</span>
+                        <span class="fw-bold text-primary fs-5" id="totalAmount">@Model.Price.ToString("#,##0")đ</span>
+                    </div>
 
-                        <div class="d-grid gap-2">
-                            <button type="submit"
-                                    asp-controller="Orders" asp-action="BuyNow"
-                                    class="btn btn-primary py-3 fw-bold rounded-3 shadow">
-                                <i class="fa-solid fa-bolt me-2"></i> MUA NGAY
-                            </button>
+                    <div class="d-grid gap-2">
+                        <button type="button" onclick="buyNow(@Model.Id)" class="btn btn-primary py-3 fw-bold rounded-3 shadow">
+                            <i class="fa-solid fa-bolt me-2"></i> MUA NGAY
+                        </button>
 
-                            <button type="submit"
-                                    asp-controller="Cart" asp-action="AddToCart"
-                                    class="btn btn-outline-primary py-2 fw-bold rounded-3">
+                        <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                            <input type="hidden" name="productId" value="@Model.Id" />
+                            <input type="hidden" id="cartQty" name="quantity" value="1" />
+                            <button type="submit" class="btn btn-outline-primary py-2 fw-bold rounded-3 w-100">
                                 <i class="fa-solid fa-cart-plus me-2"></i> Thêm vào giỏ
                             </button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 }
                 else
                 {
@@ -163,12 +163,20 @@
     .border-dashed {
         border-style: dashed !important;
     }
+
+    .btn-white {
+        background: #fff;
+    }
+
+        .btn-white:hover {
+            background: #f8f9fa;
+        }
 </style>
 
 @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function calculateTotal() {
-            // Lấy đơn giá từ thuộc tính data-price
             const price = parseInt(document.getElementById('unitPrice').getAttribute('data-price'));
             const quantityInput = document.getElementById('buyQuantity');
             const totalDisplay = document.getElementById('totalAmount');
@@ -176,16 +184,15 @@
             let quantity = parseInt(quantityInput.value);
             const maxStock = parseInt(quantityInput.getAttribute('max'));
 
-            // Kiểm tra tính hợp lệ của số lượng
             if (isNaN(quantity) || quantity < 1) quantity = 1;
             if (quantity > maxStock) quantity = maxStock;
 
-            // Cập nhật lại ô nhập nếu người dùng nhập lố
             if(quantityInput.value !== "") {
                 quantityInput.value = quantity;
             }
 
-            // Tính tổng và định dạng tiền tệ VNĐ
+            document.getElementById('cartQty').value = quantity;
+
             const total = price * quantity;
             totalDisplay.innerText = total.toLocaleString('vi-VN') + 'đ';
         }
@@ -194,7 +201,49 @@
             const input = document.getElementById('buyQuantity');
             let currentVal = parseInt(input.value) || 1;
             input.value = currentVal + step;
-            calculateTotal(); // Gọi tính toán lại sau khi bấm +/-
+            calculateTotal();
+        }
+
+        function buyNow(productId) {
+            const quantity = document.getElementById('buyQuantity').value;
+
+            Swal.fire({
+                title: 'Xác nhận mua hàng',
+                text: "Số tiền sẽ được trừ trực tiếp vào tài khoản của bạn!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#0061ff',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Đồng ý mua',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ title: 'Đang xử lý...', didOpen: () => { Swal.showLoading() } });
+
+                    $.post('/Cart/QuickBuy', { productId: productId, quantity: quantity }, function (res) {
+                        if (res.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công!',
+                                text: res.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                location.href = '/Orders/MyOrders';
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Mua hàng thất bại',
+                                text: res.message,
+                                footer: '<a href="/Home/Deposit" class="btn btn-sm btn-primary rounded-pill text-white px-3 fw-bold">Nạp tiền ngay</a>'
+                            });
+                        }
+                    }).fail(function() {
+                        Swal.fire('Lỗi!', 'Không thể kết nối đến máy chủ.', 'error');
+                    });
+                }
+            });
         }
     </script>
 }

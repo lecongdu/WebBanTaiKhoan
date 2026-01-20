@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Kho tài khoản";
     var currentFilter = ViewData["CurrentFilter"] as string;
+    var currentStatus = ViewBag.CurrentStatus as string;
 }
 
 <div class="container-fluid mt-4 pb-5">
@@ -17,13 +18,13 @@
     <div class="card shadow-sm border-0 mb-4 rounded-4 overflow-hidden">
         <div class="card-body bg-white p-4">
             <div class="row align-items-center">
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <h2 class="fw-bold text-dark mb-1">
                         <i class="fa-solid fa-key text-warning me-2"></i> KHO TÀI KHOẢN
                     </h2>
                     <p class="text-muted small mb-0">Quản lý danh sách tài khoản mật khẩu của các sản phẩm</p>
                 </div>
-                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <div class="col-md-7 text-md-end mt-3 mt-md-0">
                     <div class="d-flex flex-wrap gap-2 justify-content-md-end align-items-center">
 
                         @* FORM TÌM KIẾM *@
@@ -35,10 +36,10 @@
                                     <i class="fa-solid fa-magnifying-glass"></i>
                                 </button>
                             </div>
-                            @if (!string.IsNullOrEmpty(currentFilter))
+                            @if (!string.IsNullOrEmpty(currentFilter) || !string.IsNullOrEmpty(currentStatus))
                             {
-                                <a asp-action="Index" class="btn btn-light rounded-circle shadow-sm ms-1" title="Xóa tìm kiếm">
-                                    <i class="fa-solid fa-xmark"></i>
+                                <a asp-action="Index" class="btn btn-light rounded-circle shadow-sm ms-1" title="Xóa lọc">
+                                    <i class="fa-solid fa-rotate-left"></i>
                                 </a>
                             }
                         </form>
@@ -49,6 +50,40 @@
                     </div>
                 </div>
             </div>
+
+            @* --- 🟢 HỆ THỐNG NÚT LỌC THÔNG MINH (MỚI THÊM) --- *@
+            <div class="row mt-4 g-3">
+                <div class="col-md-3">
+                    <a asp-action="Index" asp-route-status="available" class="text-decoration-none">
+                        <div class="card bg-success text-white shadow-sm border-0 rounded-4 p-3 hover-up @(currentStatus == "available" ? "ring-active-success" : "")">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="small opacity-75 fw-bold text-uppercase">Acc Sẵn còn</div>
+                                    <div class="fs-2 fw-bold">@ViewBag.TotalAvailable</div>
+                                </div>
+                                <i class="fa-solid fa-boxes-stacked fs-1 opacity-25"></i>
+                            </div>
+                            <div class="small mt-1"><i class="fa-solid fa-filter me-1"></i> Bấm để xem hàng sẵn</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a asp-action="Index" asp-route-status="sold" class="text-decoration-none">
+                        <div class="card bg-danger text-white shadow-sm border-0 rounded-4 p-3 hover-up @(currentStatus == "sold" ? "ring-active-danger" : "")">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="small opacity-75 fw-bold text-uppercase">Acc Đã bán</div>
+                                    <div class="fs-2 fw-bold">@ViewBag.TotalSold</div>
+                                </div>
+                                <i class="fa-solid fa-cart-shopping fs-1 opacity-25"></i>
+                            </div>
+                            <div class="small mt-1"><i class="fa-solid fa-filter me-1"></i> Bấm để xem lịch sử bán</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            @* -------------------------------------------- *@
+
         </div>
     </div>
 
@@ -73,14 +108,14 @@
                                 <td colspan="5" class="text-center py-5 text-muted">
                                     <div class="py-4">
                                         <i class="fa-solid fa-folder-open fs-1 d-block mb-3 opacity-25"></i>
-                                        <p class="fs-5">Không tìm thấy tài khoản nào trong kho.</p>
+                                        <p class="fs-5">Không tìm thấy tài khoản nào phù hợp.</p>
+                                        <a asp-action="Index" class="btn btn-sm btn-outline-primary rounded-pill">Hiện tất cả tài khoản</a>
                                     </div>
                                 </td>
                             </tr>
                         }
                         @foreach (var item in Model)
                         {
-                            // LOGIC TÁCH CHUỖI TỪ CỘT DATA NẾU USER/PASS TRỐNG
                             string displayUser = item.Username;
                             string displayPass = item.Password;
 
@@ -166,9 +201,19 @@
     }
 
         .hover-up:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
         }
+
+    .ring-active-success {
+        outline: 3px solid #198754;
+        outline-offset: 2px;
+    }
+
+    .ring-active-danger {
+        outline: 3px solid #dc3545;
+        outline-offset: 2px;
+    }
 
     .transition {
         transition: all 0.2s ease;
@@ -188,7 +233,6 @@
         border-radius: 1rem !important;
     }
 
-    /* Hiệu ứng mờ cho hàng đã bán */
     .bg-light.bg-opacity-50 {
         opacity: 0.7;
     }
